@@ -23,7 +23,7 @@ int main()
 
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
 	window.setVerticalSyncEnabled(true);
-	window.setFramerateLimit(60);
+	window.setFramerateLimit(120);
 	/////////////////////////////////////////////////////////////////
 	// a cell is 64 by 64 pixels
 
@@ -61,7 +61,7 @@ int main()
 	}
 
 
-	lvl[11][1] = 'w';
+	lvl[5][1] = 'w';
 	lvl[11][2] = 'w';
 	lvl[11][3] = 'w';
 

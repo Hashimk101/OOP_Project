@@ -55,36 +55,52 @@ public:
 
         SonicSprite.setTexture(SonicTex);
 		SonicSprite.setPosition(player_x, player_y);
-		// Set the scale of the sprite
-		SonicSprite.setScale(scale_x, scale_y);
-		
-
+        SonicSprite.setScale(scale_x, scale_y);
     }
 
     // Function to get the sprite (for rendering, etc.)
     sf::Sprite& getSprite() {
         return SonicSprite;
     }
-    void movement() {
+    void movement(char** lvl) {
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
-            velocityX -= acceleration;
-            std::cout << "Left pressed\n";
-            // case for future me
-            // check location relative to window
-            player_x -= 12;
-            //SonicSprite.move(Vector2f(velocityX, 0));
-            //return -10;
+
+            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x) / cell_size]) == 'w') {
+                return;
+            }
+            velocityX = -max_speed;
+            
+            if (player_x <= 250) {
+                //std::cout << "End of Window" << player_x << std::endl;
+
+                offset_x -= 20;
+                if (offset_x <= -30) {
+					offset_x = -30;
+                }
+                //player_x += 20;
+            }
+            else {
+                player_x += velocityX;
+            }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right)) {
-            velocityX += acceleration;
-            player_x += 12;
-            //SonicSprite.move(Vector2f(velocityX, 0));
-            //return 10;
+            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size]) == 'w') {
+                return;
+            }
+            velocityX = max_speed;
+            if (player_x >= 950) {
+                //std::cout << "End of Window" << player_x << std::endl;
+                offset_x += 20;
+                //player_x -= 20;
+            }
+            else {
+                player_x += velocityX;
+            }
         }
         if (onGround) {
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
             velocityY = -22;
-            std::cout << "Space pressed\n";
+            //std::cout << "Space pressed\n";
             }
         }
     }
@@ -95,9 +111,10 @@ public:
 
         offset_y += velocityY;
 
-        char bottom_left_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(player_x + hit_box_factor_x) / cell_size];
-        char bottom_right_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(player_x + hit_box_factor_x + Pwidth) / cell_size];
-        char bottom_mid_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(player_x + hit_box_factor_x + Pwidth / 2) / cell_size];
+        char bottom_left_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x) / cell_size];
+        char bottom_right_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size];
+        char bottom_mid_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x + Pwidth / 2) / cell_size];
+       
 
 
         if (bottom_left_down == 'w' || bottom_mid_down == 'w' || bottom_right_down == 'w')
@@ -135,6 +152,9 @@ public:
         window.draw(SonicSprite);
 
     }
+	float getOffsetX() {
+		return offset_x;
+	}
 };
 
 

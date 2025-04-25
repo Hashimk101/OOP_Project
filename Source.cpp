@@ -17,7 +17,7 @@ void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGroun
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, float player_x, float player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, float offset, Sprite& background);
 
 int main()
 {
@@ -25,6 +25,11 @@ int main()
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
+	sf::Texture BackgroundTex;
+	BackgroundTex.loadFromFile("Data/bg2.png");
+	sf::Sprite BackgroundSprite(BackgroundTex);
+	BackgroundSprite.setScale(1.8, 1.2);
+	//BackgroundSprite.setPosition(100, 100);
 	/////////////////////////////////////////////////////////////////
 	// a cell is 64 by 64 pixels
 
@@ -53,8 +58,10 @@ int main()
 				window.close();
 		}
 		window.clear(Color::Black);
-		display_level(window, height, width, lvl, wallSprite1, cell_size);
-		sprite.movement();
+		BackgroundSprite.setPosition(-sprite.getOffsetX()/7, 0);
+		window.draw(BackgroundSprite);
+		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite);
+		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		sprite.draw_player(window);
 		window.display();
@@ -106,7 +113,7 @@ void draw_player(RenderWindow& window, Sprite& LstillSprite, float player_x, flo
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, float offset, Sprite& background)
 {
 	for (int i = 0; i < height; i += 1)
 	{
@@ -114,8 +121,10 @@ void display_level(RenderWindow& window, const int height, const int width, char
 		{
 			if (lvl[i][j] == 'w')
 			{
-				wallSprite1.setPosition(j * cell_size, i * cell_size);
+				wallSprite1.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(wallSprite1);
+				/*background.setPosition(0 - offset / 4, 0);*/
+				/*window.draw(background);*/
 			}
 		}
 	}

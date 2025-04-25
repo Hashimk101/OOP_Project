@@ -11,8 +11,8 @@ int cell_size = 64;
 
 class MySprite { // Renamed to avoid conflict with sf::Sprite
     Texture SonicTex, TailsTex, KnucklesTex;
-    float velocityY, velocityX, player_x, player_y, max_speed, acceleration;
-	float offset_x, offset_y, terminal_Velocity;
+    int velocityY, velocityX, player_x, player_y, max_speed, acceleration;
+	int offset_x, offset_y, terminal_Velocity;
     float scale_x, scale_y;
     int raw_img_x, raw_img_y;
 	int Pheight, Pwidth;
@@ -99,7 +99,7 @@ public:
         }
         if (onGround) {
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
-            velocityY = -22;
+            velocityY = -21;
             //std::cout << "Space pressed\n";
             }
         }
@@ -107,45 +107,53 @@ public:
     
     void player_gravity(char** lvl)
     {
+        // Store previous position
         offset_y = player_y;
 
+        // Apply vertical velocity
         offset_y += velocityY;
 
-        char bottom_left_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x) / cell_size];
-        char bottom_right_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size];
-        char bottom_mid_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x + Pwidth / 2) / cell_size];
-       
+        int check_y = (int)((offset_y + hit_box_factor_y + Pheight) / cell_size); // gives the row of the lvl the character is currently on
 
-        //std::cout << onGround << std::endl;
-        if (bottom_left_down == 'w' || bottom_mid_down == 'w' || bottom_right_down == 'w')
+        // Calculate x positions of collision points
+        int left_x = (int)(((offset_x + player_x + hit_box_factor_x) / cell_size));
+        int right_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size));
+        int mid_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth / 2) / cell_size));
+
+        // Check for ground collision
+        bool collision = false;
+        char bottom_left = lvl[check_y][left_x];
+        char bottom_right = lvl[check_y][right_x];
+        char bottom_mid = lvl[check_y][mid_x];
+
+        collision = (bottom_left == 'w' || bottom_right == 'w' || bottom_mid == 'w');
+        
+
+        if (collision)
         {
+            // Snap player to top of the collided tile
+            player_y = check_y * cell_size - (hit_box_factor_y + Pheight);
             onGround = true;
-            //std::cout << "On ground\n";
+            velocityY = 0;
+			std::cout << "On ground: " << player_y << std::endl;
         }
         else
         {
             player_y = offset_y;
             onGround = false;
-            //std::cout << "not on ground\n";
-        }
-
-        if (onGround == false)
-        {
+			std::cout << "Not on ground: " << player_y << std::endl;
+            // Apply gravity if in air
             velocityY += gravity;
-            if (velocityY >= terminal_Velocity) velocityY = terminal_Velocity;
+            if (velocityY > terminal_Velocity) {
+                velocityY = terminal_Velocity;
+            }
         }
-
-        else
-        {
-            velocityY = 0;
-        }
-
     }
 
-    float getX() {
+     int getX() const{
         return player_x;
     }
-    float getY() {
+     int getY() const {
 		return player_y;
     }
     void draw_player(RenderWindow& window) {
@@ -154,7 +162,7 @@ public:
         window.draw(SonicSprite);
 
     }
-	float getOffsetX() {
+	int getOffsetX() const {
 		return offset_x;
 	}
 };

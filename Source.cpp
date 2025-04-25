@@ -13,11 +13,11 @@ using namespace std;
 int screen_x = 1200;
 int screen_y = 900;
 // prototypes 
-void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGround, float& gravity, float& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, float& player_x, float& player_y, const int cell_size, int& Pheight, int& Pwidth);
+void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, float& gravity, int& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, int& player_x, int& player_y, const int cell_size, int& Pheight, int& Pwidth);
 
-void draw_player(RenderWindow& window, Sprite& LstillSprite, float player_x, float player_y);
+void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, float offset, Sprite& background);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background);
 
 int main()
 {
@@ -74,7 +74,7 @@ int main()
 
 // functions
 
-void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGround, float& gravity, float& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, float& player_x, float& player_y, const int cell_size, int& Pheight, int& Pwidth)
+void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, float& gravity,int& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, int& player_x, int& player_y, const int cell_size, int& Pheight, int& Pwidth)
 {
 	offset_y = player_y;
 
@@ -107,13 +107,13 @@ void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGroun
 	}
 
 }
-void draw_player(RenderWindow& window, Sprite& LstillSprite, float player_x, float player_y) {
+void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y) {
 
 	LstillSprite.setPosition(player_x, player_y);
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, float offset, Sprite& background)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background)
 {
 	for (int i = 0; i < height; i += 1)
 	{

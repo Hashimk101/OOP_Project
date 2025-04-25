@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
-#include"Maps.h"
+#include "Maps.h"
 
 using namespace sf;
 int cell_size = 64;
@@ -116,18 +116,20 @@ public:
         char bottom_mid_down = lvl[(int)(offset_y + hit_box_factor_y + Pheight) / cell_size][(int)(offset_x + player_x + hit_box_factor_x + Pwidth / 2) / cell_size];
        
 
-
+        //std::cout << onGround << std::endl;
         if (bottom_left_down == 'w' || bottom_mid_down == 'w' || bottom_right_down == 'w')
         {
             onGround = true;
+            //std::cout << "On ground\n";
         }
         else
         {
             player_y = offset_y;
             onGround = false;
+            //std::cout << "not on ground\n";
         }
 
-        if (!onGround)
+        if (onGround == false)
         {
             velocityY += gravity;
             if (velocityY >= terminal_Velocity) velocityY = terminal_Velocity;

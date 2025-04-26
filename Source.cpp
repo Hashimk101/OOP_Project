@@ -6,6 +6,7 @@
 //#include <SFML/Window.hpp>
 #include "Header.h"
 #include "Maps.h"
+#include "Collectables.h"
 
 using namespace sf;
 using namespace std;
@@ -50,6 +51,7 @@ int main()
 	Texture wallTex1;
 	wallTex1.loadFromFile("Data/brick1.png");
 	Sprite wallSprite1(wallTex1);
+	Collectables Coins(map);
 
 	sf::Event event;
 	while (window.isOpen()) {
@@ -64,6 +66,7 @@ int main()
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		sprite.draw_player(window);
+
 		window.display();
 	}
 

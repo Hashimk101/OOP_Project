@@ -69,6 +69,9 @@ public:
         for (int i = 110; i <= 115; i++) lvl[2][i] = 'w';
         for (int i = 130; i <= 135; i++) lvl[1][i] = 'w';
     }
+    Maps(Maps& m) {
+        lvl = m.lvl;
+    }
 	char** getMap() {
 		return lvl;
 	}

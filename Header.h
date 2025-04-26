@@ -59,8 +59,8 @@ public:
         player_y = 100;
         window_x = 0; // Note: There was a duplicate assignment in the original
         window_y = 0; // Corrected to window_y
-        acceleration = 10;
-        max_speed = 15;
+        acceleration = 1.2;
+        max_speed = 12;
         onGround = false;
         gravity = 1;
         terminal_Velocity = 20;
@@ -88,62 +88,81 @@ public:
     }
     bool movement(char** lvl) {
         bool isMoving = false;
+
+        // Apply friction when no key is pressed
+        if (!Keyboard::isKeyPressed(Keyboard::Left) &&
+            !Keyboard::isKeyPressed(Keyboard::Right)) {
+             velocityX = 0;
+        }
+
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
-            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x) / cell_size]) == 'w' || 
-                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x) / cell_size]) == 'w') {
-                return false; // No movement due to wall collision
-            }
-            velocityX = -max_speed;
-            SonicSprite.setTexture(SonicTex[1]);
-            currentIndex = 1;
-            isMoving = true;
-            left = true;
-            AnimateSprite(isMoving);
-            
-            if (player_x <= 350) {
-                offset_x -= 20;
-                if (offset_x <= 0) {
-                    player_x -= 10;
-                    if (player_x <= 5) {
-                        player_x = 5;
-                    }
-                    offset_x = 0;
-                }
+            // Collision checks go brrrrr
+            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x) / cell_size] == 'w' ||
+                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x) / cell_size] == 'w'))){
+                velocityX = 0;
             }
             else {
-                player_x += velocityX;
+				// Apply acceleration :(
+                velocityX -= acceleration;
+                if (velocityX < -max_speed) velocityX = -max_speed;
+
+                // Animation
+                SonicSprite.setTexture(SonicTex[1]);
+                currentIndex = 1;
+                isMoving = true;
+                left = true;
+                AnimateSprite(isMoving);
+
+                // Movement logic lol pata nai kaise ban gai
+                if (player_x <= 350) {
+                    offset_x += velocityX; // Scroll world (velocityX is negative)
+                    if (offset_x < 0) {
+                        player_x += velocityX;
+                        if (player_x < 5) player_x = 5;
+                        offset_x = 0;
+                    }
+                }
+                else {
+                    player_x += velocityX;
+                }
             }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right)) {
-            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size]) == 'w' || 
-                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size]) == 'w') {
-                return false; // No movement due to wall collision (fixed)
-            }
-            std::cout << player_x << " " << offset_x << std::endl;
-            if (onGround == false) {
-                currentIndex = 5;
-                SonicSprite.setTexture(SonicTex[5]);
+            // Collision checks go brrrrr
+            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size] == 'w' ||
+                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size] == 'w'))) {
+                velocityX = 0;
             }
             else {
-                currentIndex = 3;
-                SonicSprite.setTexture(SonicTex[3]);
-            }
-            left = false;
-            isMoving = true;
-            AnimateSprite(isMoving);
-            velocityX = max_speed;
-            if (player_x >= 850) {
-                offset_x += 20;
-                if (offset_x >= 11600) {
-                    player_x += 10;
-                    if (player_x >= 1100) {
-                        player_x = 1100;
-                    }
-                    offset_x = 11600;
+                // Applying acceleration :)
+                velocityX += acceleration;
+                if (velocityX > max_speed) velocityX = max_speed;
+
+                // Animation be like ......
+                if (onGround) {
+                    currentIndex = 3;
+                    SonicSprite.setTexture(SonicTex[3]);
                 }
-            }
-            else {
-                player_x += velocityX;
+                else {
+                    currentIndex = 5;
+                    SonicSprite.setTexture(SonicTex[5]);
+                }
+                isMoving = true;
+                left = false;
+                AnimateSprite(isMoving);
+
+                // Movement logic
+                if (player_x >= 850) {
+                    offset_x += velocityX; //velocity is positive so no need to apply any negative
+                    if (offset_x > 11600) {
+                        player_x += velocityX;
+                        if (player_x > 1100) player_x = 1100;
+                        offset_x = 11600;
+                    }
+                }
+                else {
+                    player_x += velocityX;
+                }
             }
         }
         else {
@@ -235,7 +254,7 @@ public:
     void AnimateSprite(bool isMoving)
     {
         if (isMoving) {
-            if (animationClock.getElapsedTime().asMilliseconds() > 60) {
+            if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame = (currentFrame + 1) % GetFrameNum(SonicTex[currentIndex]);
                 SonicRect.left = currentFrame * 40;
                 SonicSprite.setTextureRect(SonicRect);

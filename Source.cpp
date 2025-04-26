@@ -51,7 +51,7 @@ int main()
 	Texture wallTex1;
 	wallTex1.loadFromFile("Data/brick1.png");
 	Sprite wallSprite1(wallTex1);
-	Collectables Coins(map);
+	Collectables Coins(lvl);
 
 	sf::Event event;
 	while (window.isOpen()) {
@@ -63,9 +63,12 @@ int main()
 		BackgroundSprite.setPosition(-sprite.getOffsetX()/7, 0);
 		window.draw(BackgroundSprite);
 		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite);
+		Coins.placeCoins();
+		Coins.draw(window, sprite.getOffsetX());
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		sprite.draw_player(window);
+		//window.draw()
 
 		window.display();
 	}
@@ -120,7 +123,9 @@ void display_level(RenderWindow& window, const int height, const int width, char
 {
 	for (int i = 0; i < height; i += 1)
 	{
-		for (int j = 0; j < width; j += 1)
+		// hell yeah, only loads the current window into memory
+		// THE GREATEST PROGRAMMER THAT EVER LIVED
+		for (int j = offset/64; j < (1300 + offset)/64; j += 1)
 		{
 			if (lvl[i][j] == 'w')
 			{
@@ -129,6 +134,9 @@ void display_level(RenderWindow& window, const int height, const int width, char
 				/*background.setPosition(0 - offset / 4, 0);*/
 				/*window.draw(background);*/
 			}
+			/*else if (lvl[i][j] == 's') {
+				window.draw();
+			}*/
 		}
 	}
 }

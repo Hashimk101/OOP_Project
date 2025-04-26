@@ -26,5 +26,8 @@
     <ClInclude Include="Maps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Collectables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

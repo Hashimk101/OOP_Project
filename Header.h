@@ -1,5 +1,5 @@
 #include <iostream>
-#include <fstream>
+//#include <fstream>
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -89,7 +89,8 @@ public:
     bool movement(char** lvl) {
         bool isMoving = false;
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
-            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x) / cell_size]) == 'w') {
+            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x) / cell_size]) == 'w' || 
+                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x) / cell_size]) == 'w') {
                 return false; // No movement due to wall collision
             }
             velocityX = -max_speed;
@@ -98,11 +99,15 @@ public:
             isMoving = true;
             left = true;
             AnimateSprite(isMoving);
-
-            if (player_x <= 250) {
+            
+            if (player_x <= 350) {
                 offset_x -= 20;
-                if (offset_x <= -30) {
-                    offset_x = -30;
+                if (offset_x <= 0) {
+                    player_x -= 10;
+                    if (player_x <= 5) {
+                        player_x = 5;
+                    }
+                    offset_x = 0;
                 }
             }
             else {
@@ -110,9 +115,11 @@ public:
             }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right)) {
-            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size]) == 'w') {
+            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size]) == 'w' || 
+                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size]) == 'w') {
                 return false; // No movement due to wall collision (fixed)
             }
+            std::cout << player_x << " " << offset_x << std::endl;
             if (onGround == false) {
                 currentIndex = 5;
                 SonicSprite.setTexture(SonicTex[5]);
@@ -125,8 +132,15 @@ public:
             isMoving = true;
             AnimateSprite(isMoving);
             velocityX = max_speed;
-            if (player_x >= 950) {
+            if (player_x >= 850) {
                 offset_x += 20;
+                if (offset_x >= 11600) {
+                    player_x += 10;
+                    if (player_x >= 1100) {
+                        player_x = 1100;
+                    }
+                    offset_x = 11600;
+                }
             }
             else {
                 player_x += velocityX;
@@ -248,13 +262,10 @@ public:
 
         SonicSprite.setPosition(player_x, player_y);
         window.draw(SonicSprite);
-
     }
 	int getOffsetX() const {
 		return offset_x;
 	}
-
-
 };
 
 

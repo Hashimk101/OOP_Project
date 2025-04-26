@@ -1,9 +1,9 @@
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Window.hpp>
+//#include <iostream>
+//#include <fstream>
+//#include <cmath>
+//#include <SFML/Graphics.hpp>
+//#include <SFML/Audio.hpp>
+//#include <SFML/Window.hpp>
 #include "Header.h"
 #include "Maps.h"
 

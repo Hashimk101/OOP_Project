@@ -1,49 +1,97 @@
 #pragma once
 #include "Maps.h"
 
+sf::SoundBuffer coinBuffer;
+sf::Sound coinSound;
+
 class Collectables {
     // Your existing variables
     int collect_x, collect_y;
     int collect_width = 16, collect_height = 16;
+   /* int collect_width = 48, collect_height = 48;*/
+
     int collect_offset_x = 0, collect_offset_y = 0;
     int collect_hit_box_factor_x = 4, collect_hit_box_factor_y = 4;
+    int currentFrame;
+    sf::Clock CollectablesClock;
 
     // Single coin sprite (replaces array)
     sf::Sprite coinSprite;
     sf::Texture coinTexture;
     sf::IntRect coinsRect;
     char** lvl;
+    //Size of texture
+    Vector2u SizeOfSpritesheet;
 
-    // Track if coin is active
-    bool coinActive = false;
+
 
 public:
-    Collectables(char** lvl) : coinsRect(0, 0, collect_width, collect_height) {
-        if (!coinTexture.loadFromFile("Data/ring.png")) {
+    Collectables(char** lvl) : coinsRect(0, 0, collect_width, collect_height), currentFrame(0) {
+        if (!coinTexture.loadFromFile("Data/Ring.png")) 
+        {
             std::cout << "Failed to load coin texture!" << std::endl;
         }
         coinSprite.setTexture(coinTexture);
         coinSprite.setTextureRect(coinsRect);
         coinSprite.setScale(2.5, 2.5);
         this->lvl = lvl;
+        SizeOfSpritesheet = coinTexture.getSize();
+        // Track if coin is active
+        bool coinActive = false;
+        if (!coinBuffer.loadFromFile("Data/Ring.wav")) {
+            std::cout << "Failed to load coin sound!" << std::endl;
+        }
+        coinSound.setBuffer(coinBuffer);
+        coinSound.setVolume(100); 
     }
-
+    //CALCULATE THE NUMBER OF FRAMES IN THE TEXTURE
+    int GetFrameNum(Texture& Txt)
+    {
+        int frameNum = SizeOfSpritesheet.x / SizeOfSpritesheet.y;
+        return frameNum;
+    }
     void placeCoins() {
-        // Places one coin at first found 's' position
+        srand(time(0)); // Random seed
+
+        int validSpaces = 0;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (lvl[i][j] == 's' && i == 10) {
-                    collect_x = j * cell_size;
-                    collect_y = i * cell_size;
-                    //coinSprite.setPosition(collect_x, collect_y);
-                    //coinActive = true;
+                if (lvl[i][j] == 's') {
+                    if ((i + 1 < height && lvl[i + 1][j] == 'w') || (i + 2 < height && lvl[i + 2][j] == 'w')) 
+                    {
+                        validSpaces++;
+                    }
+                }
+            }
+        }
+
+        int numCoins = 30; 
+        if (numCoins > validSpaces)
+        { 
+            numCoins = validSpaces; // Adjust if not enough spaces
+        }
+
+        int coinsPlaced = 0;
+
+        // Step 3: Randomly place coins
+        while (coinsPlaced < numCoins) {
+            int j = rand() % width;
+            int i = rand() % height;
+
+            if (lvl[i][j] == 's') {
+                if ((i + 1 < height && lvl[i + 1][j] == 'w') ||
+                    (i + 2 < height && lvl[i + 2][j] == 'w')) {
+
                     lvl[i][j] = 'c';
-                    return; // Only place one coin
+                    coinsPlaced++;
                 }
             }
         }
     }
-	Sprite& getCoinSprite() {
+
+
+	Sprite& getCoinSprite() 
+    {
 		return coinSprite;
 	}
 
@@ -57,4 +105,51 @@ public:
             }
         }
     }
+    void AnimateCoins() 
+    {
+        if (CollectablesClock.getElapsedTime().asMilliseconds ()>100)
+        {
+            currentFrame = (currentFrame + 1) % GetFrameNum(coinTexture);
+            coinsRect.left = currentFrame * SizeOfSpritesheet.y;
+			coinSprite.setTextureRect(coinsRect);
+			CollectablesClock.restart();
+        }
+
+    }
+    void checkCoinCollection(int playerX, int playerY, int offsetX) {
+        // Player size: based on your scaling
+        int playerWidth = 40 * 2.5;
+        int playerHeight = 40 * 2.5;
+  /*       int playerWidth = 48;
+        int playerHeight = 48;*/
+
+        // Coin size: based on your scaling
+        int coinWidth = 16 * 2.5;
+        int coinHeight = 16 * 2.5;
+
+        // Loop through visible area
+        for (int i = 0; i < height; i++) {
+            for (int j = offsetX / 64; j < (offsetX + 1300) / 64 && j < width; j++) {
+                if (lvl[i][j] == 'c') { // Coin exists
+                    // Coin's screen position 
+                    int coinX = j * cell_size - offsetX;
+                    int coinY = i * cell_size;
+
+                    // Now AABB collision check
+                    if ((playerX < coinX + coinWidth) &&  (playerX + playerWidth > coinX) &&(playerY < coinY + coinHeight) &&  (playerY + playerHeight > coinY))
+                    {
+                        // COLLISION HAPPENED!
+                        lvl[i][j] = 's'; 
+                        coinSound.play(); 
+                        std::cout << "Collected a coin!" << std::endl;
+                      
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
 };

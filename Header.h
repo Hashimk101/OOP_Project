@@ -63,7 +63,7 @@ public:
         max_speed = 12;
         onGround = false;
         gravity = 1;
-        friction = 0.98;
+        friction = 0.85;
         terminal_Velocity = 20;
         scale_x = 2.5;
         scale_y = 2.5;
@@ -90,7 +90,7 @@ public:
 
     bool movement(char** lvl) {
         bool isMoving = false;
-        std::cout << velocityX << std::endl;
+        //std::cout << velocityX << std::endl;
 
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
             // Collision checks go brrrrr
@@ -316,6 +316,10 @@ public:
         }
     }
 
+
+    void borderCheck() {
+
+    }
 
     int getX() const{
         return player_x;

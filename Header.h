@@ -8,6 +8,8 @@
 
 using namespace sf;
 int cell_size = 64;
+sf::SoundBuffer JumpBuffer;
+sf::Sound JumpSound;
 
 class MySprite { // Renamed to avoid conflict with sf::Sprite
     Texture SonicTex[6]; // Array of textures for different animations
@@ -28,10 +30,11 @@ class MySprite { // Renamed to avoid conflict with sf::Sprite
     bool left; // Tracks direction
     // Sprites for different characters
     sf::Sprite SonicSprite, TailsSprite, KnucklesSprite;
-
+  
 public:
     // Constructor to initialize the sprite with the texture
-    MySprite() : SonicRect(0, 0, 40, 40), currentIndex(0), currentFrame(0), left(false) {
+    MySprite() : SonicRect(0, 0, 40, 40), currentIndex(0), currentFrame(0), left(false) 
+    {
         // Load textures into the array
         if (!SonicTex[0].loadFromFile("Data/0left_still.png")) {
             std::cout << "Failed to load 0left_still.png!" << std::endl;
@@ -51,6 +54,12 @@ public:
         if (!SonicTex[5].loadFromFile("Data/0upR.png")) {
             std::cout << "Failed to load 0upR.png!" << std::endl;
         }
+		JumpSound.setBuffer(JumpBuffer);
+		if (!JumpBuffer.loadFromFile("Data/Jump.wav")) {
+			std::cout << "Failed to load Jump sound!" << std::endl;
+		}
+		// Set volume for the jump sound
+		JumpSound.setVolume(100); // Set volume to 100% (adjust as needed)
 
         // Initialize variables
         velocityY = 0;
@@ -224,7 +233,9 @@ public:
         }
 
         if (onGround) {
-            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+            if (Keyboard::isKeyPressed(Keyboard::Up))
+            {
+				JumpSound.play();
                 velocityY = -21;
             }
         }
@@ -300,7 +311,8 @@ public:
     void AnimateSprite(bool isMoving)
     {
         if (isMoving) {
-            if (animationClock.getElapsedTime().asMilliseconds() > 80) {
+            if (animationClock.getElapsedTime().asMilliseconds() > 80)
+            {
                 currentFrame = (currentFrame + 1) % GetFrameNum(SonicTex[currentIndex]);
                 SonicRect.left = currentFrame * 40;
                 SonicSprite.setTextureRect(SonicRect);
@@ -321,7 +333,8 @@ public:
 
     }
 
-    int getX() const{
+    int getX() const
+    {
         return player_x;
     }
     int getY() const {

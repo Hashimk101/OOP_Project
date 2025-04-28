@@ -26,14 +26,19 @@ public:
         }
 
         // Create the ground floor (width 200)
-        for (int i = 0; i < 200; i++) {
-            lvl[11][i] = 'w';
+        for (int i = 0; i < 200; i++)
+        {
+           
+            lvl[12][i] = 'w';
+            lvl[13][i] = 'w';
         }
 
         // Fixed platforms (manually placed)
         // Small platforms
         lvl[8][4] = 'w';
         lvl[8][5] = 'w';
+        lvl[8][6] = 'w';
+        lvl[8][6] = 'w';
 
         lvl[7][10] = 'w';
         lvl[7][11] = 'w';
@@ -41,9 +46,10 @@ public:
 
         lvl[5][20] = 'w';
         lvl[5][21] = 'w';
+        lvl[5][22] = 'w';
 
         // Medium platforms
-        for (int i = 30; i <= 34; i++) lvl[6][i] = 'w';
+        for (int i = 30; i <= 34; i++)lvl[6][i] = 'w';
         for (int i = 50; i <= 54; i++) lvl[9][i] = 'w';
 
         // Long platforms
@@ -61,9 +67,9 @@ public:
         for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
 
         // Vertical pillars
-        lvl[10][15] = 'w'; lvl[9][15] = 'w'; lvl[8][15] = 'w';
-        lvl[10][45] = 'w'; lvl[9][45] = 'w';
-        lvl[10][85] = 'w'; lvl[9][85] = 'w'; lvl[8][85] = 'w'; lvl[7][85] = 'w';
+        lvl[10][15] = 'w'; lvl[9][15] = 'w'; lvl[11][15] = 'w';
+        lvl[10][45] = 'w'; lvl[9][45] = 'w'; lvl[11][45] = 'w';
+        lvl[10][85] = 'w'; lvl[9][85] = 'w'; lvl[8][85] = 'w'; lvl[11][85] = 'w';
 
         // Ceiling platforms
         for (int i = 110; i <= 115; i++) lvl[2][i] = 'w';

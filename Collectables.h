@@ -27,7 +27,7 @@ class Collectables {
 
 public:
     Collectables(char** lvl) : coinsRect(0, 0, collect_width, collect_height), currentFrame(0) {
-        if (!coinTexture.loadFromFile("Data/Ring.png")) 
+        if (!coinTexture.loadFromFile("Data/ring.png")) 
         {
             std::cout << "Failed to load coin texture!" << std::endl;
         }
@@ -54,7 +54,7 @@ public:
         srand(time(0)); // Random seed
 
         int validSpaces = 0;
-        for (int i = 0; i < height; i++) {
+        for (int i = 3; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (lvl[i][j] == 's') {
                     if ((i + 1 < height && lvl[i + 1][j] == 'w') || (i + 2 < height && lvl[i + 2][j] == 'w')) 
@@ -120,15 +120,16 @@ public:
         // Player size: based on your scaling
         int playerWidth = 40 * 2.5;
         int playerHeight = 40 * 2.5;
-  /*       int playerWidth = 48;
-        int playerHeight = 48;*/
+
 
         // Coin size: based on your scaling
         int coinWidth = 16 * 2.5;
         int coinHeight = 16 * 2.5;
+    
+
 
         // Loop through visible area
-        for (int i = 0; i < height; i++) {
+        for (int i = 3; i < height; i++) {
             for (int j = offsetX / 64; j < (offsetX + 1300) / 64 && j < width; j++) {
                 if (lvl[i][j] == 'c') { // Coin exists
                     // Coin's screen position 

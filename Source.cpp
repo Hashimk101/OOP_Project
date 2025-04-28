@@ -68,6 +68,7 @@ int main()
 		Coins.draw(window, sprite.getOffsetX());
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
+		sprite.borderCheck();
 		Coins.checkCoinCollection(sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		sprite.draw_player(window);
 		Coins.AnimateCoins();

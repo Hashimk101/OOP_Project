@@ -63,7 +63,7 @@ public:
         // Vertical pillars
         lvl[10][15] = 'w'; lvl[9][15] = 'w'; lvl[8][15] = 'w';
         lvl[10][45] = 'w'; lvl[9][45] = 'w';
-        lvl[10][85] = 'w'; lvl[9][85] = 'w'; lvl[8][85] = 'w'; lvl[7][85] = 'w';
+        lvl[10][85] = 'w'; lvl[9][85] = 'w'; lvl[8][85] = 'w';
 
         // Ceiling platforms
         for (int i = 110; i <= 115; i++) lvl[2][i] = 'w';

@@ -54,10 +54,10 @@ public:
         srand(time(0)); // Random seed
 
         int validSpaces = 0;
-        for (int i = 0; i < height; i++) {
+        for (int i = 3; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (lvl[i][j] == 's') {
-                    if ((i + 1 < height && lvl[i + 1][j] == 'w') || (i + 2 < height && lvl[i + 2][j] == 'w')) 
+                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) 
                     {
                         validSpaces++;
                     }
@@ -95,6 +95,10 @@ public:
 		return coinSprite;
 	}
 
+
+    ///////
+	/// @brief this needs to go into the main loop////
+    ///////
     void draw(sf::RenderWindow& window, int offset) {
         for (int i = 0; i < height; i++) {
             for (int j = offset/64; j < (offset + 1300)/64; j++) {
@@ -128,7 +132,7 @@ public:
         int coinHeight = 16 * 2.5;
 
         // Loop through visible area
-        for (int i = 0; i < height; i++) {
+        for (int i = 3; i < height; i++) {
             for (int j = offsetX / 64; j < (offsetX + 1300) / 64 && j < width; j++) {
                 if (lvl[i][j] == 'c') { // Coin exists
                     // Coin's screen position 

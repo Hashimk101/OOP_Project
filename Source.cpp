@@ -27,7 +27,7 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex;
-	BackgroundTex.loadFromFile("Data/bg2.png");
+	BackgroundTex.loadFromFile("Data/bg1.png");
 	sf::Sprite BackgroundSprite(BackgroundTex);
 	BackgroundSprite.setScale(1.8, 1.2);
 	//BackgroundSprite.setPosition(100, 100);
@@ -49,9 +49,10 @@ int main()
 	char** lvl = map.getMap();
 
 	Texture wallTex1;
-	wallTex1.loadFromFile("Data/brick1.png");
+	wallTex1.loadFromFile("Data/brick2.png");
 	Sprite wallSprite1(wallTex1);
 	Collectables Coins(lvl);
+	Coins.placeCoins();
 
 	sf::Event event;
 	while (window.isOpen()) {
@@ -63,11 +64,15 @@ int main()
 		BackgroundSprite.setPosition(-sprite.getOffsetX()/7, 0);
 		window.draw(BackgroundSprite);
 		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite);
-		Coins.placeCoins();
+		
 		Coins.draw(window, sprite.getOffsetX());
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
+		Coins.checkCoinCollection(sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		sprite.draw_player(window);
+		Coins.AnimateCoins();
+		Coins.draw(window, sprite.getOffsetX());
+
 		//window.draw()
 
 		window.display();

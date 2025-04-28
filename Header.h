@@ -20,7 +20,7 @@ class MySprite { // Renamed to avoid conflict with sf::Sprite
     int hit_box_factor_x, hit_box_factor_y;
     float window_x, window_y;
     bool onGround;
-    float gravity;
+    float gravity, friction;
     IntRect SonicRect; // For texture rectangle animation
     int currentIndex; // Tracks which texture is in use
     int currentFrame; // Tracks animation frame
@@ -59,10 +59,11 @@ public:
         player_y = 100;
         window_x = 0; // Note: There was a duplicate assignment in the original
         window_y = 0; // Corrected to window_y
-        acceleration = 1.2;
+        acceleration = 1.1;
         max_speed = 12;
         onGround = false;
         gravity = 1;
+        friction = 0.98;
         terminal_Velocity = 20;
         scale_x = 2.5;
         scale_y = 2.5;
@@ -86,23 +87,40 @@ public:
     sf::Sprite& getSprite() {
         return SonicSprite;
     }
+
     bool movement(char** lvl) {
         bool isMoving = false;
-
-        // Apply friction when no key is pressed
-        if (!Keyboard::isKeyPressed(Keyboard::Left) &&
-            !Keyboard::isKeyPressed(Keyboard::Right)) {
-             velocityX = 0;
-        }
+        std::cout << velocityX << std::endl;
 
         if (Keyboard::isKeyPressed(Keyboard::Left)) {
             // Collision checks go brrrrr
-            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x) / cell_size] == 'w' ||
-                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x) / cell_size] == 'w'))){
+            bool leftCollision = false;
+
+            // Check multiple points along the left side of the character
+            for (int checkY = 0; checkY < Pheight; checkY += cell_size / 3) {
+                // Limit to within character height
+                if (checkY > Pheight - hit_box_factor_y) checkY = Pheight - hit_box_factor_y;
+
+                // Calculate the position to check (left side of character)
+                int worldY = (offset_y + hit_box_factor_y + checkY) / cell_size;
+                int worldX = (offset_x + player_x + hit_box_factor_x - 5) / cell_size; // Check slightly ahead
+
+                // Stay within bounds
+                if (worldY < 0) worldY = 0;
+
+                // Check if there's a wall
+                if (lvl[worldY][worldX] == 'w') {
+                    leftCollision = true;
+                    break;
+                }
+            }
+
+            if (leftCollision) {
                 velocityX = 0;
             }
             else {
 				// Apply acceleration :(
+				//if (velocityX > 0) velocityX = 0; // Reset velocity if moving right
                 velocityX -= acceleration;
                 if (velocityX < -max_speed) velocityX = -max_speed;
 
@@ -129,12 +147,33 @@ public:
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right)) {
             // Collision checks go brrrrr
-            if ((lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 1][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size] == 'w' ||
-                (lvl[((int)(offset_y + hit_box_factor_y + Pheight) / cell_size) - 2][(int)(offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size] == 'w'))) {
+            bool rightCollision = false;
+
+            // Check multiple points along the right side of the character
+            for (int checkY = 0; checkY < Pheight; checkY += cell_size / 2) {
+                // Limit to within character height
+                if (checkY > Pheight - hit_box_factor_y) checkY = Pheight - hit_box_factor_y;
+
+                // Calculate the position to check (right side of character)
+                int worldY = (offset_y + hit_box_factor_y + checkY) / cell_size;
+                int worldX = (offset_x + player_x + hit_box_factor_x + Pwidth + 10) / cell_size; // Check slightly ahead
+
+                // Stay within bounds
+                if (worldY < 0) worldY = 0;
+
+                // Check if there's a wall
+                if (lvl[worldY][worldX] == 'w') {
+                    rightCollision = true;
+                    break;
+                }
+            }
+
+            if (rightCollision) {
                 velocityX = 0;
             }
             else {
                 // Applying acceleration :)
+				//if (velocityX < 0) velocityX = 0; // Reset velocity if moving left
                 velocityX += acceleration;
                 if (velocityX > max_speed) velocityX = max_speed;
 
@@ -166,6 +205,13 @@ public:
             }
         }
         else {
+			// Apply friction when no key is pressed
+            velocityX *= friction;
+			player_x += velocityX;
+            // Only zero out very small velocities
+            if (std::abs(velocityX) < 0.1f) {
+                velocityX = 0;
+            }
             currentIndex = (currentIndex == 1) ? 0 : 2;
             if (left) {
                 SonicSprite.setTexture(SonicTex[0]);

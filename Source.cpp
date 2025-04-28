@@ -27,7 +27,7 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex;
-	BackgroundTex.loadFromFile("Data/bg2.png");
+	BackgroundTex.loadFromFile("Data/bg1.png");
 	sf::Sprite BackgroundSprite(BackgroundTex);
 	BackgroundSprite.setScale(1.8, 1.2);
 	//BackgroundSprite.setPosition(100, 100);
@@ -49,7 +49,7 @@ int main()
 	char** lvl = map.getMap();
 
 	Texture wallTex1;
-	wallTex1.loadFromFile("Data/brick1.png");
+	wallTex1.loadFromFile("Data/brick2.png");
 	Sprite wallSprite1(wallTex1);
 	Collectables Coins(lvl);
 

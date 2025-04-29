@@ -141,7 +141,7 @@ public:
                 AnimateSprite(isMoving);
 
                 // Movement logic lol pata nai kaise ban gai
-                if (player_x <= 350) {
+                if (player_x <= 450) {
                     offset_x += velocityX; // Scroll world (velocityX is negative)
                     if (offset_x < 0) {
                         player_x += velocityX;
@@ -200,7 +200,7 @@ public:
                 AnimateSprite(isMoving);
 
                 // Movement logic
-                if (player_x >= 850) {
+                if (player_x >= 750) {
                     offset_x += velocityX; //velocity is positive so no need to apply any negative
                     if (offset_x > 11600) {
                         player_x += velocityX;
@@ -330,7 +330,9 @@ public:
 
 
     void borderCheck() {
-
+        if (player_y < 32) {
+			player_y = 42;
+        }
     }
 
     int getX() const

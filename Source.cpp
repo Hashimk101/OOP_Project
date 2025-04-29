@@ -27,7 +27,7 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex;
-	BackgroundTex.loadFromFile("Data/bg1.png");
+	BackgroundTex.loadFromFile("Data/bg4.png");
 	sf::Sprite BackgroundSprite(BackgroundTex);
 	BackgroundSprite.setScale(1.8, 1.2);
 	//BackgroundSprite.setPosition(100, 100);
@@ -49,10 +49,13 @@ int main()
 	char** lvl = map.getMap();
 
 	Texture wallTex1;
-	wallTex1.loadFromFile("Data/brick2.png");
+	wallTex1.loadFromFile("Data/brick2.1.png");
 	Sprite wallSprite1(wallTex1);
-	Collectables Coins(lvl);
-	Coins.placeCoins();
+	RingCoin Coins(lvl);
+	Diamond diamonds(lvl);
+
+	Coins.place();
+	diamonds.place();
 
 	sf::Event event;
 	while (window.isOpen()) {
@@ -68,10 +71,14 @@ int main()
 		Coins.draw(window, sprite.getOffsetX());
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
-		Coins.checkCoinCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
+		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
+		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		sprite.draw_player(window);
-		Coins.AnimateCoins();
+		Coins.animate();
+		diamonds.animate();
+
 		Coins.draw(window, sprite.getOffsetX());
+		diamonds.draw(window, sprite.getOffsetX());
 
 		//window.draw()
 

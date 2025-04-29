@@ -1,152 +1,138 @@
 #pragma once
 #include "Maps.h"
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <ctime>
 
-sf::SoundBuffer coinBuffer;
-sf::Sound coinSound;
-
-class Collectables {
-    // Your existing variables
-    int collect_x, collect_y;
-    int collect_width = 16, collect_height = 16;
-   /* int collect_width = 48, collect_height = 48;*/
-
+// Base Collectable class
+class Collectable {
+protected:
+    // Common properties
+    int collect_width, collect_height;
     int collect_offset_x = 0, collect_offset_y = 0;
     int collect_hit_box_factor_x = 4, collect_hit_box_factor_y = 4;
     int currentFrame;
-    sf::Clock CollectablesClock;
+    sf::Clock collectableClock;
 
-    // Single coin sprite (replaces array)
-    sf::Sprite coinSprite;
-    sf::Texture coinTexture;
-    sf::IntRect coinsRect;
+    // Sprite components
+    sf::Sprite sprite;
+    sf::Texture texture;
+    sf::IntRect textureRect;
     char** lvl;
-    //Size of texture
-    Vector2u SizeOfSpritesheet;
+    sf::Vector2u sizeOfSpritesheet;
 
+    // Sound components
+    sf::SoundBuffer soundBuffer;
+    sf::Sound sound;
 
+    // Scaling factor
+    float scaleFactor;
+
+    // Level identifier
+    char levelChar;
 
 public:
-    Collectables(char** lvl) : coinsRect(0, 0, collect_width, collect_height), currentFrame(0) {
-        if (!coinTexture.loadFromFile("Data/ring.png")) 
-        {
-            std::cout << "Failed to load coin texture!" << std::endl;
+    // Memebr Initializer List with parameters for width, height, and other properties
+    Collectable(char** lvl, int width, int height, float scale,
+        const std::string& texturePath, const std::string& soundPath, char levelIdentifier) : collect_width(width), collect_height(height), currentFrame(0),
+        scaleFactor(scale), levelChar(levelIdentifier) {
+
+        textureRect = sf::IntRect(0, 0, width, height);
+
+        if (!texture.loadFromFile(texturePath)) {
+            std::cout << "Failed to load texture: " << texturePath << std::endl;
         }
-        coinSprite.setTexture(coinTexture);
-        coinSprite.setTextureRect(coinsRect);
-        coinSprite.setScale(2.5, 2.5);
+        else {
+            std::cout << "Successfully loaded texture: " << texturePath << std::endl;
+        }
+
+        sprite.setTexture(texture);
+        sprite.setTextureRect(textureRect);
+        sprite.setScale(scale, scale);
+
         this->lvl = lvl;
-        SizeOfSpritesheet = coinTexture.getSize();
-        // Track if coin is active
-        bool coinActive = false;
-        if (!coinBuffer.loadFromFile("Data/Ring.wav")) {
-            std::cout << "Failed to load coin sound!" << std::endl;
-        }
-        coinSound.setBuffer(coinBuffer);
-        coinSound.setVolume(100); 
-    }
-    //CALCULATE THE NUMBER OF FRAMES IN THE TEXTURE
-    int GetFrameNum(Texture& Txt)
-    {
-        int frameNum = SizeOfSpritesheet.x / SizeOfSpritesheet.y;
-        return frameNum;
-    }
-    void placeCoins() {
-        srand(time(0)); // Random seed
+        sizeOfSpritesheet = texture.getSize();
 
-        int validSpaces = 0;
-        for (int i = 3; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (lvl[i][j] == 's') {
-                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) 
-                    {
-                        validSpaces++;
-                    }
-                }
-            }
+        if (!soundBuffer.loadFromFile(soundPath)) {
+            std::cout << "Failed to load sound: " << soundPath << std::endl;
+        }
+        else {
+            std::cout << "Successfully loaded sound: " << soundPath << std::endl;
         }
 
-        int numCoins = 30; 
-        if (numCoins > validSpaces)
-        { 
-            numCoins = validSpaces; // Adjust if not enough spaces
-        }
-
-        int coinsPlaced = 0;
-
-        // Step 3: Randomly place coins
-        while (coinsPlaced < numCoins) {
-            int j = rand() % width;
-            int i = rand() % height;
-
-            if (lvl[i][j] == 's') {
-                if ((i + 1 < height && lvl[i + 1][j] == 'w') ||
-                    (i + 2 < height && lvl[i + 2][j] == 'w')) {
-
-                    lvl[i][j] = 'c';
-                    coinsPlaced++;
-                }
-            }
-        }
+        sound.setBuffer(soundBuffer);
+        sound.setVolume(100);
     }
 
+    virtual ~Collectable() {}
 
-	Sprite& getCoinSprite() 
-    {
-		return coinSprite;
-	}
+    // Calculate frame count in texture
+    int getFrameNum() {
+        return sizeOfSpritesheet.x / collect_width;
+    }
 
+    sf::Sprite& getSprite() {
+        return sprite;
+    }
 
-    ///////
-	/// @brief this needs to go into the main loop////
-    ///////
-    void draw(sf::RenderWindow& window, int offset) {
+    // Virtual methods that can be overridden by child classes
+    virtual void place() = 0; // Pure virtual - must be implemented by children
+
+    virtual void draw(sf::RenderWindow& window, int offset) {
         for (int i = 0; i < height; i++) {
-            for (int j = offset/64; j < (offset + 1300)/64; j++) {
-				if (lvl[i][j] == 'c') {
-					coinSprite.setPosition(j * cell_size - offset, i * cell_size);
-					window.draw(coinSprite);
-				}
+            for (int j = offset / 64; j < (offset + 1300) / 64 && j < width; j++) {
+                if (lvl[i][j] == levelChar) {
+                    sprite.setPosition(j * cell_size - offset, i * cell_size);
+                    window.draw(sprite);
+                }
             }
         }
     }
-    void AnimateCoins() 
-    {
-        if (CollectablesClock.getElapsedTime().asMilliseconds ()>100)
-        {
-            currentFrame = (currentFrame + 1) % GetFrameNum(coinTexture);
-            coinsRect.left = currentFrame * SizeOfSpritesheet.y;
-			coinSprite.setTextureRect(coinsRect);
-			CollectablesClock.restart();
-        }
 
+    virtual void animate() {
+        if (collectableClock.getElapsedTime().asMilliseconds() > 100) {
+            currentFrame = (currentFrame + 1) % getFrameNum();
+            textureRect.left = currentFrame * collect_width;
+            sprite.setTextureRect(textureRect);
+            collectableClock.restart();
+        }
     }
-    void checkCoinCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY) {
-        // Player size: based on your scaling
+
+    virtual void checkCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY) {
+        // Player size based on your scaling
         int playerWidth = 40 * 2.5;
         int playerHeight = 40 * 2.5;
 
-        // Coin size: based on your scaling
-        int coinWidth = 16 * 2.5;
+        // Collectable size based on scaling
+        int collectableWidth = collect_width * scaleFactor;
+        int collectableHeight = collect_height * scaleFactor;
 
-        // Loop through visible area
-        for (int i = 3; i < height; i++) {
-            for (int j = offsetX / 64; j < (offsetX + 1300) / 64 && j < width; j++) {
-                if (lvl[i][j] == 'c') { // Coin exists
-                    // Coin's screen position 
-                    int coinX = j * cell_size - offsetX;
-                    int coinY = i * cell_size;
-                        int coinY = i * cell_size;  // No need to subtract offsetY here
+        // Fix the calculation to check around the actual player position
+        int startI = (playerY + hitY) / cell_size;                    // Top of player hitbox
+        int endI = (playerY + hitY + playerHeight) / cell_size;       // Bottom of player hitbox
+        int startJ = (playerX + offsetX + hitX) / cell_size;          // Left of player hitbox
+        int endJ = (playerX + offsetX + hitX + playerWidth) / cell_size; // Right of player hitbox
+
+        // Loop only through the area occupied by the player's hitbox
+        for (int i = startI; i <= endI; i++) {
+            for (int j = startJ; j <= endJ; j++) {
+                if (i >= 0 && i < height && j >= 0 && j < width) { // Safety check
+                    if (lvl[i][j] == levelChar) { // Collectable exists
+                        // Calculate collectable's screen position
+                        int collectX = j * cell_size - offsetX;
+                        int collectY = i * cell_size;  // No need to subtract offsetY here
 
                         // AABB collision check
-                        if ((playerX < coinX + coinWidth) &&
-                            (playerX + playerWidth > coinX) &&
-                            (playerY < coinY + coinHeight) &&
-                            (playerY + playerHeight > coinY))
+                        if ((playerX < collectX + collectableWidth) &&
+                            (playerX + playerWidth > collectX) &&
+                            (playerY < collectY + collectableHeight) &&
+                            (playerY + playerHeight > collectY))
                         {
-                            // Collision detected - collect the coin
-                            lvl[i][j] = 's';  // Replace with empty space
-                            coinSound.play();
-                            std::cout << "Collected a coin at grid [" << i << "][" << j << "]!" << std::endl;
+                            // Collision happened!
+                            lvl[i][j] = 's';
+                            sound.play();
+                            onCollect(i, j);
                         }
                     }
                 }
@@ -154,7 +140,110 @@ public:
         }
     }
 
+    // Method called when item is collected
+    virtual void onCollect(int i, int j) {
+        std::cout << "Collected an item at grid [" << i << "][" << j << "]!" << std::endl;
+    }
+};
 
+// Child class for rings/coins
+class RingCoin : public Collectable {
+public:
+    RingCoin(char** lvl)
+        : Collectable(lvl, 16, 16, 2.5, "Data/Ring.png", "Data/Ring.wav", 'c') {
+    }
 
+    void place() override {
+        srand(static_cast<unsigned int>(time(0))); // Random seed
 
+        int validSpaces = 0;
+        for (int i = 3; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (lvl[i][j] == 's') {
+                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
+                        validSpaces++;
+                    }
+                }
+            }
+        }
+
+        int numCoins = 30;
+        if (numCoins > validSpaces) {
+            numCoins = validSpaces; 
+        }
+
+        int coinsPlaced = 0;
+
+        // Randomly place coins
+        while (coinsPlaced < numCoins) {
+            int j = rand() % width;
+            int i = rand() % (height - 3) + 3; 
+
+            if (lvl[i][j] == 's') {
+                if ((i + 1 < height && lvl[i + 1][j] == 'w') ||
+                    (i + 2 < height && lvl[i + 2][j] == 'w')) {
+                    lvl[i][j] = 'c';
+                    coinsPlaced++;
+                }
+            }
+        }
+    }
+
+    void onCollect(int i, int j) override {
+        std::cout << "Collected a ring at grid [" << i << "][" << j << "]!" << std::endl;
+    }
+};
+
+// Child class for diamonds
+class Diamond : public Collectable {
+public:
+    Diamond(char** lvl)
+        : Collectable(lvl, 48, 48, 1.5, "Data/diamonds.png", "Data/Ring.wav", 'd') {
+    }
+
+    void place() override {
+        srand(static_cast<unsigned int>(time(0))); // Random seed
+
+        // Use different seed offset for diamonds to prevent same placement as coins
+        for (int i = 0; i < 10; i++) {
+            rand();
+        }
+
+        int validSpaces = 0;
+        for (int i = 3; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (lvl[i][j] == 's') {
+                    // For diamonds, we'll use different placement criteria
+                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
+                        validSpaces++;
+                    }
+                }
+            }
+        }
+
+        int numDiamonds = 10; 
+        if (numDiamonds > validSpaces) {
+            numDiamonds = validSpaces;
+        }
+
+        int diamondsPlaced = 0;
+
+        // Randomly place diamonds - try to place in harder-to-reach areas
+        while (diamondsPlaced < numDiamonds) {
+            int j = rand() % width;
+            int i = rand() % (height - 3) + 3; // Start from row 3
+
+            // Make diamonds appear higher up or in more challenging locations
+            if (lvl[i][j] == 's' && i > 5) { // Higher elevation
+                if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
+                    lvl[i][j] = 'd';
+                    diamondsPlaced++;
+                }
+            }
+        }
+    }
+
+    void onCollect(int i, int j) override {
+        std::cout << "Collected a diamond at grid [" << i << "][" << j << "]! +5 points!" << std::endl;
+    }
 };

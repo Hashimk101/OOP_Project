@@ -8,8 +8,6 @@
 
 using namespace sf;
 int cell_size = 64;
-sf::SoundBuffer JumpBuffer;
-sf::Sound JumpSound;
 
 class MySprite { // Renamed to avoid conflict with sf::Sprite
     Texture SonicTex[6]; // Array of textures for different animations
@@ -30,11 +28,10 @@ class MySprite { // Renamed to avoid conflict with sf::Sprite
     bool left; // Tracks direction
     // Sprites for different characters
     sf::Sprite SonicSprite, TailsSprite, KnucklesSprite;
-  
+
 public:
     // Constructor to initialize the sprite with the texture
-    MySprite() : SonicRect(0, 0, 40, 40), currentIndex(0), currentFrame(0), left(false) 
-    {
+    MySprite() : SonicRect(0, 0, 40, 40), currentIndex(0), currentFrame(0), left(false) {
         // Load textures into the array
         if (!SonicTex[0].loadFromFile("Data/0left_still.png")) {
             std::cout << "Failed to load 0left_still.png!" << std::endl;
@@ -54,12 +51,6 @@ public:
         if (!SonicTex[5].loadFromFile("Data/0upR.png")) {
             std::cout << "Failed to load 0upR.png!" << std::endl;
         }
-		JumpSound.setBuffer(JumpBuffer);
-		if (!JumpBuffer.loadFromFile("Data/Jump.wav")) {
-			std::cout << "Failed to load Jump sound!" << std::endl;
-		}
-		// Set volume for the jump sound
-		JumpSound.setVolume(100); // Set volume to 100% (adjust as needed)
 
         // Initialize variables
         velocityY = 0;
@@ -129,8 +120,8 @@ public:
                 velocityX = 0;
             }
             else {
-				// Apply acceleration :(
-				//if (velocityX > 0) velocityX = 0; // Reset velocity if moving right
+                // Apply acceleration :(
+                //if (velocityX > 0) velocityX = 0; // Reset velocity if moving right
                 velocityX -= acceleration;
                 if (velocityX < -max_speed) velocityX = -max_speed;
 
@@ -183,7 +174,7 @@ public:
             }
             else {
                 // Applying acceleration :)
-				//if (velocityX < 0) velocityX = 0; // Reset velocity if moving left
+                //if (velocityX < 0) velocityX = 0; // Reset velocity if moving left
                 velocityX += acceleration;
                 if (velocityX > max_speed) velocityX = max_speed;
 
@@ -218,7 +209,7 @@ public:
             // Apply friction when no key is pressed
             velocityX *= friction;
             if (player_x >= 450 && player_x <= 750) {
-            player_x += velocityX;
+                player_x += velocityX;
             }
             // same logic of window movement, but now in friction too ;(
             else {
@@ -251,9 +242,7 @@ public:
         }
 
         if (onGround) {
-            if (Keyboard::isKeyPressed(Keyboard::Up))
-            {
-				JumpSound.play();
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
                 velocityY = -21;
             }
         }
@@ -263,16 +252,16 @@ public:
                 SonicSprite.setTexture(SonicTex[4]);
             }
             else if ((currentIndex == 2 || currentIndex == 3)) {
-            currentIndex = 5;
-            SonicSprite.setTexture(SonicTex[5]);
+                currentIndex = 5;
+                SonicSprite.setTexture(SonicTex[5]);
             }
-        isMoving = true;
-            
+            isMoving = true;
+
         }
 
         return isMoving; // Always return isMoving
     }
-    
+
     void player_gravity(char** lvl)
     {
         // Store previous position
@@ -295,7 +284,7 @@ public:
         char bottom_mid = lvl[check_y][mid_x];
 
         collision = (bottom_left == 'w' || bottom_right == 'w' || bottom_mid == 'w');
-        
+
 
         if (collision)
         {
@@ -303,13 +292,13 @@ public:
             player_y = check_y * cell_size - (hit_box_factor_y + Pheight);
             onGround = true;
             velocityY = 0;
-			//std::cout << "On ground: " << player_y << std::endl;
+            //std::cout << "On ground: " << player_y << std::endl;
         }
         else
         {
             player_y = offset_y;
             onGround = false;
-			//std::cout << "Not on ground: " << player_y << std::endl;
+            //std::cout << "Not on ground: " << player_y << std::endl;
             // Apply gravity if in air
             velocityY += gravity;
             if (velocityY > terminal_Velocity) {
@@ -329,8 +318,7 @@ public:
     void AnimateSprite(bool isMoving)
     {
         if (isMoving) {
-            if (animationClock.getElapsedTime().asMilliseconds() > 80)
-            {
+            if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame = (currentFrame + 1) % GetFrameNum(SonicTex[currentIndex]);
                 SonicRect.left = currentFrame * 40;
                 SonicSprite.setTextureRect(SonicRect);
@@ -349,25 +337,24 @@ public:
 
     void borderCheck() {
         if (player_y < 32) {
-			player_y = 42;
+            player_y = 42;
         }
     }
 
-    int getX() const
-    {
+    int getX() const {
         return player_x;
     }
     int getY() const {
-		return player_y;
+        return player_y;
     }
     void draw_player(RenderWindow& window) {
 
         SonicSprite.setPosition(player_x, player_y);
         window.draw(SonicSprite);
     }
-	int getOffsetX() const {
-		return offset_x;
-	}
+    int getOffsetX() const {
+        return offset_x;
+    }
     int getOffsetY() const {
         return offset_y;
     }
@@ -378,5 +365,4 @@ public:
         return hit_box_factor_y;
     }
 };
-
 

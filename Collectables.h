@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <ctime>
+
 
 // Base Collectable class
 class Collectable {
@@ -34,9 +34,8 @@ protected:
 
 public:
     // Memebr Initializer List with parameters for width, height, and other properties
-    Collectable(char** lvl, int width, int height, float scale,
-        const std::string& texturePath, const std::string& soundPath, char levelIdentifier) : collect_width(width), collect_height(height), currentFrame(0),
-        scaleFactor(scale), levelChar(levelIdentifier) {
+    Collectable(char** lvl, int width, int height, float scale,  const std::string& texturePath, const std::string& soundPath, char levelIdentifier) : collect_width(width), collect_height(height), currentFrame(0),  scaleFactor(scale), levelChar(levelIdentifier) 
+    {
 
         textureRect = sf::IntRect(0, 0, width, height);
 
@@ -90,7 +89,8 @@ public:
         }
     }
 
-    virtual void animate() {
+    virtual void animate()
+    {
         if (collectableClock.getElapsedTime().asMilliseconds() > 100) {
             currentFrame = (currentFrame + 1) % getFrameNum();
             textureRect.left = currentFrame * collect_width;
@@ -99,7 +99,8 @@ public:
         }
     }
 
-    virtual void checkCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY) {
+    virtual void checkCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY)
+    {
         // Player size based on your scaling
         int playerWidth = 40 * 2.5;
         int playerHeight = 40 * 2.5;
@@ -153,7 +154,8 @@ public:
         : Collectable(lvl, 16, 16, 2.5, "Data/Ring.png", "Data/Ring.wav", 'c') {
     }
 
-    void place() override {
+    void place() override
+    {
         srand(static_cast<unsigned int>(time(0))); // Random seed
 
         int validSpaces = 0;
@@ -205,7 +207,8 @@ public:
         srand(static_cast<unsigned int>(time(0))); // Random seed
 
         // Use different seed offset for diamonds to prevent same placement as coins
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) 
+        {
             rand();
         }
 

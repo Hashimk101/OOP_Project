@@ -98,6 +98,7 @@ public:
     }
 
     bool movement(char** lvl) {
+        borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
 
@@ -214,9 +215,26 @@ public:
             }
         }
         else {
-			// Apply friction when no key is pressed
+            // Apply friction when no key is pressed
             velocityX *= friction;
-			player_x += velocityX;
+            if (player_x >= 450 && player_x <= 750) {
+            player_x += velocityX;
+            }
+            // same logic of window movement, but now in friction too ;(
+            else {
+                offset_x += velocityX;
+                if (offset_x < 0) {
+                    player_x += velocityX;
+                    if (player_x < 5) player_x = 5;
+                    offset_x = 0;
+                }
+                if (offset_x > 11600) {
+                    player_x += velocityX;
+                    if (player_x > 1100) player_x = 1100;
+                    offset_x = 11600;
+
+                }
+            }
             // Only zero out very small velocities
             if (std::abs(velocityX) < 0.1f) {
                 velocityX = 0;
@@ -350,6 +368,15 @@ public:
 	int getOffsetX() const {
 		return offset_x;
 	}
+    int getOffsetY() const {
+        return offset_y;
+    }
+    int gethitX() const {
+        return hit_box_factor_x;
+    }
+    int gethitY() const {
+        return hit_box_factor_y;
+    }
 };
 
 

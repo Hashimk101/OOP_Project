@@ -120,17 +120,13 @@ public:
         }
 
     }
-    void checkCoinCollection(int playerX, int playerY, int offsetX) {
+    void checkCoinCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY) {
         // Player size: based on your scaling
         int playerWidth = 40 * 2.5;
         int playerHeight = 40 * 2.5;
 
-
         // Coin size: based on your scaling
         int coinWidth = 16 * 2.5;
-        int coinHeight = 16 * 2.5;
-    
-
 
         // Loop through visible area
         for (int i = 3; i < height; i++) {
@@ -139,15 +135,19 @@ public:
                     // Coin's screen position 
                     int coinX = j * cell_size - offsetX;
                     int coinY = i * cell_size;
+                        int coinY = i * cell_size;  // No need to subtract offsetY here
 
-                    // Now AABB collision check
-                    if ((playerX < coinX + coinWidth) &&  (playerX + playerWidth > coinX) &&(playerY < coinY + coinHeight) &&  (playerY + playerHeight > coinY))
-                    {
-                        // COLLISION HAPPENED!
-                        lvl[i][j] = 's'; 
-                        coinSound.play(); 
-                        std::cout << "Collected a coin!" << std::endl;
-                      
+                        // AABB collision check
+                        if ((playerX < coinX + coinWidth) &&
+                            (playerX + playerWidth > coinX) &&
+                            (playerY < coinY + coinHeight) &&
+                            (playerY + playerHeight > coinY))
+                        {
+                            // Collision detected - collect the coin
+                            lvl[i][j] = 's';  // Replace with empty space
+                            coinSound.play();
+                            std::cout << "Collected a coin at grid [" << i << "][" << j << "]!" << std::endl;
+                        }
                     }
                 }
             }

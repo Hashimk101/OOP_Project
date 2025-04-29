@@ -49,8 +49,9 @@ int main()
 	char** lvl = map.getMap();
 
 	Texture wallTex1;
-	wallTex1.loadFromFile("Data/brick2.1.png");
+	wallTex1.loadFromFile("Data/bl.jpg");
 	Sprite wallSprite1(wallTex1);
+	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
 

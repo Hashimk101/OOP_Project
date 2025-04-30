@@ -17,7 +17,7 @@ public:
 	virtual ~Enemies() = 0;
 
 
-	virtual void move() = 0;
+	virtual void move(int P_x, int P_y) = 0;
 	virtual void update() = 0;
 	virtual void draw(sf::RenderWindow& window) = 0;
 	virtual void takeDamage(int damage) = 0;

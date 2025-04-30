@@ -6,7 +6,7 @@ protected:
 	int hp;
 	float x, y;
 	bool isActive;
-	bool promiximity;
+	bool proximity;
 	sf::Texture enemyTexture;
 	sf::Sprite enemySprite;
 	float speed;
@@ -32,7 +32,7 @@ public:
 		this->x = x;
 		this->y = y;
 		isActive = true;
-		promiximity = false;
+		proximity = false;
 		speed = 2.0f;
 		isPlayerRight = false;
 	}
@@ -60,5 +60,5 @@ public:
 
 	void draw(sf::RenderWindow& window) override {
 		if(isActive)
-			window.draw(enemysprite);
+			window.draw(enemySprite);
 	}

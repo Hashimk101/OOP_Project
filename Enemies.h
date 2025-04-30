@@ -19,7 +19,7 @@ protected:
 	char** lvl;
 
 public:
-	Enemies(const std::string& texturePath, int frameW, int frameH): frameRect(0, 0, frameW, frameH)
+	Enemies(const std::string& texturePath, int frameW, int frameH) : frameRect(0, 0, frameW, frameH)
 	{
 		if (!enemyTexture.loadFromFile(texturePath))
 			std::cerr << "Error loading enemy texture: " << texturePath << "\n";
@@ -44,7 +44,7 @@ public:
 
 class MotoBug : public Enemies {
 public:
-	MotoBug(int x, int y, char** lvl): Enemies("Data/motobug.png", 40, 30) 
+	MotoBug(int x, int y, char** lvl) : Enemies("Data/motobug.png", 40, 30)
 	{
 		hp = 2;
 		this->x = x;
@@ -114,34 +114,34 @@ public:
 			}
 		}
 	}
-		void animateSprite() 
+	void animateSprite()
+	{
+		const int DELAY_MS = 100;
+
+		if (animationClock.getElapsedTime().asMilliseconds() < DELAY_MS)
+			return;
+
+		// if we hit either end, flip direction
+		if (currentFrame == int(frameCount) - 1)
 		{
-			const int DELAY_MS = 100;
-
-			if (animationClock.getElapsedTime().asMilliseconds() < DELAY_MS)
-				return;
-
-			// if we hit either end, flip direction
-			if (currentFrame == int(frameCount) - 1)
-			{
-				direction = -1;
-			}
-
-			else if (currentFrame == 0)
-			{
-				direction = +1;
-			}
-
-			// step one frame
-			currentFrame += direction;
-
-			// update the sub-rectangle and sprite
-			frameRect.left = currentFrame * frameRect.width;
-			enemySprite.setTextureRect(frameRect);
-
-			animationClock.restart();
+			direction = -1;
 		}
-		
 
-	
+		else if (currentFrame == 0)
+		{
+			direction = +1;
+		}
+
+		// step one frame
+		currentFrame += direction;
+
+		// update the sub-rectangle and sprite
+		frameRect.left = currentFrame * frameRect.width;
+		enemySprite.setTextureRect(frameRect);
+
+		animationClock.restart();
+	}
+
+
+
 };

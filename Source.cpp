@@ -55,7 +55,7 @@ int main()
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
-	MotoBug m(500, 700, lvl);
+	MotoBug m(1800, 700, lvl);
 
 	Coins.place();
 	diamonds.place();
@@ -82,6 +82,8 @@ int main()
 		sprite.draw_player(window);
 		Coins.animate();
 		diamonds.animate();
+		
+		sprite.takeDamage(m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX()));
 		//m.update();
 
 		Coins.draw(window, sprite.getOffsetX());

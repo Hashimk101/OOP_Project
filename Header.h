@@ -341,7 +341,7 @@ public:
     void takeDamage(int damgCount) 
     {
         hp-=damgCount;
-        std::cout << hp << endl;
+        std::cout << hp << std::endl;
 
     }
 
@@ -375,5 +375,8 @@ public:
     int gethitY() const {
         return hit_box_factor_y;
     }
+	bool getonGround() const {
+		return onGround;
+	}
 };
 

@@ -39,7 +39,7 @@ public:
 	virtual void takeDamage(int damage) = 0;
 	virtual void animateSprite() = 0;
 	virtual bool proximityCheck(int P_x, int P_y) = 0;
-	virtual int giveDamage(bool onGround, int P_x, int P_y) = 0;
+	virtual int giveDamage(bool onGround, int P_x, int P_y, int off_x) = 0;
 };
 
 Enemies::~Enemies() {
@@ -67,7 +67,7 @@ public:
 	}
 
 	void move(int P_x, int P_y, int off_x, int off_y) override {
-		if (isActive && proximityCheck(P_x, P_y)) {
+		if (isActive && proximityCheck(P_x + off_x, P_y)) {
 			if (P_x + off_x < x) {
 				isPlayerRight = false;
 				x -= speed;
@@ -77,7 +77,7 @@ public:
 				x += speed;
 			}
 		}
-		std::cout << P_x << " " << x << " " << P_y << " " << y << std::endl;
+		//std::cout << P_x + off_x << " " << x << " " << P_y << " " << y << std::endl;
 		enemySprite.setPosition(x - off_x, y);
 
 	}
@@ -88,7 +88,7 @@ public:
 			((P_x / 64 >= (x / 64) - 6) && (P_x / 64 <= (x / 64) + 6))) {
 			proximity = true;
 		}
-		if (lvl[y / 64][(x / 64) + 1] == 'w' && isPlayerRight)
+		if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
 			proximity = false;
 		if (lvl[y / 64][(x / 64) - 1] == 'w' && !isPlayerRight)
 			proximity = false;
@@ -108,10 +108,10 @@ public:
 		}
 	}
 
-	int giveDamage(bool onGround, int P_x, int P_y) override
+	int giveDamage(bool onGround, int P_x, int P_y, int off_x) override
 	{
 		// Only process if enemy is active and player is in same grid cell
-		if (isActive && P_x / 64 == x / 64 && P_y / 64 == y / 64) {
+		if (isActive && (P_x + off_x) / 64 == x / 64 && P_y / 64 == y / 64) {
 			// Player is jumping/falling onto enemy (classic "stomp" mechanic)
 			if (!onGround) {
 				takeDamage(hp); // Enemy takes damage

@@ -12,8 +12,8 @@ protected:
 	sf::IntRect    frameRect;
 	sf::Clock      animationClock;
 	unsigned int frameCount;
-	int  currentFrame = 0;
-	int  direction = +1;
+	int currentFrame = 0;
+	int direction = 1;
 	float speed;
 	bool isPlayerRight;
 	char** lvl;
@@ -56,7 +56,7 @@ public:
 		this->lvl = lvl;
 		isActive = true;
 		proximity = false;
-		speed = 2.0f;
+		speed = 3.4f;
 		isPlayerRight = false;
 		direction = 1;
 		// how many frames across?
@@ -68,30 +68,30 @@ public:
 
 	void move(int P_x, int P_y, int off_x, int off_y) override {
 		if (isActive && proximityCheck(P_x, P_y)) {
-			if (P_x < x) {
-				isPlayerRight = true;
-				x -= 2;
-				enemySprite.setPosition(x, y);
+			if (P_x + off_x < x) {
+				isPlayerRight = false;
+				x -= speed;
 			}
-			else if (P_x > x) {
+			else if (P_x + off_x > x) {
 				isPlayerRight = true;
-				x += 2;
-				enemySprite.setPosition(x, y);
-
+				x += speed;
 			}
 		}
+		std::cout << P_x << " " << x << " " << P_y << " " << y << std::endl;
+		enemySprite.setPosition(x - off_x, y);
+
 	}
 	bool proximityCheck(int P_x, int P_y) override {
 		proximity = false;
 		// Check if the player is within a certain distance
-		if (((P_y / 64 == y / 64) || (P_y / 64 == (y / 64) - 1) || (P_y / 64 == (y / 64) - 2)) &&
-			((P_x / 64 >= (x / 64) - 3) && (P_x / 64 <= (x / 64) + 3))) {
+		if (((P_y / 64 == y / 64) || (P_y / 64 == (y / 64) - 1)) &&
+			((P_x / 64 >= (x / 64) - 6) && (P_x / 64 <= (x / 64) + 6))) {
 			proximity = true;
 		}
-		if (lvl[y / 64][(x / 64) + 1] == 'w' && isPlayerRight)
+		/*if (lvl[y / 64][(x / 64) + 1] == 'w' && isPlayerRight)
 			proximity = false;
 		if (lvl[y / 64][(x / 64) - 1] == 'w' && !isPlayerRight)
-			proximity = false;
+			proximity = false;*/
 		return proximity;
 	}
 

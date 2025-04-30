@@ -41,8 +41,11 @@ public:
 		if (isActive && proximityCheck()) {
 			if (P_x < x) {
 				x -= 2;
-				
+				enemySprite.setPosition(x, y);
 			}
+			else if (P_x > x) {
+				x += 2;
+				enemySprite.setPosition(x, y);
 		}
 	}
 	bool proximityCheck(int P_x, int P_y) override {
@@ -56,5 +59,6 @@ public:
 	}
 
 	void draw(sf::RenderWindow& window) override {
-		window.draw(enemysprite);
+		if(isActive)
+			window.draw(enemysprite);
 	}

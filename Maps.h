@@ -68,10 +68,14 @@ public:
         // Floating islands
         for (int i = 140; i <= 143; i++) lvl[5][i] = 'w';
         for (int i = 148; i <= 150; i++) lvl[4][i] = 'w';
-        for (int i = 155; i <= 158; i++) lvl[6][i] = 'w';
-        for (int i = 160; i <= 163; i++) lvl[8][i] = 'w';
-        for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
+        for (int i = 155; i <= 160; i++) lvl[6][i] = 'w';
+        for (int i = 160; i <= 167; i++) lvl[8][i] = 'w';
         for (int i = 170; i <= 180; i++) lvl[9][i] = 'w';
+        for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
+        for (int i = 186; i <= 190; i++) lvl[6][i] = 'w';
+        for (int i = 189; i <= 191; i++) lvl[4][i] = 'w';
+        for (int i = 191; i <= 195; i++) lvl[6][i] = 'w';
+      
         // Vertical pillars
         //Partially a staircase
         lvl[11][15] = 'w';
@@ -79,11 +83,13 @@ public:
         lvl[10][17] = 'w'; lvl[9][17] = 'w';lvl[11][17] = 'w';
         lvl[8][18] = 'w'; lvl[9][18] = 'w'; lvl[10][18] = 'w';lvl[11][18] = 'w';
         lvl[10][45] = 'w'; lvl[9][45] = 'w'; lvl[11][45] = 'w';
-        lvl[10][85] = 'w'; lvl[9][85] = 'w'; lvl[11][85] = 'w';
+        lvl[10][79] = 'w'; lvl[9][79] = 'w'; lvl[11][79] = 'w';
+		//Staircase for upper platforms
+        lvl[11][78] = 'w'; lvl[10][78] = 'w';
+		lvl[11][77] = 'w';
         //Vertical
-       
+        for (int i = 80; i <= 89; i++) lvl[7][i] = 'w';
         lvl[10][45] = 'w'; lvl[9][45] = 'w';
-        lvl[10][85] = 'w'; lvl[9][85] = 'w'; 
         lvl[10][100] = 'w'; lvl[9][100] = 'w';lvl[11][100] = 'w';
 
         // Ceiling platforms

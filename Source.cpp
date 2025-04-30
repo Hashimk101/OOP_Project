@@ -7,6 +7,7 @@
 #include "Header.h"
 #include "Maps.h"
 #include "Collectables.h"
+#include "Enemies.h"
 
 using namespace sf;
 using namespace std;
@@ -27,7 +28,7 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex;
-	BackgroundTex.loadFromFile("Data/bg4.png");
+	BackgroundTex.loadFromFile("Data/bg1.png");
 	sf::Sprite BackgroundSprite(BackgroundTex);
 	BackgroundSprite.setScale(1.8, 1.2);
 	//BackgroundSprite.setPosition(100, 100);
@@ -54,7 +55,10 @@ int main()
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
-
+	Motobug m;
+	m.setPosition(750, 650);
+	
+	m.setScale(3.5, 2.5);
 	Coins.place();
 	diamonds.place();
 
@@ -70,6 +74,7 @@ int main()
 		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite);
 		
 		Coins.draw(window, sprite.getOffsetX());
+		m.draw(window);
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
@@ -77,6 +82,7 @@ int main()
 		sprite.draw_player(window);
 		Coins.animate();
 		diamonds.animate();
+		m.update();
 
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());

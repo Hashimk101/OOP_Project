@@ -30,10 +30,10 @@ public:
 
 		frameCount = enemyTexture.getSize().x / frameW;
 	}
-	virtual ~Enemies() = 0;
+	virtual ~Enemies();
 
 
-	virtual void move(int P_x, int P_y) = 0;
+	virtual void move(int P_x, int P_y, int off_x, int off_y) = 0;
 	//virtual void update() = 0;
 	virtual void draw(sf::RenderWindow& window) = 0;
 	virtual void takeDamage(int damage) = 0;
@@ -61,9 +61,12 @@ public:
 		direction = 1;
 		// how many frames across?
 		frameCount = enemyTexture.getSize().x / 40;
+		// set the initial position
+		enemySprite.setPosition(x, y);
+		enemySprite.setScale(2.2, 2.24);
 	}
 
-	void move(int P_x, int P_y) override {
+	void move(int P_x, int P_y, int off_x, int off_y) override {
 		if (isActive && proximityCheck(P_x, P_y)) {
 			if (P_x < x) {
 				isPlayerRight = true;

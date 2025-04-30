@@ -1,5 +1,5 @@
 #pragma once
-#include "Header.h"
+//#include "Header.h"
 
 class Enemies {
 protected:
@@ -34,13 +34,17 @@ public:
 
 
 	virtual void move(int P_x, int P_y) = 0;
-	virtual void update() = 0;
+	//virtual void update() = 0;
 	virtual void draw(sf::RenderWindow& window) = 0;
 	virtual void takeDamage(int damage) = 0;
 	virtual void animateSprite() = 0;
 	virtual bool proximityCheck(int P_x, int P_y) = 0;
 	virtual int giveDamage(bool onGround, int P_x, int P_y) = 0;
 };
+
+Enemies::~Enemies() {
+	// Empty implementation
+}
 
 class MotoBug : public Enemies {
 public:
@@ -54,18 +58,20 @@ public:
 		proximity = false;
 		speed = 2.0f;
 		isPlayerRight = false;
-		int direction = +1;
+		direction = 1;
 		// how many frames across?
-		frameCount = enemyTexture.getSize().x / enemyTexture.getSize().y;
+		frameCount = enemyTexture.getSize().x / 40;
 	}
 
 	void move(int P_x, int P_y) override {
 		if (isActive && proximityCheck(P_x, P_y)) {
 			if (P_x < x) {
+				isPlayerRight = true;
 				x -= 2;
 				enemySprite.setPosition(x, y);
 			}
 			else if (P_x > x) {
+				isPlayerRight = true;
 				x += 2;
 				enemySprite.setPosition(x, y);
 
@@ -113,6 +119,7 @@ public:
 				return 10;     // Player takes damage
 			}
 		}
+		return 0;
 	}
 	void animateSprite()
 	{

@@ -4,7 +4,7 @@
 class Enemies {
 protected:
 	int hp;
-	float x, y;
+	int x, y;
 	bool isActive;
 	bool proximity;
 	sf::Texture enemyTexture;
@@ -24,7 +24,7 @@ public:
 	virtual void takeDamage(int damage) = 0;
 	virtual void animateSprite() = 0;
 	virtual bool proximityCheck(int P_x, int P_y) = 0;
-	virtual int giveDamage(bool onGround) = 0;
+	virtual int giveDamage(bool onGround, int P_x, int P_y) = 0;
 };
 
 class MotoBug : public Enemies {

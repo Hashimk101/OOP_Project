@@ -88,10 +88,10 @@ public:
 			((P_x / 64 >= (x / 64) - 6) && (P_x / 64 <= (x / 64) + 6))) {
 			proximity = true;
 		}
-		/*if (lvl[y / 64][(x / 64) + 1] == 'w' && isPlayerRight)
+		if (lvl[y / 64][(x / 64) + 1] == 'w' && isPlayerRight)
 			proximity = false;
 		if (lvl[y / 64][(x / 64) - 1] == 'w' && !isPlayerRight)
-			proximity = false;*/
+			proximity = false;
 		return proximity;
 	}
 

@@ -10,7 +10,8 @@
 using namespace sf;
 int cell_size = 64;
 
-class MySprite { // Renamed to avoid conflict with sf::Sprite
+class MySprite
+{ // Renamed to avoid conflict with sf::Sprite
     Texture SonicTex[6]; // Array of textures for different animations
     Texture TailsTex, KnucklesTex; // Kept for potential future use
     int velocityY, velocityX, player_x, player_y, max_speed, acceleration;
@@ -19,6 +20,7 @@ class MySprite { // Renamed to avoid conflict with sf::Sprite
     int raw_img_x, raw_img_y;
     int Pheight, Pwidth;
     int hit_box_factor_x, hit_box_factor_y;
+    int hp;
     float window_x, window_y;
     bool onGround;
     float gravity, friction;
@@ -62,6 +64,7 @@ public:
         window_y = 0; // Corrected to window_y
         acceleration = 1.1;
         max_speed = 12;
+        hp = 100;
         onGround = false;
         gravity = 1;
         friction = 0.85;
@@ -308,6 +311,7 @@ public:
         }
     }
 
+
     //CALCULATE THE NUMBER OF FRAMES IN THE TEXTURE
     int GetFrameNum(Texture& Txt)
     {
@@ -334,9 +338,15 @@ public:
             SonicSprite.setTextureRect(SonicRect);
         }
     }
+    void takeDamage(int damgCount) 
+    {
+        hp-=damgCount;
+        std::cout << hp << endl;
 
+    }
 
-    void borderCheck() {
+    void borderCheck() 
+    {
         if (player_y < 32) {
             player_y = 42;
         }

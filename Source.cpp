@@ -55,10 +55,8 @@ int main()
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
-	Motobug m;
-	m.setPosition(750, 650);
-	
-	m.setScale(3.5, 2.5);
+	MotoBug m(500, 700, lvl);
+
 	Coins.place();
 	diamonds.place();
 

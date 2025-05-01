@@ -55,8 +55,8 @@ int main()
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
-	MotoBug m(1800, 700, lvl);
-	CrabMeat (1500, 700, lvl);
+	MotoBug m(1800, 730, lvl);
+	//CrabMeat (1500, 700, lvl);
 	CrabMeat crab(1000, 800, lvl);
 
 	Coins.place();
@@ -79,7 +79,10 @@ int main()
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		//crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
 		crab.animateSprite();
-
+		int dmg = m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (dmg > 0) {
+			sprite.takeDamage(dmg);
+		}
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
@@ -87,10 +90,7 @@ int main()
 		sprite.draw_player(window);
 		Coins.animate();
 		diamonds.animate();
-		int dmg = m.giveDamage(sprite.getonGround(),sprite.getX(), sprite.getY(),sprite.getOffsetX());
-		if (dmg > 0) {
-			sprite.takeDamage(dmg);
-		}
+		
 		int dmg1 = crab.giveDamage(sprite.getonGround(),sprite.getX(), sprite.getY(),sprite.getOffsetX());
 		if (dmg1 > 0) sprite.takeDamage(dmg);
 

@@ -48,7 +48,7 @@ Enemies::~Enemies() {
 
 class MotoBug : public Enemies {
 public:
-	MotoBug(int x, int y, char** lvl) : Enemies("Data/motobug.png", 42, 30)
+	MotoBug(int x, int y, char** lvl) : Enemies("Data/motobug.png", 40, 30)
 	{
 		hp = 2;
 		this->x = x;
@@ -64,11 +64,12 @@ public:
 		// set the initial position
 		enemySprite.setPosition(x, y);
 		enemySprite.setScale(2.2, 2.24);
+		enemySprite.setOrigin(frameRect.width / 2.0f, frameRect.height / 2.0f);
 	}
 
 	void move(int P_x, int P_y, int off_x, int off_y) override {
 		if (isActive && proximityCheck(P_x + off_x, P_y)) {
-			if (P_x + off_x < x) {
+			if (P_x + off_x + 40 < x) {
 				isPlayerRight = false;
 				x -= speed;
 			}
@@ -89,7 +90,7 @@ public:
 		}
 		if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
 			proximity = false;
-		if (lvl[y / 64][(x / 64) - 1] == 'w' && !isPlayerRight)
+		if (lvl[y / 64][(x / 64)] == 'w' && !isPlayerRight)
 			proximity = false;
 		return proximity;
 	}
@@ -110,12 +111,12 @@ public:
 	int giveDamage(bool onGround, int P_x, int P_y, int off_x) override
 	{
 		// Only process if enemy is active and player is in same grid cell
-		if (isActive && (P_x + off_x) / 64 == x / 64 && P_y / 64 == y / 64) {
+		if (isActive && ((P_x + off_x) / 64 == x / 64) && (P_y / 64 == y / 64)) {
 			// Player is jumping/falling onto enemy (classic "stomp" mechanic)
 // In MotoBug::giveDamage:
 			if (!onGround) 
 			{
-				takeDamage(1);    // subtract exactly 1 HP, not all of it
+				takeDamage(hp);    // subtract exactly 1 HP, not all of it
 				return 0;
 			}
 
@@ -129,6 +130,7 @@ public:
 	}
 	void animateSprite()
 	{
+		std::cout << isPlayerRight << std::endl;
 		// Adjust animation speed based on whether the motobug is moving
 		float animationSpeed = proximity ? 150.0f : 250.0f; // Faster when in proximity mode
 
@@ -148,17 +150,23 @@ public:
 			direction = 1;
 		}
 
-		// Flip sprite horizontally based on movement direction
-		if (isPlayerRight) {
-			enemySprite.setScale(2.2, 2.24);  // Normal orientation
-		}
-		else {
-			enemySprite.setScale(-2.2, 2.24); // Flipped orientation
-		}
-
 		// Update the texture rectangle
 		frameRect.left = currentFrame * frameRect.width;
 		enemySprite.setTextureRect(frameRect);
+
+		// Set the origin to center of sprite (do this once after changing the texture rect)
+
+		// Flip sprite horizontally based on movement direction
+		if (isPlayerRight) {
+			enemySprite.setScale(-2.2, 2.24);  // Flipped orientation
+		}
+		else {
+			enemySprite.setScale(2.2, 2.24); // Normal orientation
+		}
+
+		// Update position with centered origin
+		enemySprite.setPosition(x, y);
+
 		animationClock.restart();
 	}
 

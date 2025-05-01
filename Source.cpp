@@ -1,22 +1,25 @@
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Window.hpp>
+//#include <iostream>
+//#include <fstream>
+//#include <cmath>
+//#include <SFML/Graphics.hpp>
+//#include <SFML/Audio.hpp>
+//#include <SFML/Window.hpp>
+#include "Header.h"
+#include "Maps.h"
+#include "Collectables.h"
+#include "Enemies.h"
 
 using namespace sf;
 using namespace std;
 
 int screen_x = 1200;
 int screen_y = 900;
-
 // prototypes 
-void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGround, float& gravity, float& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, float& player_x, float& player_y, const int cell_size, int& Pheight, int& Pwidth);
+void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, float& gravity, int& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, int& player_x, int& player_y, const int cell_size, int& Pheight, int& Pwidth);
 
-void draw_player(RenderWindow& window, Sprite& LstillSprite, float player_x, float player_y);
+void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush,  Sprite& BrownTower);
 
 int main()
 {
@@ -24,6 +27,11 @@ int main()
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
+	sf::Texture BackgroundTex;
+	BackgroundTex.loadFromFile("Data/bg1.png");
+	sf::Sprite BackgroundSprite(BackgroundTex);
+	BackgroundSprite.setScale(1.8, 1.2);
+	//BackgroundSprite.setPosition(100, 100);
 	/////////////////////////////////////////////////////////////////
 	// a cell is 64 by 64 pixels
 
@@ -35,111 +43,84 @@ int main()
 	// 'z' is spring
 
 	// Uppercase for not interactable background accessories
-
+	//B is for greenBushes
 	// C is for crystals
-
-	const int cell_size = 64;
-	const int height = 14;
-	const int width = 110;
-
-	char** lvl = NULL;
+	//T is for brown tower
+	MySprite sprite;
+	Maps map;
+	char** lvl = map.getMap();
 
 	Texture wallTex1;
-	Sprite wallSprite1;
+	wallTex1.loadFromFile("Data/bl.jpg");
 
-	Music lvlMus;
+	Sprite wallSprite1(wallTex1);
+	Texture GreenBush;
+	GreenBush.loadFromFile("Data/GreenBush.png");
+	Sprite GreenBushSprite(GreenBush);
+	Texture BrownTower;
+	BrownTower.loadFromFile("Data/BrownTower.png");
+	Sprite BrownTowerSprite(BrownTower);
 
-	lvlMus.openFromFile("Data/labrynth.ogg");
-	lvlMus.setVolume(30);
-	lvlMus.play();
-	lvlMus.setLoop(true);
+	
+	wallSprite1.setScale(0.64, 0.64);
+	RingCoin Coins(lvl);
+	Diamond diamonds(lvl);
+	MotoBug m(1800, 730, lvl);
+	
+	CrabMeat crab(5500, 400, lvl);
+	CrabMeat crab2(10550, 470, lvl);
+	
 
-	lvl = new char* [height];
-	for (int i = 0; i < height; i += 1)
-	{
-		lvl[i] = new char[width] {'\0'};
-	}
+	Coins.place();
+	diamonds.place();
 
-
-	lvl[5][1] = 'w';
-	lvl[11][2] = 'w';
-	lvl[11][3] = 'w';
-
-	wallTex1.loadFromFile("Data/brick1.png");
-	wallSprite1.setTexture(wallTex1);
-	////////////////////////////////////////////////////////
-	float player_x = 100;
-	float player_y = 100;
-
-	float max_speed = 15;
-
-	float velocityX = 0;
-	float velocityY = 0;
-
-	float jumpStrength = -20; // Initial jump velocity
-	float gravity = 1;  // Gravity acceleration
-
-	Texture LstillTex;
-	Sprite LstillSprite;
-
-	bool onGround = false;
-
-	float offset_x = 0;
-	float offset_y = 0;
-
-	float terminal_Velocity = 20;
-
-	float acceleration = 0.2;
-
-	float scale_x = 2.5;
-	float scale_y = 2.5;
-
-	////////////////////////////
-	int raw_img_x = 24;
-	int raw_img_y = 35;
-
-	int Pheight = raw_img_y * scale_y;
-	int Pwidth = raw_img_x * scale_x;
-
-	//only to adjust the player's hitbox
-
-	int hit_box_factor_x = 8 * scale_x;
-	int hit_box_factor_y = 5 * scale_y;
-
-	LstillTex.loadFromFile("Data/0left_still.png");
-	LstillSprite.setTexture(LstillTex);
-	LstillSprite.setScale(scale_x, scale_y);
-
-	////////////////////////////////////////////////////////
-
-	Event ev;
-	while (window.isOpen())
-	{
-
-		while (window.pollEvent(ev))
-		{
-			if (ev.type == Event::Closed)
-			{
+	sf::Event event;
+	while (window.isOpen()) {
+		while (window.pollEvent(event)) {
+			if (event.type == Event::Closed)
 				window.close();
-			}
-
-			if (ev.type == Event::KeyPressed)
-			{
-			}
-
 		}
-
-		if (Keyboard::isKeyPressed(Keyboard::Escape))
-		{
-			window.close();
+		window.clear(Color::Black);
+		BackgroundSprite.setPosition(-sprite.getOffsetX()/7, 0);
+		window.draw(BackgroundSprite);
+		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite);
+		
+		Coins.draw(window, sprite.getOffsetX());
+		m.draw(window);
+		m.animateSprite();
+		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
+		crab.animateSprite();
+		crab2.animateSprite();
+		int dmg = m.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (dmg > 0) {
+			sprite.takeDamage(dmg);
 		}
+		sprite.movement(lvl);
+		sprite.player_gravity(lvl);
+		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
+		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
+		sprite.draw_player(window);
+		Coins.animate();
+		diamonds.animate();
+		
+		int dmg1 = crab.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (dmg1 > 0) sprite.takeDamage(dmg1);
 
-		player_gravity(lvl, offset_y, velocityY, onGround, gravity, terminal_Velocity, hit_box_factor_x, hit_box_factor_y, player_x, player_y, cell_size, Pheight, Pwidth);
+		
 
-		window.clear();
+		//sprite.takeDamage(m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX()));
+		sprite.update();
+		/*m.update();*/
 
-		display_level(window, height, width, lvl, wallSprite1, cell_size);
-		draw_player(window, LstillSprite, player_x, player_y);
+		Coins.draw(window, sprite.getOffsetX());
+		diamonds.draw(window, sprite.getOffsetX());
+		crab.draw(window);
+		crab2.draw(window);
+		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+
+		//window.draw()
 
 		window.display();
 	}
@@ -151,7 +132,7 @@ int main()
 
 // functions
 
-void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGround, float& gravity, float& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, float& player_x, float& player_y, const int cell_size, int& Pheight, int& Pwidth)
+void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, float& gravity,int& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, int& player_x, int& player_y, const int cell_size, int& Pheight, int& Pwidth)
 {
 	offset_y = player_y;
 
@@ -184,22 +165,41 @@ void player_gravity(char** lvl, float& offset_y, float& velocityY, bool& onGroun
 	}
 
 }
-void draw_player(RenderWindow& window, Sprite& LstillSprite, float player_x, float player_y) {
+void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y) {
 
 	LstillSprite.setPosition(player_x, player_y);
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite)
 {
 	for (int i = 0; i < height; i += 1)
 	{
-		for (int j = 0; j < width; j += 1)
+		// hell yeah, only loads the current window into memory
+		// THE GREATEST PROGRAMMER THAT EVER LIVED
+		for (int j = offset / 64; j < (1300 + offset) / 64; j += 1)
 		{
 			if (lvl[i][j] == 'w')
 			{
-				wallSprite1.setPosition(j * cell_size, i * cell_size);
+				wallSprite1.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(wallSprite1);
+				/*background.setPosition(0 - offset / 4, 0);*/
+				/*window.draw(background);*/
+			}
+			if (lvl[i][j] == 'B') // green bushes
+			{
+				GreenBushSprite.setScale(2, 2);
+				GreenBushSprite.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(GreenBushSprite);
+				/*else if (lvl[i][j] == 's') {
+					window.draw();
+				}*/
+			}
+			if (lvl[i][j] == 'T') 
+			{
+				BrownTowerSprite.setScale(4, 4);
+				BrownTowerSprite.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(BrownTowerSprite);
 			}
 		}
 	}

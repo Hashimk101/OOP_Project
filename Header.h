@@ -346,7 +346,7 @@ public:
     }
     void takeDamage(int dmg = 1) 
     {
-        std::cout << hp << std::endl;
+        //std::cout << hp << std::endl;
         if (isInvincible)
             return;                // ignore if still invincible
 

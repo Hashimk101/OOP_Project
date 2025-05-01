@@ -106,17 +106,19 @@ public:
 		if (hp <= 0) {
 			isActive = false;
 		}
+		std::cout << "Motobug HP: " << hp << std::endl;
 	}
 
 	int giveDamage(bool onGround, int P_x, int P_y, int off_x) override
 	{
+		//std::cout << (P_x + off_x + 40) << " " << P_y << " " << x/64 << " " << y/64 << std::endl;
 		// Only process if enemy is active and player is in same grid cell
-		if (isActive && ((P_x + off_x) / 64 == x / 64) && (P_y / 64 == y / 64)) {
+		if (isActive && ((P_x + off_x + 40) / 64 == x / 64) && ((P_y + 64) / 64 == y / 64)) {
 			// Player is jumping/falling onto enemy (classic "stomp" mechanic)
 // In MotoBug::giveDamage:
 			if (!onGround) 
 			{
-				takeDamage(hp);    // subtract exactly 1 HP, not all of it
+				takeDamage(hp);    // take damage from enemy and die on first hit
 				return 0;
 			}
 
@@ -130,7 +132,7 @@ public:
 	}
 	void animateSprite()
 	{
-		std::cout << isPlayerRight << std::endl;
+		//std::cout << isPlayerRight << std::endl;
 		// Adjust animation speed based on whether the motobug is moving
 		float animationSpeed = proximity ? 150.0f : 250.0f; // Faster when in proximity mode
 

@@ -114,7 +114,7 @@ public:
 
                 // Calculate the position to check (left side of character)
                 int worldY = (offset_y + hit_box_factor_y + checkY) / cell_size;
-                int worldX = (offset_x + player_x + hit_box_factor_x - 5) / cell_size; // Check slightly ahead
+                int worldX = (offset_x + player_x + hit_box_factor_x - 17) / cell_size; // Check slightly ahead
 
                 // Stay within bounds
                 if (worldY < 0) worldY = 0;
@@ -167,7 +167,7 @@ public:
 
                 // Calculate the position to check (right side of character)
                 int worldY = (offset_y + hit_box_factor_y + checkY) / cell_size;
-                int worldX = (offset_x + player_x + hit_box_factor_x + Pwidth + 10) / cell_size; // Check slightly ahead
+                int worldX = (offset_x + player_x + hit_box_factor_x + Pwidth + 15) / cell_size; // Check slightly ahead
 
                 // Stay within bounds
                 if (worldY < 0) worldY = 0;
@@ -268,7 +268,7 @@ public:
             isMoving = true;
 
         }
-        std::cout << "Player X: " << offset_x << " Player Y: " << offset_y << std::endl;
+        //std::cout << offset_x + player_x << " " << offset_y + player_y << " ";
         return isMoving; // Always return isMoving
 		
     }
@@ -347,7 +347,7 @@ public:
     }
     void takeDamage(int dmg = 1) 
     {
-        //std::cout << hp << std::endl;
+        std::cout << hp << std::endl;
         if (isInvincible)
             return;                // ignore if still invincible
 
@@ -411,6 +411,9 @@ public:
     }
 	bool getonGround() const {
 		return onGround;
+	}
+	int getVelocityY() const {
+		return velocityY;
 	}
 };
 

@@ -89,10 +89,10 @@ int main()
 		m.draw(window);
 		m.animateSprite();
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		//crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
+		crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
 		crab.animateSprite();
 		crab2.animateSprite();
-		int dmg = m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		int dmg = m.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg > 0) {
 			sprite.takeDamage(dmg);
 		}
@@ -104,8 +104,8 @@ int main()
 		Coins.animate();
 		diamonds.animate();
 		
-		int dmg1 = crab.giveDamage(sprite.getonGround(),sprite.getX(), sprite.getY(),sprite.getOffsetX());
-		if (dmg1 > 0) sprite.takeDamage(dmg);
+		int dmg1 = crab.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (dmg1 > 0) sprite.takeDamage(dmg1);
 
 		
 

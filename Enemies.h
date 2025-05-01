@@ -39,7 +39,7 @@ public:
 	virtual void takeDamage(int damage) = 0;
 	virtual void animateSprite() = 0;
 	virtual bool proximityCheck(int P_x, int P_y) = 0;
-	virtual int giveDamage(bool onGround, int P_x, int P_y, int off_x) = 0;
+	virtual int giveDamage(int upVelocity, int P_x, int P_y, int off_x) = 0;
 };
 
 Enemies::~Enemies() {
@@ -106,17 +106,17 @@ public:
 		if (hp <= 0) {
 			isActive = false;
 		}
-		std::cout << "Motobug HP: " << hp << std::endl;
+		//std::cout << "Motobug HP: " << hp << std::endl;
 	}
 
-	int giveDamage(bool onGround, int P_x, int P_y, int off_x) override
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x) override
 	{
 		//std::cout << (P_x + off_x + 40) << " " << P_y << " " << x/64 << " " << y/64 << std::endl;
 		// Only process if enemy is active and player is in same grid cell
 		if (isActive && ((P_x + off_x + 40) / 64 == x / 64) && ((P_y + 64) / 64 == y / 64)) {
 			// Player is jumping/falling onto enemy (classic "stomp" mechanic)
 // In MotoBug::giveDamage:
-			if (!onGround) 
+			if (upVelocity > 0) // checks if the player is falling and falling ONLY, not jumping
 			{
 				takeDamage(hp);    // take damage from enemy and die on first hit
 				return 0;
@@ -278,16 +278,17 @@ public:
 		animationClock.restart();
 	}
 
-	int giveDamage(bool onGround, int P_x, int P_y, int off_x) override
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x) override
 	{
 		if (!isActive) return 0;
 
-		if ((P_x + off_x) / cell_size == x / cell_size
-			&& P_y / cell_size == y / cell_size)
+		if (((P_x + off_x + cell_size) / cell_size == x / cell_size ||
+			(P_x + off_x + cell_size) / cell_size == (x + cell_size)/ cell_size)
+			&& ((P_y + cell_size) / cell_size == y / cell_size))
 		{
-			if (!onGround) {
-				// Player is jumping on crab
-				takeDamage(1);
+			/*std::cout << "Damage to player" << std::endl;*/
+			if (upVelocity > 0) { // checks if the player is falling and falling ONLY, not jumping
+				takeDamage(hp);
 				return 0;
 			}
 			else {

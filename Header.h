@@ -21,6 +21,9 @@ class MySprite
     int Pheight, Pwidth;
     int hit_box_factor_x, hit_box_factor_y;
     int hp;
+    bool     isInvincible = false;
+    sf::Clock invClock;                     // tracks invincibility time
+    float   invDuration = 1.0;
     float window_x, window_y;
     bool onGround;
     float gravity, friction;
@@ -31,6 +34,7 @@ class MySprite
     bool left; // Tracks direction
     // Sprites for different characters
     sf::Sprite SonicSprite, TailsSprite, KnucklesSprite;
+
 
 public:
     // Constructor to initialize the sprite with the texture
@@ -65,6 +69,7 @@ public:
         acceleration = 1.1;
         max_speed = 12;
         hp = 100;
+        isInvincible = false;
         onGround = false;
         gravity = 1;
         friction = 0.85;
@@ -79,6 +84,7 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
+
 
         // Set up SonicSprite
         SonicSprite.setTexture(SonicTex[0]);
@@ -338,11 +344,37 @@ public:
             SonicSprite.setTextureRect(SonicRect);
         }
     }
-    void takeDamage(int damgCount) 
+    void takeDamage(int dmg = 1) 
     {
-        hp-=damgCount;
         std::cout << hp << std::endl;
+        if (isInvincible)
+            return;                // ignore if still invincible
 
+        hp -= dmg;                  // subtract health (or rings)
+                   
+
+        if (hp <= 0) {
+            
+            return;
+        }
+
+        // enter invincibility state
+        isInvincible = true;
+        invClock.restart();
+
+        // optional: tint sprite to show invulnerability
+        SonicSprite.setColor(sf::Color(255, 255, 255, 128));
+    }
+
+    void update() 
+    {
+        // clear invincibility after duration
+        if (isInvincible && invClock.getElapsedTime().asSeconds() >= invDuration) {
+            isInvincible = false;
+            SonicSprite.setColor(sf::Color(255, 255, 255, 255));
+        }
+
+        // … your other update logic (movement, animation, etc.) …
     }
 
     void borderCheck() 

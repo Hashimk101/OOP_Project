@@ -28,7 +28,6 @@ public:
         // Create the ground floor (width 200)
         for (int i = 0; i < 200; i++)
         {
-
             lvl[12][i] = 'w';
             lvl[13][i] = 'w';
         }
@@ -39,6 +38,11 @@ public:
         lvl[8][5] = 'w';
         lvl[8][6] = 'w';
         lvl[8][6] = 'w';
+        lvl[7][4] = 'B';
+        lvl[7][5] = 'B';
+        lvl[7][6] = 'B';
+       
+
 
         lvl[7][10] = 'w';
         lvl[7][11] = 'w';
@@ -66,14 +70,28 @@ public:
         lvl[7][126] = 'w'; lvl[7][127] = 'w';
 
         // Floating islands
-        for (int i = 140; i <= 143; i++) lvl[5][i] = 'w';
+        for (int i = 140; i <= 143; i++)
+        {
+            lvl[5][i] = 'w';
+			lvl[4][i] = 'B';
+        };
+        //towers
+        lvl[9][26] = 'T';
+        lvl[9][47] = 'T';
+        lvl[9][106] = 'T';
+        lvl[9][195] = 'T';
+
         for (int i = 148; i <= 150; i++) lvl[4][i] = 'w';
         for (int i = 155; i <= 160; i++) lvl[6][i] = 'w';
         for (int i = 160; i <= 167; i++) lvl[8][i] = 'w';
         for (int i = 170; i <= 180; i++) lvl[9][i] = 'w';
         for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
         for (int i = 186; i <= 190; i++) lvl[6][i] = 'w';
-        for (int i = 189; i <= 191; i++) lvl[4][i] = 'w';
+        for (int i = 189; i <= 191; i++) 
+        {
+            lvl[4][i] = 'w';
+            lvl[3][i] = 'B';
+        }
         for (int i = 191; i <= 195; i++) lvl[6][i] = 'w';
       
         // Vertical pillars
@@ -94,10 +112,15 @@ public:
 
         // Ceiling platforms
         for (int i = 110; i <= 115; i++) lvl[8][i] = 'w';
-        for (int i = 90; i <= 105; i++) lvl[6][i] = 'w';
+        for (int i = 90; i <= 105; i++) 
+        {
+            lvl[6][i] = 'w';
+            lvl[5][i] = 'B';
+        };
         for (int i = 130; i <= 135; i++) lvl[7][i] = 'w';
     }
-    Maps(Maps& m) {
+    Maps(Maps& m)
+    {
         lvl = m.lvl;
     }
 	char** getMap() {

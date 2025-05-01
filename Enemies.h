@@ -185,13 +185,16 @@ private:
 	sf::Sprite ProjectileSprite;
 	sf::Clock ProjectileClock;
 	float patrolSpeed = 1.5;
-	float spriteScale = 2.5;
+	float spriteScale = 3;
 	int cell_size = 64; 
-	int frameWidth = 43; // Consistent frame width
+	int frameWidth = 44; // Consistent frame width
 	bool movingForward = true; // Track animation direction
+	float originX;            // where the crab first spawned
+	float minX, maxX;
+	float range;
 
 public:
-	CrabMeat(int x, int y, char** lvl) : Enemies("Data/CrabMeat.png", 44, 31)
+	CrabMeat(int x, int y, char** lvl) : Enemies("Data/CrabMeat.png",44, 30)
 	{
 		hp = 4;
 		this->x = x;
@@ -201,59 +204,76 @@ public:
 		proximity = false;
 		speed = 3.4;
 		isPlayerRight = false;
-		frameCount = 10; // Total frames in sprite sheet
-		currentFrame = 0;
-		
-
-		
+		frameCount = 8;
+		range = 128;
 		enemySprite.setPosition(x, y);
 		enemySprite.setScale(spriteScale, spriteScale);
 
-        frameRect = sf::IntRect(0,0,43,31);
+        frameRect = sf::IntRect(0,0,43,30);
         enemySprite.setTextureRect(frameRect);
-		enemySprite.setOrigin(frameRect.width / 2.f, frameRect.height / 2.f);
+		originX = x;
+		minX = originX - range;
+		maxX = originX + range;
    
 
     }
 	
 
-	void move(int P_x, int P_y, int off_x, int off_y) override 
-	{
+	void move(int /*P_x*/, int /*P_y*/, int off_x, int /*off_y*/) override {
 		if (!isActive) return;
 
-		// Simple movement logic
+		// step horizontally
 		x += direction * patrolSpeed;
 
-		// Wall collision detection
-		int cellY = y / cell_size;
-		int aheadPixel = (direction > 0) ? x + frameWidth : x - 1;
-		int cellX_ahead = aheadPixel / cell_size;
-
-		if (lvl[cellY][cellX_ahead] == 'w') 
-		{
-			direction *= -1; // Reverse direction at wall
-			x += direction * patrolSpeed; // Move away from wall
+		// if we passed either bound, clamp & reverse
+		if (x < minX) {
+			x = minX;
+			direction = +1;
+		}
+		else if (x > maxX) {
+			x = maxX;
+			direction = -1;
 		}
 
-		// Update sprite position and flip based on direction
+		// update sprite screen position
 		enemySprite.setPosition(x - off_x, y);
-		//enemySprite.setScale(direction < 0 ? -spriteScale : spriteScale, spriteScale);
+
+		// flip sprite to face movement
+		enemySprite.setScale(
+			direction < 0 ? -spriteScale : +spriteScale,
+			spriteScale
+		);
 	}
 
 	void animateSprite() override
 	{
-		if (!isActive) return;
+		const int delay_ms = 100; // Delay in milliseconds for frame change
+		// e.g. for 10 frames:
+		int frameWidths[8] = { 43, 46, 45, 45, 45, 49, 49, 49};
+		int frameOffset[8];
 
-		const int DELAY_MS = 120;
-		if (animationClock.getElapsedTime().asMilliseconds() < DELAY_MS)
+		frameOffset[0] = 0;
+		//Offset for each itrect
+		for (int i = 1;i < 8;i++)
+		{
+			frameOffset[i] = frameOffset[i - 1] + frameWidths[i - 1];
+		}
+
+		if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
 			return;
 
-		// advance frame index
+		
 		currentFrame = (currentFrame + 1) % frameCount;
+		int w = frameWidths[currentFrame];
+		int l = frameOffset[currentFrame];
 
-		// move the rect to the correct frame
-		frameRect.left = currentFrame * frameRect.width;
+		// update the rect
+		frameRect = sf::IntRect(l, 0, w, frameRect.height);
 		enemySprite.setTextureRect(frameRect);
+
+		// re-center origin on that new width
+		enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
+
 
 		animationClock.restart();
 	}

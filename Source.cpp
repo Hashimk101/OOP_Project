@@ -19,7 +19,7 @@ void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, f
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush,  Sprite& BrownTower);
 
 int main()
 {
@@ -43,21 +43,33 @@ int main()
 	// 'z' is spring
 
 	// Uppercase for not interactable background accessories
-
+	//B is for greenBushes
 	// C is for crystals
+	//T is for brown tower
 	MySprite sprite;
 	Maps map;
 	char** lvl = map.getMap();
 
 	Texture wallTex1;
 	wallTex1.loadFromFile("Data/bl.jpg");
+
 	Sprite wallSprite1(wallTex1);
+	Texture GreenBush;
+	GreenBush.loadFromFile("Data/GreenBush.png");
+	Sprite GreenBushSprite(GreenBush);
+	Texture BrownTower;
+	BrownTower.loadFromFile("Data/BrownTower.png");
+	Sprite BrownTowerSprite(BrownTower);
+
+	
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
 	MotoBug m(1800, 730, lvl);
-	//CrabMeat (1500, 700, lvl);
-	CrabMeat crab(1000, 800, lvl);
+	
+	CrabMeat crab(5500, 400, lvl);
+	CrabMeat crab2(10550, 470, lvl);
+	
 
 	Coins.place();
 	diamonds.place();
@@ -71,7 +83,7 @@ int main()
 		window.clear(Color::Black);
 		BackgroundSprite.setPosition(-sprite.getOffsetX()/7, 0);
 		window.draw(BackgroundSprite);
-		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite);
+		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite);
 		
 		Coins.draw(window, sprite.getOffsetX());
 		m.draw(window);
@@ -79,6 +91,7 @@ int main()
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		//crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
 		crab.animateSprite();
+		crab2.animateSprite();
 		int dmg = m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg > 0) {
 			sprite.takeDamage(dmg);
@@ -103,6 +116,9 @@ int main()
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());
 		crab.draw(window);
+		crab2.draw(window);
+		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 
 		//window.draw()
 
@@ -155,13 +171,13 @@ void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int p
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite)
 {
 	for (int i = 0; i < height; i += 1)
 	{
 		// hell yeah, only loads the current window into memory
 		// THE GREATEST PROGRAMMER THAT EVER LIVED
-		for (int j = offset/64; j < (1300 + offset)/64; j += 1)
+		for (int j = offset / 64; j < (1300 + offset) / 64; j += 1)
 		{
 			if (lvl[i][j] == 'w')
 			{
@@ -170,9 +186,21 @@ void display_level(RenderWindow& window, const int height, const int width, char
 				/*background.setPosition(0 - offset / 4, 0);*/
 				/*window.draw(background);*/
 			}
-			/*else if (lvl[i][j] == 's') {
-				window.draw();
-			}*/
+			if (lvl[i][j] == 'B') // green bushes
+			{
+				GreenBushSprite.setScale(2, 2);
+				GreenBushSprite.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(GreenBushSprite);
+				/*else if (lvl[i][j] == 's') {
+					window.draw();
+				}*/
+			}
+			if (lvl[i][j] == 'T') 
+			{
+				BrownTowerSprite.setScale(4, 4);
+				BrownTowerSprite.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(BrownTowerSprite);
+			}
 		}
 	}
 }

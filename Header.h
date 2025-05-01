@@ -268,8 +268,9 @@ public:
             isMoving = true;
 
         }
-
+        std::cout << "Player X: " << offset_x << " Player Y: " << offset_y << std::endl;
         return isMoving; // Always return isMoving
+		
     }
 
     void player_gravity(char** lvl)
@@ -369,7 +370,8 @@ public:
     void update() 
     {
         // clear invincibility after duration
-        if (isInvincible && invClock.getElapsedTime().asSeconds() >= invDuration) {
+        if (isInvincible && invClock.getElapsedTime().asSeconds() >= invDuration)
+        {
             isInvincible = false;
             SonicSprite.setColor(sf::Color(255, 255, 255, 255));
         }

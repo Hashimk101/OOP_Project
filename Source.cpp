@@ -68,7 +68,7 @@ int main()
 	MotoBug m(1800, 730, lvl);
 	
 	CrabMeat crab(5500, 400, lvl);
-	CrabMeat crab2(10550, 470, lvl);
+	//CrabMeat crab2(10550, 470, lvl);
 	
 
 	Coins.place();
@@ -90,8 +90,8 @@ int main()
 		m.animateSprite();
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
-		crab.animateSprite();
-		crab2.animateSprite();
+		crab.draw(window);
+		// keep movement and drawing close to each other for better user experience :)
 		int dmg = m.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg > 0) {
 			sprite.takeDamage(dmg);
@@ -115,10 +115,8 @@ int main()
 
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());
-		crab.draw(window);
-		crab2.draw(window);
-		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		//crab2.draw(window);
+		//crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 
 		//window.draw()
 

@@ -195,7 +195,7 @@ private:
 	float proj_x, proj_y;
 	float prj_speed_y = -4.5;
 	float prj_speed_x = 3.2;
-	float gravity = 8;
+	float gravity = 10;
 	bool projectileActive = false;
 
 public:
@@ -340,6 +340,10 @@ public:
 		proximity = false;
 		// Check if the player is within a certain distance
 		//std::cout << x << " " << P_x + off_x + 49 << std::endl;
+		if ((P_x + 49) < x)
+			isPlayerRight = false;
+		else
+			isPlayerRight = true;
 
 		if ((((P_y + 49) / 64 == y / 64) || ((P_y + 49) / 64 == (y / 64) - 1)) &&
 			(((P_x  + 49)/ 64 >= (x / 64) - 6) && ((P_x + 49) / 64 <= (x / 64) + 6))) {
@@ -360,8 +364,14 @@ public:
 		if (!projectileActive) {
 			ProjectileClock.restart();
 			projectileActive = true;
-			proj_x = x - 30; 
-			proj_y = y - 20;
+			if (isPlayerRight) {
+				proj_x = x + 30;
+				proj_y = y - 20;
+			}
+			else {
+				proj_x = x - 30;
+				proj_y = y - 20;
+			}
 		}
 		else {
 			int tileX = (proj_x - off_x) / 64;
@@ -378,7 +388,12 @@ public:
 			//std::cout << projectileActive << std::endl;
 			float dt = ProjectileClock.getElapsedTime().asSeconds();
 			//projectileActive = true;
-			proj_x -= prj_speed_x * dt;
+			if (!isPlayerRight) {
+				proj_x -= prj_speed_x * dt;
+			}
+			else {
+				proj_x += prj_speed_x * dt;
+			}
 			proj_y += prj_speed_y + 0.5 * gravity * dt * dt;
 			ProjectileSprite.setPosition(proj_x - off_x, proj_y);
 		}

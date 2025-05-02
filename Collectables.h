@@ -224,8 +224,9 @@ public:
             }
         }
 
-        int numDiamonds = 10; 
-        if (numDiamonds > validSpaces) {
+        int numDiamonds = 5; 
+        if (numDiamonds > validSpaces) 
+        {
             numDiamonds = validSpaces;
         }
 
@@ -246,7 +247,8 @@ public:
         }
     }
 
-    void onCollect(int i, int j) override {
+    void onCollect(int i, int j) override 
+    {
         std::cout << "Collected a diamond at grid [" << i << "][" << j << "]! +5 points!" << std::endl;
     }
 };

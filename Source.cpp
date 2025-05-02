@@ -19,7 +19,7 @@ void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, f
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush,  Sprite& BrownTower);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower , Sprite& spikess);
 
 int main()
 {
@@ -60,16 +60,19 @@ int main()
 	Texture BrownTower;
 	BrownTower.loadFromFile("Data/BrownTower.png");
 	Sprite BrownTowerSprite(BrownTower);
+	Texture spikeTex;
+	spikeTex.loadFromFile("Data/spike.png");
+	Sprite spikeSprite(spikeTex);
 
-	
+
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
 	MotoBug m(1800, 730, lvl);
-	
+
 	CrabMeat crab(5500, 400, lvl);
-	CrabMeat crab2(10550, 470, lvl);
-	
+	//CrabMeat crab2(10550, 470, lvl);
+
 
 	Coins.place();
 	diamonds.place();
@@ -81,17 +84,17 @@ int main()
 				window.close();
 		}
 		window.clear(Color::Black);
-		BackgroundSprite.setPosition(-sprite.getOffsetX()/7, 0);
+		BackgroundSprite.setPosition(-sprite.getOffsetX() / 7, 0);
 		window.draw(BackgroundSprite);
-		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite);
-		
+		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite);
+
 		Coins.draw(window, sprite.getOffsetX());
 		m.draw(window);
 		m.animateSprite();
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		crab.move(sprite.getX(), sprite.getY(),sprite.getOffsetX(), sprite.getOffsetY());
-		crab.animateSprite();
-		crab2.animateSprite();
+		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		crab.draw(window);
+		// keep movement and drawing close to each other for better user experience :)
 		int dmg = m.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg > 0) {
 			sprite.takeDamage(dmg);
@@ -103,11 +106,11 @@ int main()
 		sprite.draw_player(window);
 		Coins.animate();
 		diamonds.animate();
-		
+
 		int dmg1 = crab.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg1 > 0) sprite.takeDamage(dmg1);
 
-		
+
 
 		//sprite.takeDamage(m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX()));
 		sprite.update();
@@ -115,10 +118,8 @@ int main()
 
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());
-		crab.draw(window);
-		crab2.draw(window);
-		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		//crab2.draw(window);
+		//crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 
 		//window.draw()
 
@@ -132,7 +133,7 @@ int main()
 
 // functions
 
-void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, float& gravity,int& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, int& player_x, int& player_y, const int cell_size, int& Pheight, int& Pwidth)
+void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, float& gravity, int& terminal_Velocity, int& hit_box_factor_x, int& hit_box_factor_y, int& player_x, int& player_y, const int cell_size, int& Pheight, int& Pwidth)
 {
 	offset_y = player_y;
 
@@ -171,7 +172,7 @@ void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int p
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess)
 {
 	for (int i = 0; i < height; i += 1)
 	{
@@ -195,11 +196,18 @@ void display_level(RenderWindow& window, const int height, const int width, char
 					window.draw();
 				}*/
 			}
-			if (lvl[i][j] == 'T') 
+			if (lvl[i][j] == 'T')
 			{
 				BrownTowerSprite.setScale(4, 4);
 				BrownTowerSprite.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(BrownTowerSprite);
+			}
+			if (lvl[i][j] == 'k')
+			{
+
+				spikess.setScale(1.5, 1.5);
+				spikess.setPosition(j * cell_size - offset, i * cell_size - 10);
+				window.draw(spikess);
 			}
 		}
 	}

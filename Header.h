@@ -12,7 +12,7 @@ int cell_size = 64;
 
 class MySprite
 { // Renamed to avoid conflict with sf::Sprite
-    Texture SonicTex[6]; // Array of textures for different animations
+    Texture SonicTex[8]; // Array of textures for different animations
     Texture TailsTex, KnucklesTex; // Kept for potential future use
     int velocityY, velocityX, player_x, player_y, max_speed, acceleration;
     int offset_x, offset_y, terminal_Velocity;
@@ -34,6 +34,7 @@ class MySprite
     bool left; // Tracks direction
     // Sprites for different characters
     sf::Sprite SonicSprite, TailsSprite, KnucklesSprite;
+	bool OnEdge = false; // Tracks if the player is on an edge
 
 
 public:
@@ -58,6 +59,13 @@ public:
         if (!SonicTex[5].loadFromFile("Data/0upR.png")) {
             std::cout << "Failed to load 0upR.png!" << std::endl;
         }
+        if (!SonicTex[6].loadFromFile("Data/0edgeL.png")) {
+            std::cout << "Failed to load0edgeL .png!" << std::endl;
+        }
+        if (!SonicTex[7].loadFromFile("Data/0edgeR.png")) {
+            std::cout << "Failed to load 0edgeR.png!" << std::endl;
+        }
+
 
         // Initialize variables
         velocityY = 0;
@@ -84,6 +92,7 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
+        
 
 
         // Set up SonicSprite
@@ -98,12 +107,36 @@ public:
         return SonicSprite;
     }
 
+
+    bool isOnEdge(char** lvl)
+    {
+        if (!onGround) return false;
+
+     
+        int footLeftX = (offset_x + player_x + hit_box_factor_x) / cell_size;
+        int footRightX = (offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size;
+        int footY = (offset_y + hit_box_factor_y + Pheight + 1) / cell_size;
+
+        // guard against OOB
+        footY = std::min(std::max(footY, 0), 13);
+
+        bool groundLeft = lvl[footY][footLeftX] == 'w';
+        bool groundRight = lvl[footY][footRightX] == 'w';
+
+        // edge = exactly one side has ground
+        
+            OnEdge =    groundLeft ^ groundRight;
+            return OnEdge;
+    }
+
+
     bool movement(char** lvl) {
         borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
 
-        if (Keyboard::isKeyPressed(Keyboard::Left)) {
+        if (Keyboard::isKeyPressed(Keyboard::Left))
+        {
             // Collision checks go brrrrr
             bool leftCollision = false;
 
@@ -156,7 +189,8 @@ public:
                 }
             }
         }
-        else if (Keyboard::isKeyPressed(Keyboard::Right)) {
+        else if (Keyboard::isKeyPressed(Keyboard::Right))
+ {
             // Collision checks go brrrrr
             bool rightCollision = false;
 
@@ -240,6 +274,14 @@ public:
             if (std::abs(velocityX) < 0.1f) {
                 velocityX = 0;
             }
+            if (isOnEdge(lvl)) {
+                // choose left or right edge pose
+                currentIndex = left ? 6 : 7;            // 6 = edgeL strip, 7 = edgeR strip
+                SonicSprite.setTexture(SonicTex[currentIndex]);
+                AnimateSprite(true);                    // cycle through its frames
+                return true; 
+            }
+
             currentIndex = (currentIndex == 1) ? 0 : 2;
             if (left) {
                 SonicSprite.setTexture(SonicTex[0]);
@@ -337,6 +379,7 @@ public:
                 animationClock.restart();
             }
         }
+        
         else {
 
             currentFrame = 0;

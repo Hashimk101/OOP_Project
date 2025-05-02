@@ -123,7 +123,7 @@ public:
 			}
 
 			// Player runs into enemy while on ground (side collision)
-			else 
+			else
 			{
 				return 10;     // Player takes damage
 			}
@@ -186,15 +186,20 @@ private:
 	sf::Clock ProjectileClock;
 	float patrolSpeed = 1.5;
 	float spriteScale = 3;
-	int cell_size = 64; 
+	int cell_size = 64;
 	int frameWidth = 44; // Consistent frame width
 	bool movingForward = true; // Track animation direction
 	float originX;            // where the crab first spawned
 	float minX, maxX;
 	float range;
+	float proj_x, proj_y;
+	float prj_speed_y = -4.5;
+	float prj_speed_x = 3.2;
+	float gravity = 10;
+	bool projectileActive = false;
 
 public:
-	CrabMeat(int x, int y, char** lvl) : Enemies("Data/CrabMeat.png",44, 30)
+	CrabMeat(int x, int y, char** lvl) : Enemies("Data/CrabMeat.png", 44, 30)
 	{
 		hp = 4;
 		this->x = x;
@@ -209,18 +214,33 @@ public:
 		enemySprite.setPosition(x, y);
 		enemySprite.setScale(spriteScale, spriteScale);
 
-        frameRect = sf::IntRect(0,0,43,30);
-        enemySprite.setTextureRect(frameRect);
+		frameRect = sf::IntRect(0, 0, 43, 30);
+		enemySprite.setTextureRect(frameRect);
 		originX = x;
 		minX = originX - range;
 		maxX = originX + range;
-   
 
-    }
-	
+		ProjectileTexture.loadFromFile("Data/CrabMeatBall.png");
+		ProjectileSprite.setTexture(ProjectileTexture);
+		ProjectileSprite.setOrigin(ProjectileTexture.getSize().x / 2.0f, ProjectileTexture.getSize().y / 2.0f);
+		ProjectileSprite.setScale(2, 2);
+	}
 
-	void move(int /*P_x*/, int /*P_y*/, int off_x, int /*off_y*/) override {
+
+	void move(int P_x, int P_y, int off_x, int off_y) override {
+
+		//ProjectileSprite.setPosition(x - 10, y - 10);
+		if (proximityCheck(P_x + off_x, P_y)) {
+			//std::cout << "true" << std::endl;
+			throwProjectile(off_x);
+		}
+		else {
+			//std::cout << "false\n";
+		}
 		if (!isActive) return;
+		else {
+			animateSprite();
+		}
 
 		// step horizontally
 		x += direction * patrolSpeed;
@@ -249,7 +269,7 @@ public:
 	{
 		const int delay_ms = 100; // Delay in milliseconds for frame change
 		// e.g. for 10 frames:
-		int frameWidths[8] = { 43, 46, 45, 45, 45, 49, 49, 49};
+		int frameWidths[8] = { 43, 46, 45, 45, 45, 49, 49, 49 };
 		int frameOffset[8];
 
 		frameOffset[0] = 0;
@@ -262,7 +282,7 @@ public:
 		if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
 			return;
 
-		
+
 		currentFrame = (currentFrame + 1) % frameCount;
 		int w = frameWidths[currentFrame];
 		int l = frameOffset[currentFrame];
@@ -273,7 +293,7 @@ public:
 
 		// re-center origin on that new width
 		enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
-
+		//enemySprite.setPosition(x, y);
 
 		animationClock.restart();
 	}
@@ -281,10 +301,11 @@ public:
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x) override
 	{
 		if (!isActive) return 0;
+		//std::cout << P_x + off_x + 49 << " " << x << " " << P_y + 49 << " " << y << std::endl;
 
-		if (((P_x + off_x + cell_size) / cell_size == x / cell_size ||
-			(P_x + off_x + cell_size) / cell_size == (x + cell_size)/ cell_size)
-			&& ((P_y + cell_size) / cell_size == y / cell_size))
+		if (((P_x + off_x + 49) / cell_size == x / cell_size ||
+			(P_x + off_x + 49) / cell_size == (x + 49) / cell_size)
+			&& ((P_y + 51) / cell_size == y / cell_size))
 		{
 			/*std::cout << "Damage to player" << std::endl;*/
 			if (upVelocity > 0) { // checks if the player is falling and falling ONLY, not jumping
@@ -305,27 +326,77 @@ public:
 		if (hp <= 0) isActive = false;
 	}
 
-	void draw(sf::RenderWindow& window) override 
+	void draw(sf::RenderWindow& window) override
 	{
 		if (isActive) {
 			window.draw(enemySprite);
+		}
+		if (projectileActive) {
+			window.draw(ProjectileSprite);
 		}
 	}
 
 	bool proximityCheck(int P_x, int P_y) override {
 		proximity = false;
 		// Check if the player is within a certain distance
-		if (((P_y / 64 == y / 64) || (P_y / 64 == (y / 64) - 1)) &&
-			((P_x / 64 >= (x / 64) - 6) && (P_x / 64 <= (x / 64) + 6))) {
+		//std::cout << x << " " << P_x + off_x + 49 << std::endl;
+		if ((P_x + 49) < x)
+			isPlayerRight = false;
+		else
+			isPlayerRight = true;
+
+		if ((((P_y + 49) / 64 == y / 64) || ((P_y + 49) / 64 == (y / 64) - 1)) &&
+			(((P_x + 49) / 64 >= (x / 64) - 6) && ((P_x + 49) / 64 <= (x / 64) + 6))) {
 			proximity = true;
 		}
 
 		// Check for walls
-		if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
+		/*if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
 			proximity = false;
 		if (lvl[y / 64][(x / 64) - 1] == 'w' && !isPlayerRight)
-			proximity = false;
+			proximity = false;*/
 
 		return proximity;
 	}
+
+	void throwProjectile(int off_x)
+	{
+		if (!projectileActive) {
+			ProjectileClock.restart();
+			projectileActive = true;
+			if (isPlayerRight) {
+				proj_x = x + 30;
+				proj_y = y - 20;
+			}
+			else {
+				proj_x = x - 30;
+				proj_y = y - 20;
+			}
+		}
+		else {
+			int tileX = (proj_x - off_x) / 64;
+			int tileY = proj_y / 64;
+			//std::cout << int(proj_y / 64) << " " << int(proj_x / 64) <<" " << y / 64 <<  " " << x/64 <<std::endl;
+			//std::cout << << " " << x / 64 << std::endl;
+			if (lvl[int(proj_y / 64)][int(proj_x / 64)] == 'w') {
+				projectileActive = false;
+			}
+			//std::cout << tileX << std::endl;
+			if (tileX < 0 || tileX > 17 || tileY < 0 || tileY > 12) {
+				projectileActive = false;
+			}
+			//std::cout << projectileActive << std::endl;
+			float dt = ProjectileClock.getElapsedTime().asSeconds();
+			//projectileActive = true;
+			if (!isPlayerRight) {
+				proj_x -= prj_speed_x * dt;
+			}
+			else {
+				proj_x += prj_speed_x * dt;
+			}
+			proj_y += prj_speed_y + 0.5 * gravity * dt * dt;
+			ProjectileSprite.setPosition(proj_x - off_x, proj_y);
+		}
+	}
+
 };

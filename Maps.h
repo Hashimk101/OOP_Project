@@ -28,7 +28,23 @@ public:
         // Create the ground floor (width 200)
         for (int i = 0; i < 200; i++)
         {
+            if (i >= 165 && i<167) 
+            {
+                lvl[12][i] = 'w';
+                lvl[13][i] = 'w';
+                continue;
+            }
+            if (i >= 64 && i < 66)
+            {
+                lvl[12][i] = 'w';
+                lvl[13][i] = 'w';
+                continue;
+            }
+
+
+
             lvl[12][i] = 'w';
+            lvl[11][i] = 'B';
             lvl[13][i] = 'w';
         }
 
@@ -76,10 +92,19 @@ public:
 			lvl[4][i] = 'B';
         };
         //towers
-        lvl[9][26] = 'T';
-        lvl[9][47] = 'T';
-        lvl[9][106] = 'T';
-        lvl[9][195] = 'T';
+        lvl[8][26] = 'T';
+        //Wall below tower
+        lvl[11][27] = 'w';
+        lvl[11][47] = 'w';
+        lvl[11][107] = 'w';
+        lvl[11][196] = 'w';
+        lvl[8][46] = 'T';
+        lvl[8][106] = 'T';
+        lvl[8][195] = 'T';
+
+        //spikes
+        lvl[11][166] = 'k';
+        lvl[11][65] = 'k';
 
         for (int i = 148; i <= 150; i++) lvl[4][i] = 'w';
         for (int i = 155; i <= 160; i++) lvl[6][i] = 'w';

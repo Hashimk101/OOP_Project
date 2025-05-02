@@ -235,7 +235,7 @@ public:
 			throwProjectile(off_x);
 		}
 		else {
-			//std::cout << "false\n";
+			projectileActive = false;
 		}
 		if (!isActive) return;
 		else {
@@ -314,8 +314,11 @@ public:
 			}
 			else {
 				// Player collides with crab horizontally
-				return 1; // Damage to player
+				return 5; // Damage to player if it collides with the crab itself
 			}
+		}
+		if (projCollision(P_x, P_y, off_x, upVelocity)) {
+			return 10; // damage if it hits the meatball
 		}
 		return 0;
 	}
@@ -346,10 +349,16 @@ public:
 		else
 			isPlayerRight = true;
 
-		if ((((P_y + 49) / 64 == y / 64) || ((P_y + 49) / 64 == (y / 64) - 1)) &&
-			(((P_x + 49) / 64 >= (x / 64) - 6) && ((P_x + 49) / 64 <= (x / 64) + 6))) {
+		int tileY = (y / 64);
+		int playerTileY = (P_y + 49) / 64;
+
+		if ((playerTileY <= tileY && playerTileY >= tileY - 4) &&
+			((P_x + 49) / 64 >= (x / 64) - 7) &&
+			((P_x + 49) / 64 <= (x / 64) + 7)) {
 			proximity = true;
 		}
+
+
 
 		// Check for walls
 		/*if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
@@ -401,6 +410,28 @@ public:
 		}
 	}
 
+	bool projCollision(int P_x, int P_y, int off_x, int upVelocity) {
+		int playerX = P_x + off_x;
+		int playerY = P_y;
+		int playerSize = 40; //player is 40x40
+
+		// Projectile details
+		int projHalfWidth = 13;   // 26 / 2
+		int projHalfHeight = 14;  // 28 / 2
+
+		// Calculate top-left corner of projectile based on centered origin
+		int projLeft = proj_x - projHalfWidth;
+		int projTop = proj_y - projHalfHeight;
+
+		// Check for AABB overlap
+		if (playerX < projLeft + 26 && playerX + playerSize + 25 > projLeft &&
+			playerY < projTop + 28 && playerY + playerSize > projTop) {
+			//giveDamage(upVelocity, P_x, P_y, off_x);
+			return true;
+		}
+
+		return false;
+	}
 };
 class BatBrain : public Enemies
 {

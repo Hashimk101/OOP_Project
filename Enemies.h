@@ -194,7 +194,7 @@ private:
 	float range;
 	float proj_x, proj_y;
 	float prj_speed_y = -4.5;
-	float prj_speed_x = 3.6;
+	float prj_speed_x = 3.2;
 	float gravity = 8;
 	bool projectileActive = false;
 
@@ -229,7 +229,7 @@ public:
 
 	void move(int P_x, int P_y, int off_x, int off_y) override {
 
-		ProjectileSprite.setPosition(x - 10, y - 10);
+		//ProjectileSprite.setPosition(x - 10, y - 10);
 		if (proximityCheck(P_x + off_x, P_y)) {
 			//std::cout << "true" << std::endl;
 			throwProjectile(off_x);
@@ -301,10 +301,11 @@ public:
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x) override
 	{
 		if (!isActive) return 0;
+		//std::cout << P_x + off_x + 49 << " " << x << " " << P_y + 49 << " " << y << std::endl;
 
-		if (((P_x + 49) / cell_size == x / cell_size ||
-			(P_x + 49) / cell_size == (x + 49)/ cell_size)
-			&& ((P_y + 49) / cell_size == y / cell_size))
+		if (((P_x + off_x + 49) / cell_size == x / cell_size ||
+			(P_x + off_x + 49) / cell_size == (x + 49)/ cell_size)
+			&& ((P_y + 51) / cell_size == y / cell_size))
 		{
 			/*std::cout << "Damage to player" << std::endl;*/
 			if (upVelocity > 0) { // checks if the player is falling and falling ONLY, not jumping
@@ -359,15 +360,28 @@ public:
 		if (!projectileActive) {
 			ProjectileClock.restart();
 			projectileActive = true;
-			proj_x = x - 50; 
+			proj_x = x - 30; 
 			proj_y = y - 20;
 		}
-		std::cout << projectileActive << std::endl;
-		float dt = ProjectileClock.getElapsedTime().asSeconds();
-		projectileActive = true;
-		proj_x -= prj_speed_x * dt;
-		proj_y += prj_speed_y + 0.5 * gravity * dt*dt;
-		ProjectileSprite.setPosition(proj_x - off_x, proj_y);
+		else {
+			int tileX = (proj_x - off_x) / 64;
+			int tileY = proj_y / 64;
+			//std::cout << int(proj_y / 64) << " " << int(proj_x / 64) <<" " << y / 64 <<  " " << x/64 <<std::endl;
+			//std::cout << << " " << x / 64 << std::endl;
+			if (lvl[int(proj_y / 64)][int(proj_x / 64)] == 'w') {
+				projectileActive = false;
+			}
+			//std::cout << tileX << std::endl;
+			if (tileX < 0 || tileX > 17 || tileY < 0 || tileY > 12) {
+				projectileActive = false;
+			}
+			//std::cout << projectileActive << std::endl;
+			float dt = ProjectileClock.getElapsedTime().asSeconds();
+			//projectileActive = true;
+			proj_x -= prj_speed_x * dt;
+			proj_y += prj_speed_y + 0.5 * gravity * dt * dt;
+			ProjectileSprite.setPosition(proj_x - off_x, proj_y);
+		}
 	}
 
 };

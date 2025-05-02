@@ -19,7 +19,7 @@ void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, f
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower , Sprite& spikess);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes);
 
 int main()
 {
@@ -68,7 +68,7 @@ int main()
 	wallSprite1.setScale(0.64, 0.64);
 	RingCoin Coins(lvl);
 	Diamond diamonds(lvl);
-	MotoBug m(1800, 730, lvl);
+	MotoBug m(2600, 730, lvl);
 
 	CrabMeat crab(5500, 400, lvl);
 	//CrabMeat crab2(10550, 470, lvl);
@@ -104,6 +104,7 @@ int main()
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		sprite.draw_player(window);
+
 		Coins.animate();
 		diamonds.animate();
 

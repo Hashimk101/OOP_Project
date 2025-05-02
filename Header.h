@@ -34,7 +34,7 @@ class MySprite
     bool left; // Tracks direction
     // Sprites for different characters
     sf::Sprite SonicSprite, TailsSprite, KnucklesSprite;
-	bool OnEdge = false; // Tracks if the player is on an edge
+    bool OnEdge = false; // Tracks if the player is on an edge
 
 
 public:
@@ -92,7 +92,7 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
-        
+
 
 
         // Set up SonicSprite
@@ -112,7 +112,7 @@ public:
     {
         if (!onGround) return false;
 
-     
+
         int footLeftX = (offset_x + player_x + hit_box_factor_x) / cell_size;
         int footRightX = (offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size;
         int footY = (offset_y + hit_box_factor_y + Pheight + 1) / cell_size;
@@ -124,9 +124,9 @@ public:
         bool groundRight = lvl[footY][footRightX] == 'w';
 
         // edge = exactly one side has ground
-        
-            OnEdge =    groundLeft ^ groundRight;
-            return OnEdge;
+
+        OnEdge = groundLeft ^ groundRight;
+        return OnEdge;
     }
 
 
@@ -190,7 +190,7 @@ public:
             }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right))
- {
+        {
             // Collision checks go brrrrr
             bool rightCollision = false;
 
@@ -279,7 +279,7 @@ public:
                 currentIndex = left ? 6 : 7;            // 6 = edgeL strip, 7 = edgeR strip
                 SonicSprite.setTexture(SonicTex[currentIndex]);
                 AnimateSprite(true);                    // cycle through its frames
-                return true; 
+                return true;
             }
 
             currentIndex = (currentIndex == 1) ? 0 : 2;
@@ -312,7 +312,7 @@ public:
         }
         //std::cout << offset_x + player_x << " " << offset_y + player_y << " ";
         return isMoving; // Always return isMoving
-		
+
     }
 
     void player_gravity(char** lvl)
@@ -379,7 +379,7 @@ public:
                 animationClock.restart();
             }
         }
-        
+
         else {
 
             currentFrame = 0;
@@ -388,17 +388,17 @@ public:
             SonicSprite.setTextureRect(SonicRect);
         }
     }
-    void takeDamage(int dmg = 1) 
+    void takeDamage(int dmg = 1)
     {
         std::cout << hp << std::endl;
         if (isInvincible)
             return;                // ignore if still invincible
 
         hp -= dmg;                  // subtract health (or rings)
-                   
+
 
         if (hp <= 0) {
-            
+
             return;
         }
 
@@ -410,7 +410,7 @@ public:
         SonicSprite.setColor(sf::Color(255, 255, 255, 128));
     }
 
-    void update() 
+    void update()
     {
         // clear invincibility after duration
         if (isInvincible && invClock.getElapsedTime().asSeconds() >= invDuration)
@@ -422,7 +422,7 @@ public:
         // … your other update logic (movement, animation, etc.) …
     }
 
-    void borderCheck() 
+    void borderCheck()
     {
         if (player_y < 32) {
             player_y = 42;
@@ -452,11 +452,11 @@ public:
     int gethitY() const {
         return hit_box_factor_y;
     }
-	bool getonGround() const {
-		return onGround;
-	}
-	int getVelocityY() const {
-		return velocityY;
-	}
+    bool getonGround() const {
+        return onGround;
+    }
+    int getVelocityY() const {
+        return velocityY;
+    }
 };
 

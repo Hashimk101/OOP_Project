@@ -12,8 +12,8 @@ const int height = 14;
 const int width = 200;
 
 class Maps {
-	// only making one map rn so there is one main class over here, else multiple classes based on the levels
-	char** lvl;
+    // only making one map rn so there is one main class over here, else multiple classes based on the levels
+    char** lvl;
 public:
     Maps() {
         lvl = new char* [height];
@@ -28,7 +28,7 @@ public:
         // Create the ground floor (width 200)
         for (int i = 0; i < 200; i++)
         {
-            if (i >= 165 && i<167) 
+            if (i >= 165 && i < 167)
             {
                 lvl[12][i] = 'w';
                 lvl[13][i] = 'w';
@@ -57,7 +57,7 @@ public:
         lvl[7][4] = 'B';
         lvl[7][5] = 'B';
         lvl[7][6] = 'B';
-       
+
 
 
         lvl[7][10] = 'w';
@@ -89,7 +89,7 @@ public:
         for (int i = 140; i <= 143; i++)
         {
             lvl[5][i] = 'w';
-			lvl[4][i] = 'B';
+            lvl[4][i] = 'B';
         };
         //towers
         lvl[8][26] = 'T';
@@ -112,24 +112,24 @@ public:
         for (int i = 170; i <= 180; i++) lvl[9][i] = 'w';
         for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
         for (int i = 186; i <= 190; i++) lvl[6][i] = 'w';
-        for (int i = 189; i <= 191; i++) 
+        for (int i = 189; i <= 191; i++)
         {
             lvl[4][i] = 'w';
             lvl[3][i] = 'B';
         }
         for (int i = 191; i <= 195; i++) lvl[6][i] = 'w';
-      
+
         // Vertical pillars
         //Partially a staircase
         lvl[11][15] = 'w';
-        lvl[11][16] = 'w'; lvl[10][16] = 'w'; 
+        lvl[11][16] = 'w'; lvl[10][16] = 'w';
         lvl[10][17] = 'w'; lvl[9][17] = 'w';lvl[11][17] = 'w';
         lvl[8][18] = 'w'; lvl[9][18] = 'w'; lvl[10][18] = 'w';lvl[11][18] = 'w';
         lvl[10][45] = 'w'; lvl[9][45] = 'w'; lvl[11][45] = 'w';
         lvl[10][79] = 'w'; lvl[9][79] = 'w'; lvl[11][79] = 'w';
-		//Staircase for upper platforms
+        //Staircase for upper platforms
         lvl[11][78] = 'w'; lvl[10][78] = 'w';
-		lvl[11][77] = 'w';
+        lvl[11][77] = 'w';
         //Vertical
         for (int i = 80; i <= 89; i++) lvl[7][i] = 'w';
         lvl[10][45] = 'w'; lvl[9][45] = 'w';
@@ -137,7 +137,7 @@ public:
 
         // Ceiling platforms
         for (int i = 110; i <= 115; i++) lvl[8][i] = 'w';
-        for (int i = 90; i <= 105; i++) 
+        for (int i = 90; i <= 105; i++)
         {
             lvl[6][i] = 'w';
             lvl[5][i] = 'B';
@@ -148,16 +148,16 @@ public:
     {
         lvl = m.lvl;
     }
-	char** getMap() {
-		return lvl;
-	}
-	~Maps() {
-		for (int i = 0; i < height; i++) {
-			delete[] lvl[i];
-		}
-		delete[] lvl;
-	}
-	/*void setLevel(int a, int b) {
+    char** getMap() {
+        return lvl;
+    }
+    ~Maps() {
+        for (int i = 0; i < height; i++) {
+            delete[] lvl[i];
+        }
+        delete[] lvl;
+    }
+    /*void setLevel(int a, int b) {
 
-	}*/
+    }*/
 };

@@ -328,10 +328,11 @@ public:
 
 	void draw(sf::RenderWindow& window) override
 	{
-		if (isActive) {
+		if (isActive)
+		{
 			window.draw(enemySprite);
 		}
-		if (projectileActive) {
+		if (projectileActive && isActive) {
 			window.draw(ProjectileSprite);
 		}
 	}
@@ -361,7 +362,8 @@ public:
 
 	void throwProjectile(int off_x)
 	{
-		if (!projectileActive) {
+		if (!projectileActive) 
+		{
 			ProjectileClock.restart();
 			projectileActive = true;
 			if (isPlayerRight) {
@@ -399,4 +401,10 @@ public:
 		}
 	}
 
+};
+class BatBrain : public Enemies
+{
+public:
+
+private:
 };

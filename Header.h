@@ -157,6 +157,11 @@ public:
                     leftCollision = true;
                     break;
                 }
+                else if (lvl[worldY][worldX] == 'k') {
+                    leftCollision = true;
+                    takeDamage(5);
+                    break;
+                }
             }
 
             if (leftCollision) {
@@ -209,6 +214,11 @@ public:
                 // Check if there's a wall
                 if (lvl[worldY][worldX] == 'w') {
                     rightCollision = true;
+                    break;
+                }
+                else if (lvl[worldY][worldX] == 'k') {
+                    rightCollision = true;
+                    takeDamage(5);
                     break;
                 }
             }

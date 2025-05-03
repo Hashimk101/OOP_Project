@@ -106,6 +106,12 @@ int main()
 		std::cout << "DMG 2" << dmg2 << std::endl;
 
 		Buzz.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		int bombdmg = Buzz.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (bombdmg > 0) {
+			sprite.takeDamage(bombdmg);
+		}
+		Buzz.animateSprite();
+		Buzz.draw(window);
 
 		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		crab.draw(window);

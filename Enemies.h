@@ -67,7 +67,8 @@ public:
 		enemySprite.setOrigin(frameRect.width / 2.0f, frameRect.height / 2.0f);
 	}
 
-	void move(int P_x, int P_y, int off_x, int off_y) override {
+	void move(int P_x, int P_y, int off_x, int off_y) override
+	{
 		if (isActive && proximityCheck(P_x + off_x, P_y)) {
 			if (P_x + off_x + 40 < x) {
 				isPlayerRight = false;
@@ -81,7 +82,8 @@ public:
 		enemySprite.setPosition(x - off_x, y);
 
 	}
-	bool proximityCheck(int P_x, int P_y) override {
+	bool proximityCheck(int P_x, int P_y) override 
+	{
 		proximity = false;
 		// Check if the player is within a certain distance
 		if (((P_y / 64 == y / 64) || (P_y / 64 == (y / 64) - 1)) &&
@@ -238,7 +240,8 @@ public:
 			projectileActive = false;
 		}
 		if (!isActive) return;
-		else {
+		else
+		{
 			animateSprite();
 		}
 
@@ -259,10 +262,7 @@ public:
 		enemySprite.setPosition(x - off_x, y);
 
 		// flip sprite to face movement
-		enemySprite.setScale(
-			direction < 0 ? -spriteScale : +spriteScale,
-			spriteScale
-		);
+		enemySprite.setScale(direction < 0 ? -spriteScale : +spriteScale,spriteScale);
 	}
 
 	void animateSprite() override
@@ -435,7 +435,224 @@ public:
 };
 class BatBrain : public Enemies
 {
-public:
-
 private:
+	float spriteScale;
+	float originX;            // where the bat first spawned
+	float minX, maxX;
+	float range;
+
+public:
+	BatBrain(int x, int y, char** lvl) : Enemies("Data/BatBrain.png", 32, 33)
+	{
+		hp = 3;
+		this->x = x;
+		this->y = y;
+		this->lvl = lvl;
+		isActive = true;
+		proximity = false;
+		speed = 2.5;
+		isPlayerRight = false;
+		direction = 1;
+		frameCount = 9;
+		enemySprite.setPosition(x, y);
+		spriteScale = 2.5;
+		enemySprite.setScale(spriteScale, spriteScale);
+		frameRect = sf::IntRect(0, 0, 31, 33);
+		enemySprite.setTextureRect(frameRect);
+		range = 200;
+		maxX = x + range;
+		minX = x - range;
+
+	}
+	void animateSprite() override
+	{
+		const int delay_ms = 100; // Delay in milliseconds for frame change
+
+		int frameWidths[9] = { 31, 28, 38, 33, 34, 37, 36, 36, 40 };
+		int frameOffset[9];
+
+		frameOffset[0] = 0;
+		//Offset for each itrect
+		for (int i = 1;i < 9;i++)
+		{
+			frameOffset[i] = frameOffset[i - 1] + frameWidths[i - 1];
+		}
+
+		if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
+			return;
+
+
+		currentFrame = (currentFrame + 1) % frameCount;
+		int w = frameWidths[currentFrame];
+		int l = frameOffset[currentFrame];
+
+		// update the rect
+		frameRect = sf::IntRect(l, 0, w, frameRect.height);
+		enemySprite.setTextureRect(frameRect);
+
+		// re-center origin on that new width
+		enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
+		
+
+		animationClock.restart();
+	}
+
+
+	void move(int P_x, int P_y, int off_x, int off_y) 
+	{
+		if (!isActive) return;	
+		x += direction * speed;
+		// if we passed either bound, clamp & reverse
+		if (x < minX)
+		{
+			x = minX;
+			direction = +1;
+		}
+		else if (x > maxX)
+		{
+			x = maxX;
+			direction = -1;
+		}
+		// update sprite screen position
+		enemySprite.setPosition(x - off_x, y);
+
+		// flip sprite to face movement
+		enemySprite.setScale(direction < 0 ? +spriteScale : -spriteScale, spriteScale);
+
+	};
+	//virtual void update() = 0;
+	void draw(sf::RenderWindow& window)
+	{
+		if (isActive)
+		{
+			window.draw(enemySprite);
+		}
+
+	}
+	void takeDamage(int damage) {};
+
+	bool proximityCheck(int P_x, int P_y)
+	{
+		return false;
+	}
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x)
+	{
+		return 1;
+	}
+};
+
+
+
+
+
+
+
+
+class BuzzBomber : public Enemies
+{
+private:
+	float spriteScale;
+	float originX;            // where the bat first spawned
+	float minX, maxX;
+	float range;
+public:
+	BuzzBomber(int x, int y, char** lvl) : Enemies("Data/BuzzBomber.png", 47, 22)
+	{
+		hp = 5;
+		this->x = x;
+		this->y = y;
+		this->lvl = lvl;
+		isActive = true;
+		proximity = false;
+		speed = 3.4f;
+		isPlayerRight = false;
+		direction = 1;
+		frameCount = 4;
+		enemySprite.setPosition(x, y);
+		spriteScale = 2.5;
+		enemySprite.setScale(spriteScale, spriteScale);
+		frameRect = sf::IntRect(0, 0, 47, 22);
+		enemySprite.setTextureRect(frameRect);
+		range = 250;
+		maxX = x + range;
+		minX = x - range;
+
+	}
+	void animateSprite() override
+	{
+		const int delay_ms = 200; // Delay in milliseconds for frame change
+
+		int frameWidths[4] = { 47, 47, 48, 47 };
+		int frameOffset[4];
+
+		frameOffset[0] = 0;
+		//Offset for each itrect
+		for (int i = 1;i < 4;i++)
+		{
+			frameOffset[i] = frameOffset[i - 1] + frameWidths[i - 1];
+		}
+
+		if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
+			return;
+
+
+		currentFrame = (currentFrame + 1) % frameCount;
+		int w = frameWidths[currentFrame];
+		int l = frameOffset[currentFrame];
+
+		// update the rect
+		frameRect = sf::IntRect(l, 0, w, frameRect.height);
+		enemySprite.setTextureRect(frameRect);
+
+		// re-center origin on that new width
+		enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
+	
+
+		animationClock.restart();
+	}
+
+
+	
+
+	void move(int P_x, int P_y, int off_x, int off_y) override
+	{
+		if (!isActive) return;
+		x += direction * speed;
+		// if we passed either bound, clamp & reverse
+		if (x < minX)
+		{
+			x = minX;
+			direction = +1;
+		}
+		else if (x > maxX)
+		{
+			x = maxX;
+			direction = -1;
+		}
+		// update sprite screen position
+		enemySprite.setPosition(x - off_x, y);
+
+		// flip sprite to face movement
+		enemySprite.setScale(direction < 0 ? +spriteScale : -spriteScale, spriteScale);
+	}
+
+	//virtual void update() = 0;
+	void draw(sf::RenderWindow& window)
+	{
+		if (isActive)
+		{
+			window.draw(enemySprite);
+		}
+
+	}
+	void takeDamage(int damage) {};
+
+	bool proximityCheck(int P_x, int P_y)
+	{
+		return false;
+	}
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x)
+	{
+		return 1;
+	}
 };

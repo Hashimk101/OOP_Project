@@ -17,7 +17,8 @@ class Maps {
 public:
     Maps() {
         lvl = new char* [height];
-        for (int i = 0; i < height; i++) {
+        for (int i = 0; i < height; i++)
+        {
             lvl[i] = new char[width];
             // Initialize all cells to empty space
             for (int j = 0; j < width; j++) {

@@ -28,7 +28,7 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex;
-	BackgroundTex.loadFromFile("Data/bg1.png");
+	BackgroundTex.loadFromFile("Data/bg5.png");
 	sf::Sprite BackgroundSprite(BackgroundTex);
 	BackgroundSprite.setScale(1.8, 1.2);
 	//BackgroundSprite.setPosition(100, 100);
@@ -72,7 +72,8 @@ int main()
 
 	CrabMeat crab(5500, 400, lvl);
 	//CrabMeat crab2(10550, 470, lvl);
-
+	BatBrain Bat(7000, 300, lvl);
+	BuzzBomber Buzz(10000, 100, lvl);
 
 	Coins.place();
 	diamonds.place();
@@ -92,6 +93,9 @@ int main()
 		m.draw(window);
 		m.animateSprite();
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		Bat.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		Buzz.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+
 		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		crab.draw(window);
 		// keep movement and drawing close to each other for better user experience :)
@@ -122,6 +126,10 @@ int main()
 		//crab2.draw(window);
 		//crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 
+		Bat.animateSprite();				
+		Bat.draw(window);
+		Buzz.animateSprite();
+		Buzz.draw(window);
 		//window.draw()
 
 		window.display();

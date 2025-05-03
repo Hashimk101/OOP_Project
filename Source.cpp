@@ -95,6 +95,10 @@ int main()
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		Bat.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		Buzz.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		int bombdmg = Buzz.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (bombdmg > 0) {
+			sprite.takeDamage(bombdmg);
+		}
 
 		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		crab.draw(window);
@@ -103,6 +107,7 @@ int main()
 		if (dmg > 0) {
 			sprite.takeDamage(dmg);
 		}
+		
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());

@@ -84,7 +84,7 @@ public:
         // Staircase pattern
         lvl[5][120] = 'w'; lvl[5][121] = 'w';
         lvl[6][123] = 'w'; lvl[6][124] = 'w';
-        lvl[7][126] = 'w'; lvl[7][127] = 'w';
+        lvl[7][126] = 'w'; /*lvl[7][127] = 'w';*/
 
         // Floating islands
         for (int i = 140; i <= 143; i++)
@@ -144,6 +144,79 @@ public:
             lvl[5][i] = 'B';
         };
         for (int i = 130; i <= 135; i++) lvl[7][i] = 'w';
+        for (int i =126; i <= 128; i++)
+        {
+            if (i == 128) 
+            {
+				lvl[2][i] = 'b';
+                lvl[3][i] = 'b';
+                lvl[4][i] = 'b';
+                lvl[5][i] = 'b';
+                lvl[6][i] = 'b';
+                lvl[7][i] = 'b';
+                lvl[8][i] = 'b';
+                lvl[9][i] = 'b';
+                lvl[10][i] = 'b';
+                lvl[11][i] = 'b';
+            }
+            else if(i==127)
+            {
+
+                lvl[3][i] = 'b';
+                lvl[4][i] = 'b';
+                lvl[5][i] = 'b';
+                lvl[6][i] = 'b';
+                lvl[7][i] = 'b';
+                lvl[8][i] = 'b';
+                lvl[9][i] = 'b';
+                lvl[10][i] = 'b';
+                lvl[11][i] = 'b';
+            }
+            else if (i == 126)
+            {
+
+                lvl[4][i] = 'b';
+                lvl[5][i] = 'b';
+                lvl[6][i] = 'b';
+                lvl[7][i] = 'b';
+                lvl[8][i] = 'b';
+                lvl[9][i] = 'b';
+                lvl[10][i] = 'b';
+                lvl[11][i] = 'b';
+            }
+      
+        }
+
+
+		//breakable walls
+		for (int i = 148; i < 150; i++)
+		{
+
+                if (i == 148)
+                {
+                    lvl[11][i] = 'b';
+                    lvl[10][i] = 'b';
+                    lvl[9][i] = 'b';
+                    lvl[8][i] = 'b';
+                    lvl[7][i] = 'b';
+
+                }     
+                else 
+                {
+                    lvl[11][i] = 'b';
+                    lvl[10][i] = 'b';
+                    lvl[9][i] = 'b';
+                    lvl[8][i] = 'b';
+                    lvl[7][i] = 'b';
+                    lvl[6][i] = 'b';
+                    lvl[5][i] = 'b';
+
+
+                }
+
+            
+		
+		}
     }
     Maps(Maps& m)
     {

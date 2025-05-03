@@ -12,8 +12,9 @@ int cell_size = 64;
 
 class MySprite
 { // Renamed to avoid conflict with sf::Sprite
-    Texture SonicTex[8]; // Array of textures for different animations
-    Texture TailsTex, KnucklesTex; // Kept for potential future use
+protected:
+    Texture SpriteTex[8]; // Array of textures for different animations
+   
     int velocityY, velocityX, player_x, player_y, max_speed, acceleration;
     int offset_x, offset_y, terminal_Velocity;
     float scale_x, scale_y;
@@ -27,42 +28,115 @@ class MySprite
     float window_x, window_y;
     bool onGround;
     float gravity, friction;
-    IntRect SonicRect; // For texture rectangle animation
+    IntRect SpriteRect; // For texture rectangle animation
     int currentIndex; // Tracks which texture is in use
     int currentFrame; // Tracks animation frame
     sf::Clock animationClock; // For animation timing
     bool left; // Tracks direction
     // Sprites for different characters
-    sf::Sprite SonicSprite, TailsSprite, KnucklesSprite;
+	sf::Sprite ESprite;
     bool OnEdge = false; // Tracks if the player is on an edge
 
 
 public:
     // Constructor to initialize the sprite with the texture
-    MySprite() : SonicRect(0, 0, 40, 40), currentIndex(0), currentFrame(0), left(false) {
+    MySprite() 
+    {
+
+    }
+
+    // Function to get the sprite (for rendering, etc.)
+    sf::Sprite& getSprite() {
+        return ESprite;
+    }
+
+
+    virtual bool isOnEdge(char** lvl) = 0;
+    virtual  bool movement(char** lvl) = 0;
+
+    virtual void player_gravity(char** lvl) = 0;
+
+
+    //CALCULATE THE NUMBER OF FRAMES IN THE TEXTURE
+   virtual  int GetFrameNum(Texture& Txt) = 0;
+   virtual  void AnimateSprite(bool isMoving) = 0;
+   virtual    void takeDamage(int dmg = 1) = 0;
+
+
+  virtual   void update()
+    {
+        // clear invincibility after duration
+        if (isInvincible && invClock.getElapsedTime().asSeconds() >= invDuration)
+        {
+            isInvincible = false;
+            ESprite.setColor(sf::Color(255, 255, 255, 255));
+        }
+
+        // … your other update logic (movement, animation, etc.) …
+    }
+
+  virtual  void borderCheck() = 0;
+
+    int getX() const {
+        return player_x;
+    }
+    int getY() const {
+        return player_y;
+    }
+    void draw_player(RenderWindow& window) {
+
+        ESprite.setPosition(player_x, player_y);
+        window.draw(ESprite);
+    }
+    int getOffsetX() const {
+        return offset_x;
+    }
+    int getOffsetY() const {
+        return offset_y;
+    }
+    int gethitX() const {
+        return hit_box_factor_x;
+    }
+    int gethitY() const {
+        return hit_box_factor_y;
+    }
+    bool getonGround() const {
+        return onGround;
+    }
+    int getVelocityY() const {
+        return velocityY;
+    }
+};
+class Sonic : public MySprite
+{
+private:
+
+public:
+	Sonic() : MySprite()
+	{
         // Load textures into the array
-        if (!SonicTex[0].loadFromFile("Data/0left_still.png")) {
+        if (!SpriteTex[0].loadFromFile("Data/0left_still.png")) {
             std::cout << "Failed to load 0left_still.png!" << std::endl;
         }
-        if (!SonicTex[1].loadFromFile("Data/0jog_left.png")) {
+        if (!SpriteTex[1].loadFromFile("Data/0jog_left.png")) {
             std::cout << "Failed to load 0jog_left.png!" << std::endl;
         }
-        if (!SonicTex[2].loadFromFile("Data/0right_still.png")) {
+        if (!SpriteTex[2].loadFromFile("Data/0right_still.png")) {
             std::cout << "Failed to load 0right_still.png!" << std::endl;
         }
-        if (!SonicTex[3].loadFromFile("Data/0jog_right.png")) {
+        if (!SpriteTex[3].loadFromFile("Data/0jog_right.png")) {
             std::cout << "Failed to load 0jog_right.png!" << std::endl;
         }
-        if (!SonicTex[4].loadFromFile("Data/0upL.png")) {
+        if (!SpriteTex[4].loadFromFile("Data/0upL.png")) {
             std::cout << "Failed to load 0upL.png!" << std::endl;
         }
-        if (!SonicTex[5].loadFromFile("Data/0upR.png")) {
+        if (!SpriteTex[5].loadFromFile("Data/0upR.png")) {
             std::cout << "Failed to load 0upR.png!" << std::endl;
         }
-        if (!SonicTex[6].loadFromFile("Data/0edgeL.png")) {
+        if (!SpriteTex[6].loadFromFile("Data/0edgeL.png")) {
             std::cout << "Failed to load0edgeL .png!" << std::endl;
         }
-        if (!SonicTex[7].loadFromFile("Data/0edgeR.png")) {
+        if (!SpriteTex[7].loadFromFile("Data/0edgeR.png")) {
             std::cout << "Failed to load 0edgeR.png!" << std::endl;
         }
 
@@ -93,20 +167,17 @@ public:
         offset_x = 0;
         offset_y = 0;
 
+        // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
+        SpriteRect = IntRect(0, 0, 40, 40);
+        ESprite.setTextureRect(SpriteRect);
 
 
         // Set up SonicSprite
-        SonicSprite.setTexture(SonicTex[0]);
-        SonicSprite.setTextureRect(SonicRect);
-        SonicSprite.setPosition(player_x, player_y);
-        SonicSprite.setScale(scale_x, scale_y);
-    }
-
-    // Function to get the sprite (for rendering, etc.)
-    sf::Sprite& getSprite() {
-        return SonicSprite;
-    }
-
+        ESprite.setTexture(SpriteTex[0]);
+        ESprite.setTextureRect(SpriteRect);
+        ESprite.setPosition(player_x, player_y);
+        ESprite.setScale(scale_x, scale_y);
+	}
 
     bool isOnEdge(char** lvl)
     {
@@ -128,7 +199,6 @@ public:
         OnEdge = groundLeft ^ groundRight;
         return OnEdge;
     }
-
 
     bool movement(char** lvl) {
         borderCheck();
@@ -157,6 +227,11 @@ public:
                     leftCollision = true;
                     break;
                 }
+                else if (lvl[worldY][worldX] == 'k') {
+                    leftCollision = true;
+                    takeDamage(5);
+                    break;
+                }
             }
 
             if (leftCollision) {
@@ -169,7 +244,7 @@ public:
                 if (velocityX < -max_speed) velocityX = -max_speed;
 
                 // Animation
-                SonicSprite.setTexture(SonicTex[1]);
+                ESprite.setTexture(SpriteTex[1]);
                 currentIndex = 1;
                 isMoving = true;
                 left = true;
@@ -211,6 +286,11 @@ public:
                     rightCollision = true;
                     break;
                 }
+                else if (lvl[worldY][worldX] == 'k') {
+                    rightCollision = true;
+                    takeDamage(5);
+                    break;
+                }
             }
 
             if (rightCollision) {
@@ -225,11 +305,11 @@ public:
                 // Animation be like ......
                 if (onGround) {
                     currentIndex = 3;
-                    SonicSprite.setTexture(SonicTex[3]);
+                    ESprite.setTexture(SpriteTex[3]);
                 }
                 else {
                     currentIndex = 5;
-                    SonicSprite.setTexture(SonicTex[5]);
+                    ESprite.setTexture(SpriteTex[5]);
                 }
                 isMoving = true;
                 left = false;
@@ -277,35 +357,35 @@ public:
             if (isOnEdge(lvl)) {
                 // choose left or right edge pose
                 currentIndex = left ? 6 : 7;            // 6 = edgeL strip, 7 = edgeR strip
-                SonicSprite.setTexture(SonicTex[currentIndex]);
+                ESprite.setTexture(SpriteTex[currentIndex]);
                 AnimateSprite(true);                    // cycle through its frames
                 return true;
             }
 
             currentIndex = (currentIndex == 1) ? 0 : 2;
             if (left) {
-                SonicSprite.setTexture(SonicTex[0]);
+                ESprite.setTexture(SpriteTex[0]);
             }
             else {
-                SonicSprite.setTexture(SonicTex[2]);
+                ESprite.setTexture(SpriteTex[2]);
             }
             isMoving = false;
             AnimateSprite(isMoving); // Moved here to ensure animation updates when not moving
         }
 
         if (onGround) {
-            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+            if ((Keyboard::isKeyPressed(Keyboard::Up)) || (Keyboard::isKeyPressed(Keyboard::Space))) {
                 velocityY = -21;
             }
         }
         else if (!onGround) {
             if ((currentIndex == 0 || currentIndex == 1)) {
                 currentIndex = 4;
-                SonicSprite.setTexture(SonicTex[4]);
+                ESprite.setTexture(SpriteTex[4]);
             }
             else if ((currentIndex == 2 || currentIndex == 3)) {
                 currentIndex = 5;
-                SonicSprite.setTexture(SonicTex[5]);
+                ESprite.setTexture(SpriteTex[5]);
             }
             isMoving = true;
 
@@ -314,7 +394,6 @@ public:
         return isMoving; // Always return isMoving
 
     }
-
     void player_gravity(char** lvl)
     {
         // Store previous position
@@ -354,13 +433,12 @@ public:
             //std::cout << "Not on ground: " << player_y << std::endl;
             // Apply gravity if in air
             velocityY += gravity;
-            if (velocityY > terminal_Velocity) {
+            if (velocityY > terminal_Velocity)
+            {
                 velocityY = terminal_Velocity;
             }
         }
     }
-
-
     //CALCULATE THE NUMBER OF FRAMES IN THE TEXTURE
     int GetFrameNum(Texture& Txt)
     {
@@ -373,9 +451,9 @@ public:
     {
         if (isMoving) {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
-                currentFrame = (currentFrame + 1) % GetFrameNum(SonicTex[currentIndex]);
-                SonicRect.left = currentFrame * 40;
-                SonicSprite.setTextureRect(SonicRect);
+                currentFrame = (currentFrame + 1) % GetFrameNum(SpriteTex[currentIndex]);
+                SpriteRect.left = currentFrame * 40;
+                ESprite.setTextureRect(SpriteRect);
                 animationClock.restart();
             }
         }
@@ -383,11 +461,12 @@ public:
         else {
 
             currentFrame = 0;
-            SonicRect.left = 0;
+            SpriteRect.left = 0;
 
-            SonicSprite.setTextureRect(SonicRect);
+            ESprite.setTextureRect(SpriteRect);
         }
     }
+
     void takeDamage(int dmg = 1)
     {
         std::cout << hp << std::endl;
@@ -395,31 +474,17 @@ public:
             return;                // ignore if still invincible
 
         hp -= dmg;                  // subtract health (or rings)
-
+        // enter invincibility state
+        isInvincible = true;
+        invClock.restart();
+        ESprite.setColor(sf::Color(255, 255, 255, 128));
 
         if (hp <= 0) {
 
             return;
         }
 
-        // enter invincibility state
-        isInvincible = true;
-        invClock.restart();
 
-        // optional: tint sprite to show invulnerability
-        SonicSprite.setColor(sf::Color(255, 255, 255, 128));
-    }
-
-    void update()
-    {
-        // clear invincibility after duration
-        if (isInvincible && invClock.getElapsedTime().asSeconds() >= invDuration)
-        {
-            isInvincible = false;
-            SonicSprite.setColor(sf::Color(255, 255, 255, 255));
-        }
-
-        // … your other update logic (movement, animation, etc.) …
     }
 
     void borderCheck()
@@ -428,35 +493,9 @@ public:
             player_y = 42;
         }
     }
-
-    int getX() const {
-        return player_x;
-    }
-    int getY() const {
-        return player_y;
-    }
-    void draw_player(RenderWindow& window) {
-
-        SonicSprite.setPosition(player_x, player_y);
-        window.draw(SonicSprite);
-    }
-    int getOffsetX() const {
-        return offset_x;
-    }
-    int getOffsetY() const {
-        return offset_y;
-    }
-    int gethitX() const {
-        return hit_box_factor_x;
-    }
-    int gethitY() const {
-        return hit_box_factor_y;
-    }
-    bool getonGround() const {
-        return onGround;
-    }
-    int getVelocityY() const {
-        return velocityY;
-    }
 };
+
+
+
+
 

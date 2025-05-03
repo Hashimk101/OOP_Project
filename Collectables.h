@@ -169,7 +169,7 @@ public:
             }
         }
 
-        int numCoins = 30;
+        int numCoins = 50;
         if (numCoins > validSpaces) {
             numCoins = validSpaces; 
         }
@@ -197,14 +197,15 @@ public:
 };
 
 // Child class for diamonds
-class Diamond : public Collectable {
-public:
-    Diamond(char** lvl)
-        : Collectable(lvl, 48, 48, 1.5, "Data/diamonds.png", "Data/Ring.wav", 'd') {
-    }
+class ExtraLife : public Collectable 
+{
+public: ExtraLife(char** lvl): Collectable(lvl, 90, 94, 0.5, "Data/GreenPowerup.png", "Data/SpecialRing.wav", 'L')
+{
+ }
 
-    void place() override {
-        srand(static_cast<unsigned int>(time(0))); // Random seed
+    void place() override
+    {
+   srand(static_cast<unsigned int>(time(0))); // Random seed
 
         // Use different seed offset for diamonds to prevent same placement as coins
         for (int i = 0; i < 10; i++) 
@@ -224,8 +225,67 @@ public:
             }
         }
 
-        int numDiamonds = 5; 
-        if (numDiamonds > validSpaces) 
+        int ExtraLifeNume = 5;
+        if (ExtraLifeNume > validSpaces)
+        {
+            ExtraLifeNume = validSpaces;
+        }
+
+        int ExtraLifePlaced = 0;
+
+        // Randomly place diamonds - try to place in harder-to-reach areas
+        while (ExtraLifePlaced < ExtraLifeNume) {
+            int j = rand() % width;
+            int i = rand() % (height - 3) + 3; // Start from row 3
+
+            // Make diamonds appear higher up or in more challenging locations
+            if (lvl[i][j] == 's' && i <7)
+            { // Higher elevation
+                if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
+                    lvl[i][j] = 'L';
+                    ExtraLifePlaced++;
+                }
+            }
+        }
+    }
+
+    void onCollect(int i, int j) override 
+    {
+        std::cout << "Collected an Entra Life at grid [" << i << "][" << j << "]! +5 points!" << std::endl;
+    }
+};
+// Child class for special Boost
+class SpecialBoost : public Collectable
+{
+public:
+    SpecialBoost(char** lvl) : Collectable(lvl, 48, 48, 1.5, "Data/diamonds.png", "Data/Ring.wav", 'd')
+    {
+
+    }
+
+    void place() override {
+        srand(static_cast<unsigned int>(time(0))); // Random seed
+
+        // Use different seed offset for diamonds to prevent same placement as coins
+        for (int i = 0; i < 10; i++)
+        {
+            rand();
+        }
+
+        int validSpaces = 0;
+        for (int i = 3; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (lvl[i][j] == 's') {
+                    // For diamonds, we'll use different placement criteria
+                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
+                        validSpaces++;
+                    }
+                }
+            }
+        }
+
+        int numDiamonds = 5;
+        if (numDiamonds > validSpaces)
         {
             numDiamonds = validSpaces;
         }
@@ -238,17 +298,12 @@ public:
             int i = rand() % (height - 3) + 3; // Start from row 3
 
             // Make diamonds appear higher up or in more challenging locations
-            if (lvl[i][j] == 's' && i > 5) { // Higher elevation
+            if (lvl[i][j] == 's' && i < 7) { // Higher elevation
                 if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
                     lvl[i][j] = 'd';
                     diamondsPlaced++;
                 }
             }
         }
-    }
-
-    void onCollect(int i, int j) override 
-    {
-        std::cout << "Collected a diamond at grid [" << i << "][" << j << "]! +5 points!" << std::endl;
     }
 };

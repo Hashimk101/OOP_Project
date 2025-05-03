@@ -439,7 +439,7 @@ class BatBrain : public Enemies
 {
 private:
 	float spriteScale;
-           // where the bat first spawned
+	// where the bat first spawned
 	float minX, maxX;
 	float range;
 	bool isReturning;
@@ -448,7 +448,7 @@ public:
 	BatBrain(int x, int y, char** lvl) : Enemies("Data/BatBrain.png", 32, 33)
 	{
 		originX = x;
-		originY= y;
+		originY = y;
 
 		hp = 3;
 		this->x = x;
@@ -586,13 +586,13 @@ public:
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x)
 	{
 
-		if (checkCollision(P_x+off_x, P_y))
+		if (checkCollision(P_x + off_x, P_y))
 		{
 
 			if (upVelocity > 0) // checks if the player is falling and falling ONLY, not jumping
 			{
 
-				takeDamage(hp);    // take damage from enemy and die on first hit
+				takeDamage(1);    // take damage from enemy and die on first hit
 				return 0;
 			}
 
@@ -761,7 +761,7 @@ public:
 		{
 			window.draw(enemySprite);
 			if (isProjActive) {
-				
+
 				window.draw(projSprite);
 			}
 		}

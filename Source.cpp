@@ -76,7 +76,7 @@ int main()
 
 	CrabMeat crab(5500, 400, lvl);
 	//CrabMeat crab2(10550, 470, lvl);
-	BatBrain Bat(1000, 300, lvl);
+	BatBrain Bat(400, 300, lvl);
 	BuzzBomber Buzz(10000, 100, lvl);
 
 	Coins.place();
@@ -96,31 +96,29 @@ int main()
 
 		m.draw(window);
 		m.animateSprite();
+		Bat.animateSprite();
+		Bat.draw(window);
+
 		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-	
 		Bat.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		int dmg2 = Bat.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg2 > 0) sprite.takeDamage(dmg2);
 		std::cout << "DMG 2" << dmg2 << std::endl;
 
 		Buzz.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		int bombdmg = Buzz.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
-		if (bombdmg > 0) {
-			sprite.takeDamage(bombdmg);
-		}
-		Bat.animateSprite();
-		Bat.draw(window);
-		Buzz.animateSprite();
-		Buzz.draw(window);
 
-	
 		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		crab.draw(window);
 		// keep movement and drawing close to each other for better user experience :)
 		int dmg = m.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
-		if (dmg > 0) {
+		if (dmg > 0)
+		{
 			sprite.takeDamage(dmg);
 		}
+		Bat.animateSprite();
+		Bat.draw(window);
+
+		
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 

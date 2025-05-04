@@ -75,7 +75,7 @@ public:
         return OnEdge;
     }
 
-    bool movement(char** lvl) {
+    virtual bool movement(char** lvl) {
         borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
@@ -549,7 +549,7 @@ public:
 class Knuckles : public MySprite
 {
 private:
-
+    bool isGliding;
 public:
     Knuckles() : MySprite()
     {
@@ -650,6 +650,7 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
+        isGliding = false;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -666,6 +667,21 @@ public:
 
     }
 
+    bool movement(char** lvl) override {
+        bool isMoving = MySprite::movement(lvl);
+        if (!isGliding && Keyboard::isKeyPressed(Keyboard::F)) {
+            velocityX = velocityX > 0 ? +4 : -4;
+            velocityY = -3;
+
+            isGliding = true;
+        }
+
+        if (onGround) {
+            isGliding = false;
+        }
+
+        return isMoving;
+    }
 
 };
 

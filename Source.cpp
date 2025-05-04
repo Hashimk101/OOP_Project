@@ -49,6 +49,7 @@ int main()
 	Sonic sprite;
 	Maps map;
 	char** lvl = map.getMap();
+	Knuckles K;
 
 	Texture wallTex1;
 	wallTex1.loadFromFile("Data/bl.jpg");
@@ -124,14 +125,16 @@ int main()
 		Bat.animateSprite();
 		Bat.draw(window);
 
-		
-		sprite.movement(lvl);
-		sprite.player_gravity(lvl);
+		K.movement(lvl);
+		//sprite.movement(lvl);
+		//sprite.player_gravity(lvl);
+		K.player_gravity(lvl);
 
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		special.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
-		sprite.draw_player(window);
+		//sprite.draw_player(window);
+		K.draw_player(window);
 
 		Coins.animate();
 		diamonds.animate();

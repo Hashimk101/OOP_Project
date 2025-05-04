@@ -676,9 +676,9 @@ public:
 		range = 250;
 		maxX = x + range;
 		minX = x - range;
-		projText.loadFromFile("Data/SHOT.png");
+		projText.loadFromFile("Data/egg.png");
 		projSprite.setTexture(projText);
-		projSprite.setScale(3, 3);
+		projSprite.setScale(0.03, 0.03);
 		isInvincible = false;
 
 	}

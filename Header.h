@@ -13,7 +13,7 @@ int cell_size = 64;
 class MySprite
 { // Renamed to avoid conflict with sf::Sprite
 protected:
-    Texture SpriteTex[8]; // Array of textures for different animations
+    Texture* SpriteTex; // Array of textures for different animations
    
     int velocityY, velocityX, player_x, player_y, max_speed, acceleration;
     int offset_x, offset_y, terminal_Velocity;
@@ -114,6 +114,7 @@ private:
 public:
 	Sonic() : MySprite()
 	{
+        SpriteTex = new Texture[9];
         // Load textures into the array
         if (!SpriteTex[0].loadFromFile("Data/0left_still.png")) {
             std::cout << "Failed to load 0left_still.png!" << std::endl;
@@ -139,6 +140,10 @@ public:
         if (!SpriteTex[7].loadFromFile("Data/0edgeR.png")) {
             std::cout << "Failed to load 0edgeR.png!" << std::endl;
         }
+        if (!SpriteTex[8].loadFromFile("Data/Sonic_Injured.png")) {
+            std::cout << "Failed to load Sonic_Injured.png!" << std::endl;
+        }
+
 
 
         // Initialize variables
@@ -390,7 +395,14 @@ public:
             isMoving = true;
 
         }
-        //std::cout << offset_x + player_x << " " << offset_y + player_y << " ";
+        if (isInvincible) 
+        {
+          
+            currentIndex = 8;
+            ESprite.setTexture(SpriteTex[8]);
+            AnimateSprite(isInvincible);
+        }
+
         return isMoving; // Always return isMoving
 
     }
@@ -449,7 +461,8 @@ public:
 
     void AnimateSprite(bool isMoving)
     {
-        if (isMoving) {
+        if (isMoving) 
+        {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame = (currentFrame + 1) % GetFrameNum(SpriteTex[currentIndex]);
                 SpriteRect.left = currentFrame * 40;
@@ -471,13 +484,18 @@ public:
     {
         std::cout << hp << std::endl;
         if (isInvincible)
+        {
+
             return;                // ignore if still invincible
 
-        hp -= dmg;                  // subtract health (or rings)
-        // enter invincibility state
+        }
+          
+        hp -= dmg;                
         isInvincible = true;
+      
         invClock.restart();
         ESprite.setColor(sf::Color(255, 255, 255, 128));
+        
 
         if (hp <= 0) {
 
@@ -493,6 +511,112 @@ public:
             player_y = 42;
         }
     }
+};
+class Knuckles : public MySprite
+{
+private:
+
+public:
+    Knuckles() : MySprite() 
+    {
+
+        SpriteTex = new Texture[11];
+        //IDLE
+        if (!SpriteTex[0].loadFromFile("Data/Knuckles_Idle_L.png")) {
+            std::cout << "Failed to load Knuckles_Idle_L.png!" << std::endl;
+        }
+       // IDLE
+        if (!SpriteTex[1].loadFromFile("Data/Knuckles_Jog_Walk _L.png")) {
+            std::cout << "Failed to load Knuckles_Jog_Walk _L.png!" << std::endl;
+        }
+        //RIGHT RUN
+        if (!SpriteTex[2].loadFromFile("Data/Knuckles_Idle_ R.png")) {
+            std::cout << "Failed to load Knuckles_Idle_R.png!" << std::endl;
+        }
+        //LEFT RUN
+        if (!SpriteTex[3].loadFromFile("Data/Knuckles_Jog_Walk_R.png"))
+        {
+            std::cout << "Failed to load Knuckles_Jog_Walk _R.png!" << std::endl;
+        }
+        //ROLL LEFT
+         if (!SpriteTex[4].loadFromFile("Data/Knuckles_0up_L.png"))
+         {
+                std::cout << "Failed to load 0upL.png!" << std::endl;
+         }
+         //ROLL RIGHT
+        if (!SpriteTex[5].loadFromFile("Data/Knuckles_0up_R.png"))
+        {
+                std::cout << "Failed to load 0upR.png!" << std::endl;
+        }
+        //PUNCH LEFT
+        if (!SpriteTex[6].loadFromFile("Data/Knuckles_Punch_L.png"))
+        {
+            std::cout << "Failed to load Knuckles_Punch_L.png!" << std::endl;
+        }
+        //PUNCH RIGHT
+        if (!SpriteTex[7].loadFromFile("Data/Knuckles_Punch_R.png"))
+        {
+            std::cout << "Failed to load Knuckles_Punch_R.png!" << std::endl;
+        }
+        //CLIMB UP
+        if (!SpriteTex[8].loadFromFile("Data/Knuckles_climb_Up.png"))
+        {
+            std::cout << "Failed to load Knuckles_climb_Up.png!" << std::endl;
+        }
+        //CLIMB DOWN
+        if (!SpriteTex[9].loadFromFile("Data/Knuckles_climb_R.png"))
+        {
+            std::cout << "Failed to load Knuckles_climb_R.png!" << std::endl;
+        }
+        //GLIDE IN MID AIR
+        if (!SpriteTex[10].loadFromFile("Data/Knuckles_Glide.png"))
+        {
+            std::cout << "Failed to load Knuckles_Glide.png!" << std::endl;
+        }
+
+        // Initialize variables
+        velocityY = 0;
+        velocityX = 0;
+        player_x = 100;
+        player_y = 100;
+        window_x = 0; // Note: There was a duplicate assignment in the original
+        window_y = 0; // Corrected to window_y
+        acceleration = 1.1;
+        max_speed = 12;
+        hp = 100;
+        isInvincible = false;
+        onGround = false;
+        gravity = 1;
+        friction = 0.85;
+        terminal_Velocity = 20;
+        scale_x = 2.5;
+        scale_y = 2.5;
+        raw_img_x = 24;
+        raw_img_y = 35;
+        Pheight = raw_img_y * scale_y;
+        Pwidth = raw_img_x * scale_x;
+        hit_box_factor_x = 8 * scale_x;
+        hit_box_factor_y = 5 * scale_y;
+        offset_x = 0;
+        offset_y = 0;
+
+        // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
+        SpriteRect = IntRect(0, 0, 40, 40);
+        ESprite.setTextureRect(SpriteRect);
+
+
+        // Set up SonicSprite
+        ESprite.setTexture(SpriteTex[0]);
+        ESprite.setTextureRect(SpriteRect);
+        ESprite.setPosition(player_x, player_y);
+        ESprite.setScale(scale_x, scale_y);
+
+
+
+    }
+
+
+
 };
 
 

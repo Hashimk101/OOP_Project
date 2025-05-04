@@ -380,7 +380,7 @@ public:
 
         if (onGround) {
             if ((Keyboard::isKeyPressed(Keyboard::Up)) || (Keyboard::isKeyPressed(Keyboard::Space))) {
-                velocityY = -21;
+                velocityY = -20;
             }
         }
         else if (!onGround) {
@@ -395,9 +395,12 @@ public:
             isMoving = true;
 
         }
+
+        // animation for the case if it receives damage
         if (isInvincible) 
         {
-          
+            velocityY = -2;
+            velocityX = -3;
             currentIndex = 8;
             ESprite.setTexture(SpriteTex[8]);
             AnimateSprite(isInvincible);
@@ -494,7 +497,7 @@ public:
         isInvincible = true;
       
         invClock.restart();
-        ESprite.setColor(sf::Color(255, 255, 255, 128));
+        ESprite.setColor(sf::Color(255, 255, 255, 200));
         
 
         if (hp <= 0) {

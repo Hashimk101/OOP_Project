@@ -360,11 +360,11 @@ public:
 
 
 
-		// Check for walls
-		/*if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
+		 //Check for walls
+		if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
 			proximity = false;
 		if (lvl[y / 64][(x / 64) - 1] == 'w' && !isPlayerRight)
-			proximity = false;*/
+			proximity = false;
 
 		return proximity;
 	}

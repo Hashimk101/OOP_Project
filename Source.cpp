@@ -23,6 +23,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 
 int main()
 {
+	Knuckles K;
 
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
 	window.setVerticalSyncEnabled(true);
@@ -49,7 +50,7 @@ int main()
 	Sonic sprite;
 	Maps map;
 	char** lvl = map.getMap();
-	Knuckles K;
+	
 
 	Texture wallTex1;
 	wallTex1.loadFromFile("Data/bl.jpg");
@@ -126,14 +127,14 @@ int main()
 		Bat.draw(window);
 
 		K.movement(lvl);
-		//sprite.movement(lvl);
-		//sprite.player_gravity(lvl);
+		sprite.movement(lvl);
+		sprite.player_gravity(lvl);
 		K.player_gravity(lvl);
 
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		special.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
-		//sprite.draw_player(window);
+		
 		K.draw_player(window);
 
 		Coins.animate();
@@ -142,11 +143,15 @@ int main()
 
 		int dmg1 = crab.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg1 > 0) sprite.takeDamage(dmg1);
-
-		//sprite.takeDamage(m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX()));
-		sprite.update();
+		int dmg3= m.giveDamage(sprite.getonGround(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		if (dmg3 > 0)
+		{
+			sprite.takeDamage(dmg3);
+		}
+		
+		//sprite.update();
 		/*m.update();*/
-
+		sprite.draw_player(window);
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());
 		special.draw(window, sprite.getOffsetX());

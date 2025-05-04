@@ -105,7 +105,7 @@ int main()
 		Bat.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		int dmg2 = Bat.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg2 > 0) sprite.takeDamage(dmg2);
-		std::cout << "DMG 2" << dmg2 << std::endl;
+		//std::cout << "DMG 2" << dmg2 << std::endl;
 
 		Buzz.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 		int bombdmg = Buzz.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());

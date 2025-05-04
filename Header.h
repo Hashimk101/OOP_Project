@@ -19,8 +19,8 @@ class MySprite
 protected:
     SpriteSheet* SpriteTex; // Array of textures for different animations
 
-    int velocityY, velocityX, player_x, player_y, max_speed, acceleration;
-    int offset_x, offset_y, terminal_Velocity;
+    float velocityY, velocityX, player_x, player_y, max_speed, acceleration;
+    float offset_x, offset_y, terminal_Velocity;
     float scale_x, scale_y;
     int raw_img_x, raw_img_y;
     int Pheight, Pwidth;
@@ -305,7 +305,7 @@ public:
 
         collision = (bottom_left == 'w' || bottom_right == 'w' || bottom_mid == 'w');
 
-
+        //std::cout << player_y << std::endl;
         if (collision)
         {
             // Snap player to top of the collided tile
@@ -439,6 +439,7 @@ public:
 class Sonic : public MySprite
 {
 private:
+    bool isGliding;
 
 public:
     Sonic() : MySprite()
@@ -500,7 +501,7 @@ public:
         isInvincible = false;
         onGround = false;
         gravity = 1;
-        friction = 0.85;
+        friction = 0.80;
         terminal_Velocity = 20;
         scale_x = 2.5;
         scale_y = 2.5;
@@ -512,6 +513,7 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
+        isGliding = false;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -670,15 +672,21 @@ public:
     bool movement(char** lvl) override {
         bool isMoving = MySprite::movement(lvl);
         if (!isGliding && Keyboard::isKeyPressed(Keyboard::F)) {
-            velocityX = velocityX > 0 ? +4 : -4;
+            //velocityX = velocityX > 0 ? +10 : -10;
             velocityY = -3;
 
             isGliding = true;
         }
+        if (isGliding) {
+            gravity = 0.15;
+        }
 
         if (onGround) {
             isGliding = false;
+            gravity = 1;
         }
+        //std::cout << gravity << std::endl;
+        //std::cout << velocityX << " " << velocityY << std::endl;
 
         return isMoving;
     }

@@ -362,11 +362,11 @@ public:
 
     void takeDamage(int dmg)
     {
+        std::cout << hp << std::endl;
         if (isInvincible)
         {
 
             return;                // ignore if still invincible
-
         }
 
         hp -= dmg;

@@ -585,7 +585,7 @@ public:
 	}
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x)
 	{
-
+		if (!isActive) return 0;
 		if (checkCollision(P_x + off_x, P_y))
 		{
 
@@ -618,15 +618,20 @@ public:
 	}
 	bool checkCollision(int P_x, int P_y)
 	{
-		float batLeft = x - 38 / 2.0f;
-		float batTop = y - 33 / 2.0f;
-		if ((P_x < (batLeft + 38)) && ((P_x + 40) > batLeft) && (P_y < (batTop + 33) && (P_y + 40 > batTop)))
+		float batLeft = x - 38 / 2.0f;   // Enemy width = 38
+		float batTop = y - 40 / 2.0f;    // Enemy height = 40
+		int playerWidth = 40;
+		int playerHeight = 40;
+
+		if ((P_x < batLeft + 38) &&       // Player's left is before bat's right
+			(P_x + playerWidth > batLeft) &&  // Player's right is after bat's left
+			(P_y < batTop + 40) &&        // Player's top is before bat's bottom
+			(P_y + playerHeight > batTop))    // Player's bottom is after bat's top
 		{
+			//std::cout << "YES\n";
 			return true;
 		}
 		return false;
-
-
 	}
 };
 

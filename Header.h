@@ -75,6 +75,17 @@ public:
         return OnEdge;
     }
 
+    void updateTextureRectForCurrentIndex() {
+
+        int frameWidth = SpriteTex[currentIndex].T.getSize().x / SpriteTex[currentIndex].frameNum;
+        int frameHeight = SpriteTex[currentIndex].T.getSize().y;
+
+        // Update the SpriteRect
+        SpriteRect.width = frameWidth;
+        SpriteRect.height = frameHeight;
+        ESprite.setTextureRect(SpriteRect);
+    }
+
     virtual bool movement(char** lvl) {
         borderCheck();
         bool isMoving = false;
@@ -126,6 +137,7 @@ public:
                 currentIndex = 1;
                 isMoving = true;
                 left = true;
+                updateTextureRectForCurrentIndex();
                 AnimateSprite(isMoving);
 
                 // Movement logic lol pata nai kaise ban gai
@@ -191,6 +203,7 @@ public:
                 }
                 isMoving = true;
                 left = false;
+                updateTextureRectForCurrentIndex();
                 AnimateSprite(isMoving);
 
                 // Movement logic
@@ -236,6 +249,7 @@ public:
                 // choose left or right edge pose
                 currentIndex = left ? 6 : 7;            // 6 = edgeL strip, 7 = edgeR strip
                 ESprite.setTexture(SpriteTex[currentIndex].T);
+                updateTextureRectForCurrentIndex();
                 AnimateSprite(true);                    // cycle through its frames
                 return true;
             }
@@ -248,6 +262,7 @@ public:
                 ESprite.setTexture(SpriteTex[2].T);
             }
             isMoving = false;
+            updateTextureRectForCurrentIndex();
             AnimateSprite(isMoving); // Moved here to ensure animation updates when not moving
         }
 
@@ -259,10 +274,12 @@ public:
         else if (!onGround) {
             if ((currentIndex == 0 || currentIndex == 1)) {
                 currentIndex = 4;
+
                 ESprite.setTexture(SpriteTex[4].T);
             }
             else if ((currentIndex == 2 || currentIndex == 3)) {
                 currentIndex = 5;
+
                 ESprite.setTexture(SpriteTex[5].T);
             }
             isMoving = true;
@@ -276,6 +293,7 @@ public:
             velocityX = -3;
             currentIndex = 8;
             ESprite.setTexture(SpriteTex[8].T);
+            updateTextureRectForCurrentIndex();
             AnimateSprite(isInvincible);
         }
 
@@ -342,7 +360,7 @@ public:
         return frameNum;
     }
 
-   virtual  void AnimateSprite(bool isMoving) {
+    virtual  void AnimateSprite(bool isMoving) {
 
         if (isMoving) {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
@@ -401,10 +419,10 @@ public:
             ESprite.setColor(sf::Color(255, 255, 255, 255));
         }
 
-     
+
     }
 
-   
+
 
     int getX() const {
         return player_x;
@@ -449,40 +467,76 @@ public:
         if (!SpriteTex[0].T.loadFromFile("Data/0left_still.png"))
         {
             std::cout << "Failed to load 0left_still.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[0].frameNum = 1;
         }
         if (!SpriteTex[1].T.loadFromFile("Data/0jog_left.png"))
         {
             std::cout << "Failed to load 0jog_left.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[1].frameNum = 10;
         }
         if (!SpriteTex[2].T.loadFromFile("Data/0right_still.png")) {
             std::cout << "Failed to load 0right_still.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[2].frameNum = 1;
         }
         if (!SpriteTex[3].T.loadFromFile("Data/0jog_right.png")) {
             std::cout << "Failed to load 0jog_right.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[3].frameNum = 10;
         }
         if (!SpriteTex[4].T.loadFromFile("Data/0upL.png")) {
             std::cout << "Failed to load 0upL.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[4].frameNum = 8;
         }
         if (!SpriteTex[5].T.loadFromFile("Data/0upR.png")) {
             std::cout << "Failed to load 0upR.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[5].frameNum = 8;
         }
         if (!SpriteTex[6].T.loadFromFile("Data/0edgeL.png"))
         {
             std::cout << "Failed to load0edgeL .png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[6].frameNum = 7;
         }
         if (!SpriteTex[7].T.loadFromFile("Data/0edgeR.png")) {
             std::cout << "Failed to load 0edgeR.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[7].frameNum = 8;
         }
         if (!SpriteTex[8].T.loadFromFile("Data/Sonic_Injured.png")) {
             std::cout << "Failed to load Sonic_Injured.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[8].frameNum = 6;
         }
 
@@ -527,7 +581,7 @@ public:
         ESprite.setScale(scale_x, scale_y);
     }
 
-    void AnimateSprite( bool isMoving)override
+    void AnimateSprite(bool isMoving)override
     {
         if (isMoving) {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
@@ -545,7 +599,7 @@ public:
         }
     }
 
- 
+
 };
 
 class Knuckles : public MySprite
@@ -557,76 +611,123 @@ public:
     {
 
         SpriteTex = new SpriteSheet[12];
-      //  IDLE
+        //  IDLE
         if (!SpriteTex[0].T.loadFromFile("Data/Knuckles_Idle_L.png")) { //40x40 => 1 frame
             std::cout << "Failed to load Knuckles_Idle_L.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[0].frameNum = 1;
         }
         //LEFT RUN
         if (!SpriteTex[1].T.loadFromFile("Data/Knuckles_Jog_Walk _L.png")) { //493x40 => 10 frames
             std::cout << "Failed to load Knuckles_Jog_Walk _L.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[1].frameNum = 10;
         }
-      //   IDLE
+        //   IDLE
         if (!SpriteTex[2].T.loadFromFile("Data/Knuckles_Idle_R.png")) {//40x40 => 1 frame
             std::cout << "Failed to load Knuckles_Idle_R.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[2].frameNum = 1;
         }
         //RIGHT RUN
         if (!SpriteTex[3].T.loadFromFile("Data/Knuckles_Jog_Walk_R.png")) //493x40 => 10 frames
         {
             std::cout << "Failed to load Knuckles_Jog_Walk_R.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[3].frameNum = 10;
         }
         //ROLL LEFT
         if (!SpriteTex[4].T.loadFromFile("Data/Knuckles_0up_L.png")) //492x40 => 10 frames
         {
             std::cout << "Failed to load 0upL.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[4].frameNum = 10;
         }
         //ROLL RIGHT
         if (!SpriteTex[5].T.loadFromFile("Data/Knuckles_0up_R.png"))//492x40 => 10 frames
         {
             std::cout << "Failed to load 0upR.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[5].frameNum = 10;
         }
         //PUNCH LEFT
         if (!SpriteTex[6].T.loadFromFile("Data/Knuckles_Punch_L.png")) //850x40 => 17frames
         {
             std::cout << "Failed to load Knuckles_Punch_L.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[6].frameNum = 17;
         }
         //PUNCH RIGHT
         if (!SpriteTex[7].T.loadFromFile("Data/Knuckles_Punch_R.png"))//850x40 => 17frames
         {
             std::cout << "Failed to load Knuckles_Punch_R.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[7].frameNum = 17;
         }
         //CLIMB UP
         if (!SpriteTex[8].T.loadFromFile("Data/Knuckles_climb_Up.png")) //575x42 =>12 frames
         {
             std::cout << "Failed to load Knuckles_climb_Up.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[8].frameNum = 12;
         }
         //CLIMB DOWN
         if (!SpriteTex[9].T.loadFromFile("Data/Knuckles_climb_R.png")) //75x42 =>2 frames
         {
             std::cout << "Failed to load Knuckles_climb_R.png!" << std::endl;
+
+        }
+        else
+        {
             SpriteTex[9].frameNum = 2;
         }
         //GLIDE IN MID AIR
         if (!SpriteTex[10].T.loadFromFile("Data/Knuckles_Glide.png")) //517x46 =>11 frames
         {
-            SpriteTex[10].frameNum = 11;
+
             std::cout << "Failed to load Knuckles_Glide.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[10].frameNum = 11;
         }
         //HANG TO TAILS
         if (!SpriteTex[11].T.loadFromFile("Data/Knuckles_Hang.png")) //966x50 =>20 frames
         {
-            SpriteTex[11].frameNum = 20;
+
             std::cout << "Failed to load Knuckles_Hang.png!" << std::endl;
         }
-
+        else
+        {
+            SpriteTex[11].frameNum = 20;
+        }
         // Initialize variables
         velocityY = 0;
         velocityX = 0;

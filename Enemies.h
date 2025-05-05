@@ -113,25 +113,27 @@ public:
 
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x) override
 	{
-		//std::cout << (P_x + off_x + 40) << " " << P_y << " " << x/64 << " " << y/64 << std::endl;
-		// Only process if enemy is active and player is in same grid cell
-		if (isActive && ((P_x + off_x + 40) / 64 == x / 64) && ((P_y + 64) / 64 == y / 64)) {
-			// Player is jumping/falling onto enemy (classic "stomp" mechanic)
-// In MotoBug::giveDamage:
-			if (upVelocity > 0) // checks if the player is falling and falling ONLY, not jumping
-			{
-				takeDamage(hp);    // take damage from enemy and die on first hit
+		//std::cout << isActive << " " << hp << std::endl;
+		if (!isActive) return 0;
+
+		if (checkCollision(P_x + off_x, P_y)) {
+			// Check if player is falling and coming from above
+			float playerBottom = P_y + 80;
+			float enemyTop = y - 40 / 2.0f;
+
+			if (upVelocity > 0 && playerBottom < enemyTop + 15) {
+				takeDamage(hp);
+				// Return immediately to prevent side damage
 				return 0;
 			}
 
-			// Player runs into enemy while on ground (side collision)
-			else
-			{
-				return 10;     // Player takes damage
-			}
+			// Don't check isActive again here; return 10 since it's not a stomp
+			return 10;
 		}
+
 		return 0;
 	}
+
 	void animateSprite()
 	{
 		//std::cout << isPlayerRight << std::endl;
@@ -174,7 +176,21 @@ public:
 		animationClock.restart();
 	}
 
+	bool checkCollision(int P_x, int P_y) {
+		float enemyLeft = x - 40 / 2.0f;
+		float enemyTop = y - 40 / 2.0f;
+		float enemyRight = enemyLeft + 40;
+		float enemyBottom = enemyTop + 30;
 
+		float playerLeft = P_x;
+		float playerTop = P_y;
+		float playerRight = playerLeft + 40;
+		float playerBottom = playerTop + 80;
+		
+		//std::cout << enemyTop - 30 << " " << playerTop << std::endl;
+		return (playerRight > enemyLeft && playerLeft < enemyRight &&
+			playerBottom >= enemyTop - 20 && playerTop < enemyBottom);
+	}
 
 };
 
@@ -188,7 +204,7 @@ private:
 	sf::Clock ProjectileClock;
 
 	sf::Clock projectileCooldown;    // Timer for cooldown between shots
-	float projectileCooldownTime = 2.0f; // 2 second delay between shots
+	float projectileCooldownTime = 2.5f; // 2 second delay between shots
 	bool isOnCooldown = false;      // Flag to track if we're currently on cooldown
 
 	float patrolSpeed = 1.5;
@@ -306,26 +322,46 @@ public:
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x) override
 	{
 		if (!isActive) return 0;
-		//std::cout << P_x + off_x + 49 << " " << x << " " << P_y + 49 << " " << y << std::endl;
 
-		if (((P_x + off_x + 49) / cell_size == x / cell_size ||
-			(P_x + off_x + 49) / cell_size == (x + 49) / cell_size)
-			&& ((P_y + 51) / cell_size == y / cell_size))
+		// Define player bounding box (assuming player size is 49x51 as hinted in original code)
+		float playerLeft = P_x + off_x;
+		float playerRight = P_x + off_x + 49;
+		float playerTop = P_y;
+		float playerBottom = P_y + 51;
+
+		// Define crab bounding box (based on sprite size and position)
+		float crabWidth = frameRect.width * spriteScale; // Current frame width scaled
+		float crabHeight = frameRect.height * spriteScale; // Frame height scaled
+		float crabLeft = x - crabWidth / 2; // Centered on x
+		float crabRight = x + crabWidth / 2;
+		float crabTop = y - crabHeight / 2; // Centered on y
+		float crabBottom = y + crabHeight / 2;
+
+		// AABB collision check for player and crab
+		bool collisionWithCrab = (playerLeft < crabRight &&
+			playerRight > crabLeft &&
+			playerTop < crabBottom &&
+			playerBottom > crabTop);
+
+		if (collisionWithCrab)
 		{
-			/*std::cout << "Damage to player" << std::endl;*/
-			if (upVelocity > 0) { // checks if the player is falling and falling ONLY, not jumping
-				takeDamage(hp);
-				return 0;
+			if (upVelocity > 0) { // Player is falling (not jumping)
+				takeDamage(hp);   // Destroy crab
+				return 0;         // No damage to player
 			}
 			else {
 				// Player collides with crab horizontally
-				return 5; // Damage to player if it collides with the crab itself
+				return 5; // Damage to player
 			}
 		}
-		if (projCollision(P_x, P_y, off_x)) {
-			return 10; // damage if it hits the meatball
+
+		// Keep original projectile collision check unchanged
+		if (projCollision(P_x, P_y, off_x) && projectileActive) {
+			projectileActive = false; // Deactivate projectile
+			return 10; // Damage to player from projectile
 		}
-		return 0;
+
+		return 0; // No damage
 	}
 
 	void takeDamage(int dmg) override
@@ -452,7 +488,7 @@ public:
 			projtop + 35 > playerY) {
 
 			std::cout << "Collision happened" << std::endl;
-			projectileActive = false;  // Deactivate projectile on collision
+			//projectileActive = false;  // Deactivate projectile on collision
 
 			projectileCooldown.restart();
 			isOnCooldown = true;

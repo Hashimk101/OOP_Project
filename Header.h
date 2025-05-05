@@ -380,20 +380,20 @@ public:
 
     void takeDamage(int dmg)
     {
-        std::cout << hp << std::endl;
         if (isInvincible)
         {
 
             return;                // ignore if still invincible
         }
+        std::cout << dmg << std::endl;
+        if (dmg != 0) {
+            hp -= dmg;
+            isInvincible = true;
 
-        hp -= dmg;
-        isInvincible = true;
+            invClock.restart();
+            ESprite.setColor(sf::Color(255, 255, 255, 200));
 
-        invClock.restart();
-        ESprite.setColor(sf::Color(255, 255, 255, 200));
-
-
+        }
         if (hp <= 0) {
 
             return;

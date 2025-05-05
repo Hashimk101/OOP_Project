@@ -599,25 +599,6 @@ public:
             ESprite.setTextureRect(SpriteRect);
         }
     }
-
-    void punching(char** lvl) {
-            std::cout << ((player_y + hit_box_factor_y + Pheight/2) / cell_size) << std::endl;
-        if (Keyboard::isKeyPressed(Keyboard::T)) {
-            int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 10) / cell_size;
-            int targetYRight = (player_y + hit_box_factor_y + Pheight/2) / cell_size;
-            int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
-            int targetYLeft = (player_y + hit_box_factor_y) / cell_size;
-
-            if (lvl[targetYRight][targetXRight] == 'b') {
-				// Break the wall
-				lvl[targetYRight][targetXRight] = 's'; // Change to space or whatever represents a breakable wall
-            }
-            if (lvl[targetYLeft][targetXLeft] == 'b') {
-                lvl[targetYRight][targetXRight] = 's';
-            }
-        }
-    }
-
 };
 
 class Knuckles : public MySprite
@@ -810,7 +791,30 @@ public:
         return isMoving;
     }
 
-    
+  
+    void punching(char** lvl) {
+        std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
+        if (Keyboard::isKeyPressed(Keyboard::T)) {
+            int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
+            int targetYRight = (player_y + hit_box_factor_y) / cell_size;
+            int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
+            int targetYLeft = (player_y + hit_box_factor_y) / cell_size;
+
+            if (lvl[targetYRight][targetXRight] == 'b') {
+                lvl[targetYRight][targetXRight] = 's';
+            }
+            if (lvl[targetYRight + 1][targetXRight] == 'b') {
+                lvl[targetYRight + 1][targetXRight] = 's';
+            }
+            if (lvl[targetYLeft][targetXLeft] == 'b') {
+                lvl[targetYLeft][targetXLeft] = 's';
+            }
+            if (lvl[targetYLeft + 1][targetXLeft] == 'b') {
+                lvl[targetYLeft + 1][targetXLeft] = 's';
+            }
+        }
+    }
+
 };
 
 

@@ -817,5 +817,64 @@ public:
 
 };
 
+class Tails : public MySprite
+{
+private:
+    bool isFlying;
+
+public:
+    Tails() : MySprite()
+    {
+        SpriteTex = new SpriteSheet[10];
+        // Load texture for idle left
+        // Load texture for jog/walk left
+        // Load texture for idle right
+        // Load texture for jog/walk right
+        // Load texture for fly left
+        // Load texture for fly right
+        // Load texture for edge left
+        // Load texture for edge right
+        // Load texture for injured
+        // Load texture for spin
+
+        // Initialize variables
+        velocityY = 0;
+        velocityX = 0;
+        player_x = 100;
+        player_y = 100;
+        window_x = 0;
+        window_y = 0;
+        acceleration = 1.1;
+        max_speed = 8;
+        hp = 90;
+        isInvincible = false;
+        onGround = false;
+        gravity = 1;
+        friction = 0.80;
+        terminal_Velocity = 20;
+        scale_x = 2.5;
+        scale_y = 2.5;
+        raw_img_x = 40;
+        raw_img_y = 40;
+        Pheight = raw_img_y * scale_y;
+        Pwidth = raw_img_x * scale_x;
+        hit_box_factor_x = 8 * scale_x;
+        hit_box_factor_y = 5 * scale_y;
+        offset_x = 0;
+        offset_y = 0;
+        isFlying = false;
+
+        // Set up sprite rectangle
+        SpriteRect = IntRect(0, 0, 40, 40);
+        ESprite.setTextureRect(SpriteRect);
+
+        // Set up Tails sprite
+        // ESprite.setTexture(SpriteTex[0].T); // Set to idle left
+        ESprite.setTextureRect(SpriteRect);
+        ESprite.setPosition(player_x, player_y);
+        ESprite.setScale(scale_x, scale_y);
+    }
+};
+
 
 

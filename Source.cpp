@@ -23,7 +23,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 
 int main()
 {
-	//Knuckles K;
+	Knuckles K;
 
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
 	window.setVerticalSyncEnabled(true);
@@ -126,18 +126,18 @@ int main()
 		Bat.animateSprite();
 		Bat.draw(window);
 
-		/*K.movement(lvl);*/
+		K.movement(lvl);
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		sprite.update();
-		/*K.player_gravity(lvl);
-		K.update();*/
+		K.player_gravity(lvl);
+		K.update();
 
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		special.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		
-		//K.draw_player(window);
+		K.draw_player(window);
 
 		Coins.animate();
 		diamonds.animate();
@@ -148,7 +148,7 @@ int main()
 
 		//sprite.update();
 		/*m.update();*/
-		sprite.draw_player(window);
+		/*sprite.draw_player(window);*/
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());
 		special.draw(window, sprite.getOffsetX());

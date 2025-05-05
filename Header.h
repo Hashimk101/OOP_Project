@@ -786,8 +786,8 @@ public:
             isGliding = false;
             gravity = 1;
         }
-        //std::cout << gravity << std::endl;
-        //std::cout << velocityX << " " << velocityY << std::endl;
+        std::cout << gravity << std::endl;
+        std::cout << velocityX << " " << velocityY << std::endl;
 
         return isMoving;
     }

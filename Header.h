@@ -110,7 +110,7 @@ public:
                 if (worldY < 0) worldY = 0;
 
                 // Check if there's a wall
-                if (lvl[worldY][worldX] == 'w') {
+                if (lvl[worldY][worldX] == 'w' || lvl[worldY][worldX] == 'b') {
                     leftCollision = true;
                     break;
                 }
@@ -172,7 +172,7 @@ public:
                 if (worldY < 0) worldY = 0;
 
                 // Check if there's a wall
-                if (lvl[worldY][worldX] == 'w') {
+                if (lvl[worldY][worldX] == 'w' || lvl[worldY][worldX] == 'b') {
                     rightCollision = true;
                     break;
                 }
@@ -321,7 +321,8 @@ public:
         char bottom_right = lvl[check_y][right_x];
         char bottom_mid = lvl[check_y][mid_x];
 
-        collision = (bottom_left == 'w' || bottom_right == 'w' || bottom_mid == 'w');
+        collision = (bottom_left == 'w' || bottom_right == 'w' || bottom_mid == 'w'
+            || bottom_left == 'b' || bottom_right == 'b' || bottom_mid == 'b');
 
         //std::cout << player_y << std::endl;
         if (collision)
@@ -599,6 +600,23 @@ public:
         }
     }
 
+    void punching(char** lvl) {
+            std::cout << ((player_y + hit_box_factor_y + Pheight/2) / cell_size) << std::endl;
+        if (Keyboard::isKeyPressed(Keyboard::T)) {
+            int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 10) / cell_size;
+            int targetYRight = (player_y + hit_box_factor_y + Pheight/2) / cell_size;
+            int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
+            int targetYLeft = (player_y + hit_box_factor_y) / cell_size;
+
+            if (lvl[targetYRight][targetXRight] == 'b') {
+				// Break the wall
+				lvl[targetYRight][targetXRight] = 's'; // Change to space or whatever represents a breakable wall
+            }
+            if (lvl[targetYLeft][targetXLeft] == 'b') {
+                lvl[targetYRight][targetXRight] = 's';
+            }
+        }
+    }
 
 };
 
@@ -792,6 +810,7 @@ public:
         return isMoving;
     }
 
+    
 };
 
 

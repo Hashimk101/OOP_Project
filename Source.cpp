@@ -23,7 +23,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 
 int main()
 {
-	Knuckles K;
+	/*Knuckles K;*/
 
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
 	window.setVerticalSyncEnabled(true);
@@ -126,18 +126,20 @@ int main()
 		Bat.animateSprite();
 		Bat.draw(window);
 
-		K.movement(lvl);
+		/*K.movement(lvl);*/
 		sprite.movement(lvl);
 		sprite.player_gravity(lvl);
 		sprite.update();
-		K.player_gravity(lvl);
+		sprite.punching(lvl);
+		/*K.player_gravity(lvl);
 		K.update();
+		K.punching(lvl, BreakableWallSprite);*/
 
 		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		special.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
 		
-		K.draw_player(window);
+		//K.draw_player(window);
 
 		Coins.animate();
 		diamonds.animate();
@@ -146,16 +148,16 @@ int main()
 		int dmg1 = crab.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
 		if (dmg1 > 0) sprite.takeDamage(dmg1);
 
-		//sprite.update();
+		sprite.update();
 		/*m.update();*/
-		/*sprite.draw_player(window);*/
+		sprite.draw_player(window);
 		Coins.draw(window, sprite.getOffsetX());
 		diamonds.draw(window, sprite.getOffsetX());
 		special.draw(window, sprite.getOffsetX());
 		//crab2.draw(window);
 		//crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 
-
+		
 		//window.draw()
 
 		window.display();
@@ -248,6 +250,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 			{
 				BreakableWallSprite.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(BreakableWallSprite);
+				
 				/*background.setPosition(0 - offset / 4, 0);*/
 				/*window.draw(background);*/
 			}

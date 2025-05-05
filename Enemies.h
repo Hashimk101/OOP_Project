@@ -186,6 +186,11 @@ private:
 	sf::Texture ProjectileTexture;
 	sf::Sprite ProjectileSprite;
 	sf::Clock ProjectileClock;
+
+	sf::Clock projectileCooldown;    // Timer for cooldown between shots
+	float projectileCooldownTime = 2.0f; // 2 second delay between shots
+	bool isOnCooldown = false;      // Flag to track if we're currently on cooldown
+
 	float patrolSpeed = 1.5;
 	float spriteScale = 3;
 	int cell_size = 64;
@@ -371,6 +376,18 @@ public:
 
 	void throwProjectile(int off_x)
 	{
+		// Check if we're on cooldown
+		if (isOnCooldown) {
+			// Check if cooldown period has elapsed
+			if (projectileCooldown.getElapsedTime().asSeconds() >= projectileCooldownTime) {
+				isOnCooldown = false; // Reset cooldown flag
+			}
+			else {
+				// Still on cooldown, don't throw
+				return;
+			}
+		}
+
 		if (!projectileActive)
 		{
 			ProjectileClock.restart();
@@ -387,18 +404,24 @@ public:
 		else {
 			int tileX = (proj_x - off_x) / 64;
 			int tileY = proj_y / 64;
-			//std::cout << int(proj_y / 64) << " " << int(proj_x / 64) <<" " << y / 64 <<  " " << x/64 <<std::endl;
-			//std::cout << << " " << x / 64 << std::endl;
+
+			// Check if projectile hits a wall or goes out of bounds
 			if (lvl[int(proj_y / 64)][int(proj_x / 64)] == 'w') {
 				projectileActive = false;
+				// Start cooldown when projectile is destroyed
+				projectileCooldown.restart();
+				isOnCooldown = true;
 			}
-			//std::cout << tileX << std::endl;
+
 			if (tileX < 0 || tileX > 17 || tileY < 0 || tileY > 12) {
 				projectileActive = false;
+				// Start cooldown when projectile goes off-screen
+				projectileCooldown.restart();
+				isOnCooldown = true;
 			}
-			//std::cout << projectileActive << std::endl;
+
 			float dt = ProjectileClock.getElapsedTime().asSeconds();
-			//projectileActive = true;
+
 			if (!isPlayerRight) {
 				proj_x -= prj_speed_x * dt;
 			}
@@ -430,6 +453,9 @@ public:
 
 			std::cout << "Collision happened" << std::endl;
 			projectileActive = false;  // Deactivate projectile on collision
+
+			projectileCooldown.restart();
+			isOnCooldown = true;
 			return true;
 		}
 		return false;

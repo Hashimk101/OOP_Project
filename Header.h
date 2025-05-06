@@ -40,6 +40,8 @@ protected:
     // Sprites for different characters
     sf::Sprite ESprite;
     bool OnEdge = false; // Tracks if the player is on an edge
+    bool gravFalse = false;
+    bool PUUUUUNCH = false;
 
 
 public:
@@ -266,12 +268,12 @@ public:
             AnimateSprite(isMoving); // Moved here to ensure animation updates when not moving
         }
 
-        if (onGround) {
+        if (onGround && !gravFalse) {
             if ((Keyboard::isKeyPressed(Keyboard::Up)) || (Keyboard::isKeyPressed(Keyboard::Space))) {
                 velocityY = -20;
             }
         }
-        else if (!onGround) {
+        else if (!onGround && !gravFalse) {
             if ((currentIndex == 0 || currentIndex == 1)) {
                 currentIndex = 4;
 
@@ -286,6 +288,18 @@ public:
 
         }
 
+        if (gravFalse) {
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                player_y -= 10;
+            }
+            if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                player_y -= 10;
+            }
+            isMoving = true;
+            ESprite.setPosition(player_x, player_y);
+
+        }
+
 
         if (isInvincible)
         {
@@ -297,11 +311,22 @@ public:
             AnimateSprite(isInvincible);
         }
 
+        if (PUUUUUNCH) {
+            if (left)
+                currentIndex = 10;
+            if (!left)
+                currentIndex = 9;
+            ESprite.setTexture(SpriteTex[currentIndex].T);
+        }
+
         return isMoving; // Always return isMoving
 
     }
     void player_gravity(char** lvl)
     {
+        if (gravFalse) {
+            return;
+        }
         // Store previous position
         offset_y = player_y;
 
@@ -776,7 +801,7 @@ public:
     }
 
     bool movement(char** lvl) override {
-        std::cout << player_x + offset_x << " " << player_y << std::endl;
+        //std::cout << player_x + offset_x << " " << player_y << std::endl;
         bool isMoving = MySprite::movement(lvl);
         if (!isGliding && Keyboard::isKeyPressed(Keyboard::F)) {
             //velocityX = velocityX > 0 ? +10 : -10;
@@ -806,6 +831,7 @@ public:
         if (Keyboard::isKeyPressed(Keyboard::T)) 
         {
             Punch = true;
+            PUUUUUNCH = true;
             int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
             int targetYRight = (player_y + hit_box_factor_y) / cell_size;
             int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
@@ -835,10 +861,11 @@ public:
             {
                 ESprite.setTexture(SpriteTex[10].T);
                 currentIndex = 10;
+                std::cout << currentIndex << std::endl;
                 updateTextureRectForCurrentIndex();
                 AnimateSprite(true);
             }
-            else if (Punch)
+            else if (!left && Punch)
             {
                 ESprite.setTexture(SpriteTex[9].T);
                 currentIndex = 9;
@@ -846,14 +873,17 @@ public:
                 AnimateSprite(true);
             }
         }
+        
 
         Punch = false;
     }
     
 
 
-    void AnimateSprite(bool isMoving)override
+    void AnimateSprite(bool isMoving) override
     {
+        std::cout << currentFrame << std::endl;
+
         if (isMoving) {
             
             if (animationClock.getElapsedTime().asMilliseconds() > 80)
@@ -866,11 +896,11 @@ public:
                 {
                     ESprite.setScale(2.75, 2.75);
                 }
-                if (currentIndex == 9) 
+                if (currentIndex == 10) 
                 {
-                    currentFrame = SpriteTex[9].frameNum;
+                    currentFrame = SpriteTex[10].frameNum;
                     
-                    currentFrame = (currentFrame - 1 + SpriteTex[currentIndex].frameNum) % SpriteTex[currentIndex].frameNum;
+                    currentFrame = (currentFrame - 1) % SpriteTex[currentIndex].frameNum;
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
                     animationClock.restart();
@@ -903,6 +933,8 @@ class Tails : public MySprite
 {
 private:
     bool isFlying;
+    sf::Clock flyingClock;
+    const float maxFlyTime = 7;
 
 public:
     Tails() : MySprite()
@@ -1048,6 +1080,24 @@ public:
         ESprite.setTextureRect(SpriteRect);
         ESprite.setPosition(player_x, player_y);
         ESprite.setScale(scale_x, scale_y);
+    }
+
+    bool movement(char** lvl) override {
+        bool isMoving = MySprite::movement(lvl);
+
+        if (flyingClock.getElapsedTime().asSeconds() >= maxFlyTime) {
+            isFlying = false;
+            gravFalse = false;
+        }
+
+        if (Keyboard::isKeyPressed(Keyboard::F)) {
+            isFlying = true;
+            gravFalse = true;
+            isMoving = true;
+            flyingClock.restart();
+        }
+        
+        return isMoving;
     }
 };
 

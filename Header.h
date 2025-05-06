@@ -741,12 +741,12 @@ public:
         isInvincible = false;
         onGround = false;
         gravity = 1;
-        friction = 0.85;
+        friction = 0.80;
         terminal_Velocity = 20;
         scale_x = 2.5;
         scale_y = 2.5;
-        raw_img_x = 40;
-        raw_img_y = 40;
+        raw_img_x = 24;
+        raw_img_y = 35;
         Pheight = raw_img_y * scale_y;
         Pwidth = raw_img_x * scale_x;
         hit_box_factor_x = 8 * scale_x;
@@ -1021,8 +1021,8 @@ public:
         terminal_Velocity = 20;
         scale_x = 2.5;
         scale_y = 2.5;
-        raw_img_x = 40;
-        raw_img_y = 40;
+        raw_img_x = 24;
+        raw_img_y = 35;
         Pheight = raw_img_y * scale_y;
         Pwidth = raw_img_x * scale_x;
         hit_box_factor_x = 8 * scale_x;

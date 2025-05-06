@@ -41,7 +41,7 @@ protected:
     sf::Sprite ESprite;
     bool OnEdge = false; // Tracks if the player is on an edge
     bool gravFalse = false;
-    bool PUUUUUNCH = false;
+    bool Punch = false;
 
 
 public:
@@ -311,7 +311,7 @@ public:
             AnimateSprite(isInvincible);
         }
 
-        if (PUUUUUNCH) {
+        if (Punch) {
             if (left)
                 currentIndex = 10;
             if (!left)
@@ -826,12 +826,11 @@ public:
   
     void punching(char** lvl)
     {
-        bool Punch = false;
+        std::cout << Punch << std::endl;
         //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
         if (Keyboard::isKeyPressed(Keyboard::T)) 
         {
             Punch = true;
-            PUUUUUNCH = true;
             int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
             int targetYRight = (player_y + hit_box_factor_y) / cell_size;
             int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
@@ -874,15 +873,16 @@ public:
             }
         }
         
-
+        else{
         Punch = false;
+        }
     }
     
 
 
     void AnimateSprite(bool isMoving) override
     {
-        std::cout << currentFrame << std::endl;
+        //std::cout << currentFrame << std::endl;
 
         if (isMoving) {
             

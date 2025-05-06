@@ -667,55 +667,56 @@ public:
         {
             SpriteTex[5].frameNum = 10;
         }
-        //PUNCH LEFT
-        if (!SpriteTex[6].T.loadFromFile("Data/Knuckles_Punch_L.png")) //850x40 => 17frames
+        
+        if (!SpriteTex[6].T.loadFromFile("Data/Knuckles_Tripping_L.png")) //240x40=> 6 frames
         {
-            std::cout << "Failed to load Knuckles_Punch_L.png!" << std::endl;
+            std::cout << "Failed to load Knuckles_Tripping_L.png!" << std::endl;
 
         }
         else
         {
-            SpriteTex[6].frameNum = 17;
+            SpriteTex[6].frameNum = 6;
+        }
+       
+        if (!SpriteTex[7].T.loadFromFile("Data/Knuckles_Tripping_R.png")) //240x40=> 6 frames
+        {
+            std::cout << "Failed to load Knuckles_Tripping_R.png!" << std::endl;
+
+        }
+        else
+        {
+            SpriteTex[7].frameNum = 6;
+        }
+
+        //Injured aa 
+        if (!SpriteTex[8].T.loadFromFile("Data/Knuckles_Tripping_L.png"))
+        {
+            std::cout << "Failed to load Knuckles_Tripping_L.png!" << std::endl;
+
+        }
+        else
+        {
+            SpriteTex[8].frameNum = 6;
         }
         //PUNCH RIGHT
-        if (!SpriteTex[7].T.loadFromFile("Data/Knuckles_Punch_R.png"))//850x40 => 17frames
+        if (!SpriteTex[9].T.loadFromFile("Data/Knuckles_Punch_R.png")) //850x40 => 17frames
         {
             std::cout << "Failed to load Knuckles_Punch_R.png!" << std::endl;
 
         }
         else
         {
-            SpriteTex[7].frameNum = 17;
+            SpriteTex[9].frameNum = 17;
         }
-        //CLIMB UP
-        if (!SpriteTex[8].T.loadFromFile("Data/Knuckles_climb_Up.png")) //575x42 =>12 frames
+        //PUNCH LEFT
+        if (!SpriteTex[10].T.loadFromFile("Data/Knuckles_Punch_L.png")) // 850x40 = > 17frames
         {
-            std::cout << "Failed to load Knuckles_climb_Up.png!" << std::endl;
 
+            std::cout << "Failed to load Knuckles_Punch_L.png!" << std::endl;
         }
         else
         {
-            SpriteTex[8].frameNum = 12;
-        }
-        //CLIMB DOWN
-        if (!SpriteTex[9].T.loadFromFile("Data/Knuckles_climb_R.png")) //75x42 =>2 frames
-        {
-            std::cout << "Failed to load Knuckles_climb_R.png!" << std::endl;
-
-        }
-        else
-        {
-            SpriteTex[9].frameNum = 2;
-        }
-        //GLIDE IN MID AIR
-        if (!SpriteTex[10].T.loadFromFile("Data/Knuckles_Glide.png")) //517x46 =>11 frames
-        {
-
-            std::cout << "Failed to load Knuckles_Glide.png!" << std::endl;
-        }
-        else
-        {
-            SpriteTex[10].frameNum = 11;
+            SpriteTex[10].frameNum = 17;
         }
         //HANG TO TAILS
         if (!SpriteTex[11].T.loadFromFile("Data/Knuckles_Hang.png")) //966x50 =>20 frames
@@ -758,8 +759,6 @@ public:
         SpriteRect = IntRect(0, 0, 40, 40);
         ESprite.setTextureRect(SpriteRect);
 
-
-        // Set up SonicSprite
         ESprite.setTexture(SpriteTex[0].T);
         ESprite.setTextureRect(SpriteRect);
         ESprite.setPosition(player_x, player_y);
@@ -792,28 +791,103 @@ public:
     }
 
   
-    void punching(char** lvl) {
+    void punching(char** lvl)
+    {
+        bool Punch = false;
         std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
-        if (Keyboard::isKeyPressed(Keyboard::T)) {
+        if (Keyboard::isKeyPressed(Keyboard::T)) 
+        {
+            Punch = true;
             int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
             int targetYRight = (player_y + hit_box_factor_y) / cell_size;
             int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
             int targetYLeft = (player_y + hit_box_factor_y) / cell_size;
-
-            if (lvl[targetYRight][targetXRight] == 'b') {
+           
+            if (lvl[targetYRight][targetXRight] == 'b')
+            {
                 lvl[targetYRight][targetXRight] = 's';
+              
             }
-            if (lvl[targetYRight + 1][targetXRight] == 'b') {
+            if (lvl[targetYRight + 1][targetXRight] == 'b')
+            {
                 lvl[targetYRight + 1][targetXRight] = 's';
+                
             }
-            if (lvl[targetYLeft][targetXLeft] == 'b') {
+            if (lvl[targetYLeft][targetXLeft] == 'b')
+            {
                 lvl[targetYLeft][targetXLeft] = 's';
+                
             }
-            if (lvl[targetYLeft + 1][targetXLeft] == 'b') {
+            if (lvl[targetYLeft + 1][targetXLeft] == 'b')
+            {
                 lvl[targetYLeft + 1][targetXLeft] = 's';
+                
+            }
+            if (left && Punch)
+            {
+                ESprite.setTexture(SpriteTex[10].T);
+                currentIndex = 10;
+                updateTextureRectForCurrentIndex();
+                AnimateSprite(true);
+            }
+            else if (Punch)
+            {
+                ESprite.setTexture(SpriteTex[9].T);
+                currentIndex = 9;
+                updateTextureRectForCurrentIndex();
+                AnimateSprite(true);
             }
         }
+
+        Punch = false;
     }
+    
+
+
+    void AnimateSprite(bool isMoving)override
+    {
+        if (isMoving) {
+            
+            if (animationClock.getElapsedTime().asMilliseconds() > 80)
+            {
+                if (currentIndex == 1 || currentIndex == 3) 
+                {
+					ESprite.setScale(3.5, 3.5);
+                }
+                else
+                {
+                    ESprite.setScale(2.75, 2.75);
+                }
+                if (currentIndex == 9) 
+                {
+                    currentFrame = SpriteTex[9].frameNum;
+                    
+                    currentFrame = (currentFrame - 1 + SpriteTex[currentIndex].frameNum) % SpriteTex[currentIndex].frameNum;
+                    SpriteRect.left = currentFrame * SpriteRect.width;
+                    ESprite.setTextureRect(SpriteRect);
+                    animationClock.restart();
+                }
+                else
+                {
+                    currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
+                    SpriteRect.left = currentFrame * SpriteRect.width;
+                    ESprite.setTextureRect(SpriteRect);
+                    animationClock.restart();
+                }
+
+            }
+        }
+        else {
+            // reset to first frame of current strip
+            currentFrame = 0;
+            SpriteRect.left = 0;
+            ESprite.setTextureRect(SpriteRect);
+            ESprite.setScale(2.75, 2.75);
+        }
+        
+    }
+
+
 
 };
 
@@ -825,17 +899,110 @@ private:
 public:
     Tails() : MySprite()
     {
-        SpriteTex = new SpriteSheet[10];
+        SpriteTex = new SpriteSheet[11];
         // Load texture for idle left
+		if (!SpriteTex[0].T.loadFromFile("Data/Tails_Idle_L.png")) { //40x40 => 1 frame
+			std::cout << "Failed to load Tails_Idle_L.png!" << std::endl;
+		}
+		else
+		{
+			SpriteTex[0].frameNum = 1;
+		}
         // Load texture for jog/walk left
+		if (!SpriteTex[1].T.loadFromFile("Data/Tails_Jog_L.png"))
+		{
+			std::cout << "Failed to load Tails_Jog_L.png!" << std::endl;
+		}
+		else
+		{
+			SpriteTex[1].frameNum = 10;
+		}
         // Load texture for idle right
+        if (!SpriteTex[2].T.loadFromFile("Data/Tails_Idle_R.png")) { //40x40 => 1 frame
+            std::cout << "Failed to load Tails_Idle_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[2].frameNum = 1;
+        }
         // Load texture for jog/walk right
-        // Load texture for fly left
-        // Load texture for fly right
-        // Load texture for edge left
+		if (!SpriteTex[3].T.loadFromFile("Data/Tails_Jog_R.png"))
+		{
+			std::cout << "Failed to load Tails_Jog_R.png!" << std::endl;
+		}
+		else
+		{
+			SpriteTex[3].frameNum = 10;
+		}
+        // Load texture for jump left 
+        if (!SpriteTex[4].T.loadFromFile("Data/Tail_Jump"))
+        {
+            std::cout << "Failed to load Tail_Jump.png!" << std::endl;
+			
+        }
+        else
+        {
+            SpriteTex[4].frameNum = 6;
+        }
+        // Load texture for jump right 
+        if (!SpriteTex[5].T.loadFromFile("Data/Tail_Jump"))
+        {
+            std::cout << "Failed to load Tail_Jump.png!" << std::endl;
+           
+        }
+        else
+        {
+            SpriteTex[5].frameNum = 6;
+        }
+         // Load texture for edge left
+        if (!SpriteTex[6].T.loadFromFile("Data/Tails_Edge_L.png")) 
+        {
+			std::cout << "Failed to load Tails_Edge_L.png!" << std::endl;
+		}
+		else
+		{
+			SpriteTex[6].frameNum = 8;
+
+        }
         // Load texture for edge right
+        if (!SpriteTex[7].T.loadFromFile("Data/Tails_Edge_R.png"))
+        {
+
+            std::cout << "Failed to load =Tails_Edge_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[7].frameNum = 8;
+
+        }
+        // Load texture for fly left
+		if (!SpriteTex[8].T.loadFromFile("Data/Tails_Fly_L.png"))
+		{
+			std::cout << "Failed to load Tails_Fly_L.png!" << std::endl;
+		}
+		else
+		{
+			SpriteTex[8].frameNum = 4;
+		}
+        // Load texture for fly right
+        if (!SpriteTex[9].T.loadFromFile("Data/Tails_Fly_R.png"))
+        {
+            std::cout << "Failed to load Tails_Fly_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[9].frameNum = 4;
+        }
+
         // Load texture for injured
-        // Load texture for spin
+        if (!SpriteTex[10].T.loadFromFile("Data/Tails_Hurt.png"))
+        {
+            std::cout << "Failed to load Tails_Hurt.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[9].frameNum = 5;
+        }
 
         // Initialize variables
         velocityY = 0;

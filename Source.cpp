@@ -94,36 +94,36 @@ int main()
 		}
 		//menu.handleEvent(event);
 		window.clear(Color::Black);
-		BackgroundSprite.setPosition(-sprite.getOffsetX() / 7, 0);
+		BackgroundSprite.setPosition(-K.getOffsetX() / 7, 0);
 		window.draw(BackgroundSprite);
-		display_level(window, height, width, lvl, wallSprite1, cell_size, sprite.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite);
+		display_level(window, height, width, lvl, wallSprite1, cell_size, K.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite);
 
 		m.draw(window);
 		m.animateSprite();
 		Bat.animateSprite();
 		Bat.draw(window);
 
-		m.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		Bat.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		int dmg2 = Bat.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
-		if (dmg2 > 0) sprite.takeDamage(dmg2);
+		m.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
+		Bat.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
+		int dmg2 = Bat.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
+		if (dmg2 > 0) K.takeDamage(dmg2);
 		//std::cout << "DMG 2" << dmg2 << std::endl;
 
-		Buzz.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
-		int bombdmg = Buzz.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		Buzz.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
+		int bombdmg = Buzz.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
 		if (bombdmg > 0) {
-			sprite.takeDamage(bombdmg);
+			K.takeDamage(bombdmg);
 		}
 		Buzz.animateSprite();
 		Buzz.draw(window);
 
-		crab.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
+		crab.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
 		crab.draw(window);
 		// keep movement and drawing close to each other for better user experience :)
-		int dmg = m.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
+		int dmg = m.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
 		if (dmg > 0)
 		{
-			sprite.takeDamage(dmg);
+			K.takeDamage(dmg);
 		}
 		Bat.animateSprite();
 		Bat.draw(window);
@@ -132,30 +132,30 @@ int main()
 		//sprite.movement(lvl);
 		//sprite.player_gravity(lvl);
 		//sprite.update();
+		K.draw_player(window);
 		K.punching(lvl);
 		K.player_gravity(lvl);
 		K.update();
 		/*K.punching(lvl);*/
 
-		Coins.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
-		diamonds.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
-		special.checkCollision(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY(), sprite.gethitX(), sprite.gethitY());
+		Coins.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
+		diamonds.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
+		special.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
 		
-		K.draw_player(window);
 
 		Coins.animate();
 		diamonds.animate();
 		special.animate();
 
-		int dmg1 = crab.giveDamage(sprite.getVelocityY(), sprite.getX(), sprite.getY(), sprite.getOffsetX());
-		if (dmg1 > 0) sprite.takeDamage(dmg1);
+		int dmg1 = crab.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
+		if (dmg1 > 0) K.takeDamage(dmg1);
 
-		//sprite.update();
+		//K.update();
 		/*m.update();*/
-	//	sprite.draw_player(window);
-		Coins.draw(window, sprite.getOffsetX());
-		diamonds.draw(window, sprite.getOffsetX());
-		special.draw(window, sprite.getOffsetX());
+		//K.draw_player(window);
+		Coins.draw(window, K.getOffsetX());
+		diamonds.draw(window, K.getOffsetX());
+		special.draw(window, K.getOffsetX());
 		//crab2.draw(window);
 		//crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 

@@ -432,9 +432,16 @@ public:
         return player_y;
     }
     void draw_player(RenderWindow& window) {
-
         ESprite.setPosition(player_x, player_y);
         window.draw(ESprite);
+
+        // Debug hitbox
+        sf::RectangleShape hitbox(sf::Vector2f(Pwidth, Pheight));
+        hitbox.setPosition(player_x + hit_box_factor_x, player_y + hit_box_factor_y);
+        hitbox.setFillColor(sf::Color::Transparent);
+        hitbox.setOutlineColor(sf::Color::Blue);
+        hitbox.setOutlineThickness(3);
+        window.draw(hitbox);
     }
     int getOffsetX() const {
         return offset_x;
@@ -769,6 +776,7 @@ public:
     }
 
     bool movement(char** lvl) override {
+        std::cout << player_x + offset_x << " " << player_y << std::endl;
         bool isMoving = MySprite::movement(lvl);
         if (!isGliding && Keyboard::isKeyPressed(Keyboard::F)) {
             //velocityX = velocityX > 0 ? +10 : -10;
@@ -784,8 +792,8 @@ public:
             isGliding = false;
             gravity = 1;
         }
-        std::cout << gravity << std::endl;
-        std::cout << velocityX << " " << velocityY << std::endl;
+        /*std::cout << gravity << std::endl;
+        std::cout << velocityX << " " << velocityY << std::endl;*/
 
         return isMoving;
     }
@@ -794,7 +802,7 @@ public:
     void punching(char** lvl)
     {
         bool Punch = false;
-        std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
+        //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
         if (Keyboard::isKeyPressed(Keyboard::T)) 
         {
             Punch = true;

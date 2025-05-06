@@ -92,7 +92,14 @@ public:
         borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
-
+        if (Punch) {
+            if (left)
+                currentIndex = 10;
+            if (!left)
+                currentIndex = 9;
+            ESprite.setTexture(SpriteTex[currentIndex].T);
+            return isMoving;
+        }
         if (Keyboard::isKeyPressed(Keyboard::Left))
         {
             // Collision checks go brrrrr
@@ -309,14 +316,6 @@ public:
             ESprite.setTexture(SpriteTex[8].T);
             updateTextureRectForCurrentIndex();
             AnimateSprite(isInvincible);
-        }
-
-        if (Punch) {
-            if (left)
-                currentIndex = 10;
-            if (!left)
-                currentIndex = 9;
-            ESprite.setTexture(SpriteTex[currentIndex].T);
         }
 
         return isMoving; // Always return isMoving
@@ -826,7 +825,7 @@ public:
   
     void punching(char** lvl)
     {
-        std::cout << Punch << std::endl;
+        //std::cout << Punch << std::endl;
         //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
         if (Keyboard::isKeyPressed(Keyboard::T)) 
         {
@@ -882,7 +881,7 @@ public:
 
     void AnimateSprite(bool isMoving) override
     {
-        //std::cout << currentFrame << std::endl;
+        std::cout << currentFrame << std::endl;
 
         if (isMoving) {
             

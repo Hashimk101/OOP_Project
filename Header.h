@@ -602,7 +602,7 @@ public:
         isGliding = false;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
-        SpriteRect = IntRect(0, 0, 40, 40);
+        SpriteRect = IntRect(0, 0, 49, 49);
         ESprite.setTextureRect(SpriteRect);
 
 
@@ -889,7 +889,7 @@ public:
             {
                 if (currentIndex == 1 || currentIndex == 3) 
                 {
-					ESprite.setScale(3.5, 3.5);
+					ESprite.setScale(2.2, 2.5);
                 }
                 else
                 {

@@ -71,7 +71,7 @@ public:
 
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
-    map(),     
+    map(1),     
     coins(map.getMap()),
     diamonds(map.getMap()),
     special(map.getMap()),

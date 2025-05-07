@@ -44,7 +44,7 @@ protected:
     bool Punch = false;
 	bool isFlying = false; // Tracks if the player is flying
 	bool isMoving = false; // Tracks if the player is moving
-
+    int totalWidth;
 
 public:
     // Constructor to initialize the sprite with the texture
@@ -528,6 +528,17 @@ public:
     }
 
     virtual void punching(char** lvl) = 0;
+    void setPos(float x, float y) {
+        player_x = x;
+        player_y = y;
+    }
+    sf::Vector2f getPos() {
+        return Vector2f(player_x, player_y);
+    }
+
+    void setWidth(int width) {
+        totalWidth = width;
+    }
 };
 class Sonic : public MySprite
 {

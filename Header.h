@@ -92,6 +92,7 @@ public:
 
     virtual bool movement(char** lvl) 
     {
+        //std::cout << isFlying << std::endl;
         borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
@@ -159,14 +160,15 @@ public:
                 //if (velocityX > 0) velocityX = 0; // Reset velocity if moving right
                 velocityX -= acceleration;
                 if (velocityX < -max_speed) velocityX = -max_speed;
-
                 // Animation
-                ESprite.setTexture(SpriteTex[1].T);
-                currentIndex = 1;
-                isMoving = true;
-                left = true;
-                updateTextureRectForCurrentIndex();
-                AnimateSprite(isMoving);
+                if (!isFlying) {
+                    ESprite.setTexture(SpriteTex[1].T);
+                    currentIndex = 1;
+                    isMoving = true;
+                    left = true;
+                    updateTextureRectForCurrentIndex();
+                    AnimateSprite(isMoving);
+                }
 
                 // Movement logic lol pata nai kaise ban gai
                 if (player_x <= 450) 
@@ -329,7 +331,7 @@ public:
 
         if (gravFalse) 
         {
-            std::cout << "HELLO\n";
+            //std::cout << "HELLO\n";
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
                 player_y -= 10;
             }
@@ -1149,7 +1151,8 @@ public:
     }
 
     bool movement(char** lvl) override {
-       
+        bool isMovingBase = MySprite::movement(lvl);
+
         if (Keyboard::isKeyPressed(Keyboard::F))
         {
             if (!isFlying) 
@@ -1181,7 +1184,6 @@ public:
         }
 
       
-        bool isMovingBase = MySprite::movement(lvl);
 
       
         if (!isFlying) {
@@ -1226,7 +1228,7 @@ public:
                 {
                     ESprite.setScale(2.1, 2.63);
                 }
-				std::cout << "Current Index: " << currentIndex << std:: endl;
+				//std::cout << "Current Index: " << currentIndex << std:: endl;
                 
                      updateTextureRectForCurrentIndex();
                     currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;

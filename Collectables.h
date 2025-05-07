@@ -101,42 +101,38 @@ public:
 
     virtual void checkCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY)
     {
-        // Player size based on your scaling
+        // Player dimensions (unchanged from original)
         int playerWidth = 40 * 2.5;
         int playerHeight = 40 * 2.5;
 
-        // Collectable size based on scaling
+        // Collectable dimensions (unchanged)
         int collectableWidth = collect_width * scaleFactor;
         int collectableHeight = collect_height * scaleFactor;
 
-        // Fix the calculation to check around the actual player position
-        int startI = (playerY + hitY) / cell_size;                    // Top of player hitbox
-        int endI = (playerY + hitY + playerHeight) / cell_size;       // Bottom of player hitbox
-        int startJ = (playerX + offsetX + hitX) / cell_size;          // Left of player hitbox
-        int endJ = (playerX + offsetX + hitX + playerWidth) / cell_size; // Right of player hitbox
+        // Calculate player's center position in world coordinates
+        int playerCenterX = playerX + offsetX + hitX + playerWidth / 2;
+        int playerCenterY = playerY + hitY + playerHeight / 2;
 
-        // Loop only through the area occupied by the player's hitbox
-        for (int i = startI; i <= endI; i++) {
-            for (int j = startJ; j <= endJ; j++) {
-                if (i >= 0 && i < height && j >= 0 && j < width) { // Safety check
-                    if (lvl[i][j] == levelChar) { // Collectable exists
-                        // Calculate collectable's screen position
-                        int collectX = j * cell_size - offsetX;
-                        int collectY = i * cell_size;  // No need to subtract offsetY here
+        // Convert to grid coordinates
+        int gridX = playerCenterX / cell_size;
+        int gridY = playerCenterY / cell_size;
 
-                        // AABB collision check
-                        if ((playerX < collectX + collectableWidth) &&
-                            (playerX + playerWidth > collectX) &&
-                            (playerY < collectY + collectableHeight) &&
-                            (playerY + playerHeight > collectY))
-                        {
-
-                            lvl[i][j] = 's';
-                            sound.play();
-                            onCollect(i, j);
-                        }
-                    }
-                }
+        // Boundary check
+        if (gridX >= 0 && gridX < width && gridY >= 0 && gridY < height)
+        {
+            if (lvl[gridY][gridX] == levelChar)
+            {
+                // Calculate collectable's screen position
+                    lvl[gridY][gridX] = 's';
+                    sound.play();
+                    onCollect(gridY, gridX);
+            }
+            if (lvl[gridY - 1][gridX] == levelChar)
+            {
+                // Calculate collectable's screen position
+                lvl[gridY - 1][gridX] = 's';
+                sound.play();
+                onCollect(gridY - 1, gridX);
             }
         }
     }

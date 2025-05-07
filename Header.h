@@ -112,7 +112,7 @@ public:
                 if (checkY > Pheight - hit_box_factor_y) checkY = Pheight - hit_box_factor_y;
 
                 // Calculate the position to check (left side of character)
-                int worldY = (offset_y + hit_box_factor_y + checkY) / cell_size;
+                int worldY = (player_y + hit_box_factor_y + checkY) / cell_size;
                 int worldX = (offset_x + player_x + hit_box_factor_x - 17) / cell_size; // Check slightly ahead
 
                 // Stay within bounds
@@ -174,7 +174,7 @@ public:
                 if (checkY > Pheight - hit_box_factor_y) checkY = Pheight - hit_box_factor_y;
 
                 // Calculate the position to check (right side of character)
-                int worldY = (offset_y + hit_box_factor_y + checkY) / cell_size;
+                int worldY = (player_y + hit_box_factor_y + checkY) / cell_size;
                 int worldX = (offset_x + player_x + hit_box_factor_x + Pwidth + 15) / cell_size; // Check slightly ahead
 
                 // Stay within bounds
@@ -299,10 +299,10 @@ public:
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
                 player_y -= 10;
             }
-            if (Keyboard::isKeyPressed(Keyboard::Up)) {
-                player_y -= 10;
+            if (Keyboard::isKeyPressed(Keyboard::Down)) {
+                player_y += 10;
             }
-            isMoving = true;
+            //isMoving = true;
             ESprite.setPosition(player_x, player_y);
 
         }
@@ -1121,6 +1121,8 @@ public:
             gravFalse = true;
             isMoving = true;
             flyingClock.restart();
+            //player_y -= 10;
+            //ESprite.setPosition(player_x, player_y);
         }
         
         return isMoving;

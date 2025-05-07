@@ -312,6 +312,7 @@ public:
         }
 
         if (gravFalse) {
+            std::cout << "HELLO\n";
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
                 player_y -= 10;
             }
@@ -501,6 +502,8 @@ public:
     int getVelocityY() const {
         return velocityY;
     }
+
+    virtual void punching(char** lvl) = 0;
 };
 class Sonic : public MySprite
 {
@@ -645,6 +648,10 @@ public:
             SpriteRect.left = 0;
             ESprite.setTextureRect(SpriteRect);
         }
+    }
+
+    void punching(char** lvl) override {
+
     }
 };
 
@@ -839,7 +846,7 @@ public:
     }
 
   
-    void punching(char** lvl)
+    void punching(char** lvl) override
     {
         //std::cout << Punch << std::endl;
         //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
@@ -875,7 +882,7 @@ public:
             {
                 ESprite.setTexture(SpriteTex[10].T);
                 currentIndex = 10;
-                std::cout << currentIndex << std::endl;
+                //std::cout << currentIndex << std::endl;
                 updateTextureRectForCurrentIndex();
                 AnimateSprite(true);
             }
@@ -911,7 +918,7 @@ public:
                 animationClock.restart();
             }
         }
-        std::cout << currentFrame << std::endl;
+        //std::cout << currentFrame << std::endl;
 
         if (isMoving) {
             
@@ -1133,9 +1140,10 @@ public:
                 gravFalse = true;
                 flyingClock.restart();
                 std::cout << "Flying started!" << std::endl;
+                isMoving = true;
+                player_y -= 10;
             }
-            isMoving = true;
-            player_y -= 10;  
+            
             ESprite.setPosition(player_x, player_y);
         }
 
@@ -1221,7 +1229,9 @@ public:
 
     }
 
+    void punching(char** lvl) override {
 
+    }
 
 
 

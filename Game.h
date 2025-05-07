@@ -14,8 +14,11 @@ private:
     const int screen_y = 900;
 
     // Game objects
-    Knuckles player;
     Maps map;
+    MySprite* players[3];
+    int currentPlayer;
+    MySprite* player;
+    //Knuckles player;
     char** lvl;
 
     // Collectables
@@ -46,6 +49,7 @@ private:
 
     // Window
     sf::RenderWindow window;
+    sf::Clock playerChange;
 
     // Private methods
     void initWindow();
@@ -54,6 +58,7 @@ private:
     void processEvents();
     void update();
     void render();
+    void switchPlayer();
 
 public:
     Game();
@@ -66,6 +71,7 @@ public:
 
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
+    map(),     
     coins(map.getMap()),
     diamonds(map.getMap()),
     special(map.getMap()),
@@ -74,6 +80,12 @@ Game::Game() :
     bat(400, 300, map.getMap()),
     buzz(10000, 100, map.getMap()) {
 
+    //player = new Sonic();
+    players[0] = new Sonic();
+    players[1] = new Knuckles();
+    players[2] = new Tails();
+    currentPlayer = 0;
+    player = players[currentPlayer];
     initWindow();
     initTextures();
     initGameObjects();
@@ -115,6 +127,7 @@ void Game::initGameObjects() {
     coins.place();
     diamonds.place();
     special.place();
+    playerChange.restart();
 }
 
 void Game::processEvents() {
@@ -127,34 +140,34 @@ void Game::processEvents() {
 
 void Game::update() {
     // Update player
-    player.movement(lvl);
-    player.punching(lvl);
-    player.player_gravity(lvl);
-    player.update();
+    player->movement(lvl);
+    player->punching(lvl);
+    player->player_gravity(lvl);
+    player->update();
 
     // Update enemies
-    motoBug.move(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY());
-    bat.move(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY());
-    buzz.move(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY());
-    crab.move(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY());
+    motoBug.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
+    bat.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
+    buzz.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
+    crab.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
 
     // Check collisions with enemies
-    int dmg = motoBug.giveDamage(player.getVelocityY(), player.getX(), player.getY(), player.getOffsetX());
-    if (dmg > 0) player.takeDamage(dmg);
+    int dmg = motoBug.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    if (dmg > 0) player->takeDamage(dmg);
 
-    int dmg2 = bat.giveDamage(player.getVelocityY(), player.getX(), player.getY(), player.getOffsetX());
-    if (dmg2 > 0) player.takeDamage(dmg2);
+    int dmg2 = bat.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    if (dmg2 > 0) player->takeDamage(dmg2);
 
-    int bombdmg = buzz.giveDamage(player.getVelocityY(), player.getX(), player.getY(), player.getOffsetX());
-    if (bombdmg > 0) player.takeDamage(bombdmg);
+    int bombdmg = buzz.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    if (bombdmg > 0) player->takeDamage(bombdmg);
 
-    int dmg1 = crab.giveDamage(player.getVelocityY(), player.getX(), player.getY(), player.getOffsetX());
-    if (dmg1 > 0) player.takeDamage(dmg1);
+    int dmg1 = crab.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    if (dmg1 > 0) player->takeDamage(dmg1);
 
     // Check collectable collisions
-    coins.checkCollision(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY(), player.gethitX(), player.gethitY());
-    diamonds.checkCollision(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY(), player.gethitX(), player.gethitY());
-    special.checkCollision(player.getX(), player.getY(), player.getOffsetX(), player.getOffsetY(), player.gethitX(), player.gethitY());
+    coins.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY());
+    diamonds.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY());
+    special.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY());
 
     // Animate collectables
     coins.animate();
@@ -166,33 +179,33 @@ void Game::render() {
     window.clear(sf::Color::Black);
 
     // Draw background
-    backgroundSprite.setPosition(-player.getOffsetX() / 7, 0);
+    backgroundSprite.setPosition(-player->getOffsetX() / 7, 0);
     window.draw(backgroundSprite);
 
     // Draw level
     for (int i = 0; i < height; i += 1) {
-        for (int j = player.getOffsetX() / 64; j < (1300 + player.getOffsetX()) / 64; j += 1) {
+        for (int j = player->getOffsetX() / 64; j < (1300 + player->getOffsetX()) / 64; j += 1) {
             if (lvl[i][j] == 'w') {
-                wallSprite1.setPosition(j * cell_size - player.getOffsetX(), i * cell_size);
+                wallSprite1.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(wallSprite1);
             }
             if (lvl[i][j] == 'B') {
                 greenBushSprite.setScale(2, 2);
-                greenBushSprite.setPosition(j * cell_size - player.getOffsetX(), i * cell_size);
+                greenBushSprite.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(greenBushSprite);
             }
             if (lvl[i][j] == 'T') {
                 brownTowerSprite.setScale(4, 4);
-                brownTowerSprite.setPosition(j * cell_size - player.getOffsetX(), i * cell_size);
+                brownTowerSprite.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(brownTowerSprite);
             }
             if (lvl[i][j] == 'k') {
                 spikeSprite.setScale(1.5, 1.5);
-                spikeSprite.setPosition(j * cell_size - player.getOffsetX(), i * cell_size - 10);
+                spikeSprite.setPosition(j * cell_size - player->getOffsetX(), i * cell_size - 10);
                 window.draw(spikeSprite);
             }
             if (lvl[i][j] == 'b') {
-                breakableWallSprite.setPosition(j * cell_size - player.getOffsetX(), i * cell_size);
+                breakableWallSprite.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(breakableWallSprite);
             }
         }
@@ -211,12 +224,12 @@ void Game::render() {
     crab.draw(window);
 
     // Draw player
-    player.draw_player(window);
+    player->draw_player(window);
 
     // Draw collectables
-    coins.draw(window, player.getOffsetX());
-    diamonds.draw(window, player.getOffsetX());
-    special.draw(window, player.getOffsetX());
+    coins.draw(window, player->getOffsetX());
+    diamonds.draw(window, player->getOffsetX());
+    special.draw(window, player->getOffsetX());
 
     window.display();
 }
@@ -226,5 +239,19 @@ void Game::run() {
         processEvents();
         update();
         render();
+        switchPlayer();
+    }
+}
+
+void Game::switchPlayer() {
+    if (Keyboard::isKeyPressed(Keyboard::C)) {
+        if (playerChange.getElapsedTime().asSeconds() >= 1.5f) {
+            currentPlayer++;
+            if (currentPlayer >= 3) {
+                currentPlayer = 0;
+            }
+            player = players[currentPlayer];
+            playerChange.restart();
+        }
     }
 }

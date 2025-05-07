@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <cmath>
 #include <SFML/Graphics.hpp>
@@ -8,25 +9,69 @@
 //#include "Header.h"
 
 //const int cell_size = 64;
+//Heights of all levels are same
 const int height = 14;
-const int width = 300;
+const int width = 200;
+
 
 class Maps {
+    const  int widthLvl;
     // only making one map rn so there is one main class over here, else multiple classes based on the levels
     char** lvl;
+    int level;
+   std:: string* FilePath=nullptr;
+   std:: string File="";
 public:
-    Maps() {
+   
+    Maps(int levl) : widthLvl((levl == 1) ? 200 : ((levl == 2) ? 250 : 300))
+    {
+
         lvl = new char* [height];
         for (int i = 0; i < height; i++)
         {
-            lvl[i] = new char[width];
+            lvl[i] = new char[widthLvl];
             // Initialize all cells to empty space
-            for (int j = 0; j < width; j++)
+            for (int j = 0; j < widthLvl; j++)
             {
                 lvl[i][j] = 's'; // 's' for empty space
             }
         }
+        FilePath = new std::string[3];
+        FilePath[0] = "Data/level1.txt";
+        FilePath[1] = "Data/level2.txt";
+        FilePath[2] = "Data/level3.txt";
+        this->level = levl;
        
+        File = (levl == 1) ? FilePath[0] : ((levl == 2) ? FilePath[1] : FilePath[2]);
+
+    
+        std::ifstream file(File);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open map file: " << File << std::endl;
+            // Continue with hardcoded map if file doesn't exist
+        }
+        else {
+
+            std::string line;
+            int row = 0;
+
+            while (std::getline(file, line) && row < height) {
+                for (int col = 0; col < line.length() && col < widthLvl; col++) 
+                {
+                    lvl[row][col] = line[col];
+                }
+                row++;
+            }
+
+            file.close();
+            std::cout << "Map loaded from file: " << File << std::endl;
+
+            // If the file didn't contain enough rows to fill the map, we keep
+            // the initialized 's' characters for the remaining rows
+        }
+
+
+
         // Create the ground floor 
         for (int i = 0; i < 300; i++)
         {
@@ -108,12 +153,10 @@ public:
             lvl[7][i] = lvl[8][i] = lvl[9][i] = lvl[10][i] = lvl[11][i] = 'b';
         }
 
-        for (int i = 0; i < width; i += 8) 
-        {
-            lvl[11][i] = 'j';  // jelly
-        }
 
-        for (int i = 0; i < width; i += 8) {
+ 
+
+        for (int i = 0; i < widthLvl; i += 8) {
             lvl[11][i] = 'r';
         }
 
@@ -218,9 +261,15 @@ public:
 
 
 
-    Maps(Maps& m)
+    Maps(Maps& m) : widthLvl(m.widthLvl)   
     {
-        lvl = m.lvl;
+        lvl = new char* [height];
+        for (int i = 0; i < height; i++) {
+            lvl[i] = new char[widthLvl];
+            for (int j = 0; j < widthLvl; j++) {
+                lvl[i][j] = m.lvl[i][j]; // Copy the map data  
+            }
+        }
     }
     char** getMap() {
         return lvl;
@@ -234,4 +283,9 @@ public:
     /*void setLevel(int a, int b) {
 
     }*/
+
+    const int GetLevelWidth() const
+    {
+        return widthLvl;
+    }
 };

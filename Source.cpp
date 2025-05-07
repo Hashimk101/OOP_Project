@@ -79,7 +79,7 @@ int main()
 	Sprite BlackCrystal(BlackCrystalTex), PinkCrystal(PinkCrystalTex), WhiteCrystal(WhiteCrystalTex), BlueCrystal(blueCrystalTex), voiletCrystal(voiletCrystalTex);
 
 	Sonic sprite;
-	Maps map;
+	Maps map(3);
 	char** lvl = map.getMap();
 
 
@@ -140,7 +140,7 @@ int main()
 		BackgroundSprite.setPosition(-tails.getOffsetX() / 7, 0);
 		window.draw(BackgroundSprite);
 
-		display_level(window, height, width, lvl, wallSprite1, wallSprite3, cell_size, tails.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite2, rocks, jellySp, Crystals, BlackCrystal, PinkCrystal, WhiteCrystal, BlueCrystal, voiletCrystal);
+		display_level(window, height, map.GetLevelWidth(), lvl, wallSprite1, wallSprite3, cell_size, tails.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite2, rocks, jellySp, Crystals, BlackCrystal, PinkCrystal, WhiteCrystal, BlueCrystal, voiletCrystal);
 
 		m.draw(window);
 		m.animateSprite();

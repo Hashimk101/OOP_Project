@@ -101,6 +101,7 @@ public:
                 currentIndex = 10;
             if (!left)
                 currentIndex = 9;
+
             ESprite.setTexture(SpriteTex[currentIndex].T);
             return isMoving;
         }
@@ -120,6 +121,7 @@ public:
            // AnimateSprite(true);
          
         }
+        ESprite.setTexture(SpriteTex[currentIndex].T);
         if (Keyboard::isKeyPressed(Keyboard::Left))
         {
             // Collision checks go brrrrr
@@ -161,11 +163,13 @@ public:
                 velocityX -= acceleration;
                 if (velocityX < -max_speed) velocityX = -max_speed;
                 // Animation
-                if (!isFlying) {
+                if (!isFlying && !gravFalse)
+                {
                     ESprite.setTexture(SpriteTex[1].T);
                     currentIndex = 1;
                     isMoving = true;
                     left = true;
+                
                     updateTextureRectForCurrentIndex();
                     AnimateSprite(isMoving);
                 }
@@ -423,7 +427,8 @@ public:
 
     virtual  void AnimateSprite(bool isMoving) {
 
-        if (isMoving) {
+        if (isMoving) 
+        {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
                 SpriteRect.left = currentFrame * SpriteRect.width;
@@ -1150,7 +1155,8 @@ public:
         ESprite.setScale(scale_x, scale_y);
     }
 
-    bool movement(char** lvl) override {
+    bool movement(char** lvl) override
+    {
         bool isMovingBase = MySprite::movement(lvl);
 
         if (Keyboard::isKeyPressed(Keyboard::F))
@@ -1224,14 +1230,15 @@ public:
                 {
                     ESprite.setScale(2.56, 2.70);
                 }
-                else
+                else if(currentIndex == 9 || currentIndex == 10)
                 {
                     ESprite.setScale(2.1, 2.63);
                 }
-				//std::cout << "Current Index: " << currentIndex << std:: endl;
+				
                 
                      updateTextureRectForCurrentIndex();
                     currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
+                    std::cout << "Current frame: " << currentFrame << std:: endl;
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
                     animationClock.restart();

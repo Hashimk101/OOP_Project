@@ -90,7 +90,8 @@ public:
         ESprite.setTextureRect(SpriteRect);
     }
 
-    virtual bool movement(char** lvl) {
+    virtual bool movement(char** lvl) 
+    {
         borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
@@ -106,15 +107,17 @@ public:
         if (isFlying && left)
         {
             currentIndex = 10;
-            AnimateSprite(true);
-            return isMoving;
+            isMoving = true;
+           // AnimateSprite(true);
+            
         }
         else if (isFlying && !left)
 
         {
             currentIndex = 9;
-            AnimateSprite(true);
-            return isMoving;
+            isMoving = true;
+           // AnimateSprite(true);
+         
         }
         if (Keyboard::isKeyPressed(Keyboard::Left))
         {
@@ -166,7 +169,8 @@ public:
                 AnimateSprite(isMoving);
 
                 // Movement logic lol pata nai kaise ban gai
-                if (player_x <= 450) {
+                if (player_x <= 450) 
+                {
                     offset_x += velocityX; // Scroll world (velocityX is negative)
                     if (offset_x < 0) {
                         player_x += velocityX;
@@ -218,11 +222,13 @@ public:
                 if (velocityX > max_speed) velocityX = max_speed;
 
                 // Animation be like ......
-                if (onGround) {
+                if (onGround && !isFlying && !gravFalse) 
+                {
                     currentIndex = 3;
                     ESprite.setTexture(SpriteTex[3].T);
                 }
-                else {
+                else if(!gravFalse)
+                {
                     currentIndex = 5;
                     ESprite.setTexture(SpriteTex[5].T);
                 }
@@ -270,7 +276,8 @@ public:
             if (std::abs(velocityX) < 0.1f) {
                 velocityX = 0;
             }
-            if (isOnEdge(lvl)) {
+            if (isOnEdge(lvl)) 
+            {
                 // choose left or right edge pose
                 currentIndex = left ? 6 : 7;            // 6 = edgeL strip, 7 = edgeR strip
                 ESprite.setTexture(SpriteTex[currentIndex].T);
@@ -278,31 +285,40 @@ public:
                 AnimateSprite(true);                    // cycle through its frames
                 return true;
             }
+            if (!gravFalse)
 
-            currentIndex = (currentIndex == 1) ? 0 : 2;
-            if (left) {
-                ESprite.setTexture(SpriteTex[0].T);
+            {
+                currentIndex = (currentIndex == 1) ? 0 : 2;
+                if (left) {
+                    ESprite.setTexture(SpriteTex[0].T);
+                }
+                else
+                {
+                    ESprite.setTexture(SpriteTex[2].T);
+                }
+                isMoving = false;
+
+                updateTextureRectForCurrentIndex();
+                AnimateSprite(isMoving);
             }
-            else {
-                ESprite.setTexture(SpriteTex[2].T);
-            }
-            isMoving = false;
-            updateTextureRectForCurrentIndex();
-            AnimateSprite(isMoving); // Moved here to ensure animation updates when not moving
+
         }
 
-        if (onGround && !gravFalse) {
+        if (onGround && !gravFalse)
+        {
             if ((Keyboard::isKeyPressed(Keyboard::Up)) || (Keyboard::isKeyPressed(Keyboard::Space))) {
                 velocityY = -20;
             }
         }
-        else if (!onGround && !gravFalse) {
+        else if (!onGround && !gravFalse)
+        {
             if ((currentIndex == 0 || currentIndex == 1)) {
                 currentIndex = 4;
 
                 ESprite.setTexture(SpriteTex[4].T);
             }
-            else if ((currentIndex == 2 || currentIndex == 3)) {
+            else if ((currentIndex == 2 || currentIndex == 3)) 
+            {
                 currentIndex = 5;
 
                 ESprite.setTexture(SpriteTex[5].T);
@@ -311,7 +327,8 @@ public:
 
         }
 
-        if (gravFalse) {
+        if (gravFalse) 
+        {
             std::cout << "HELLO\n";
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
                 player_y -= 10;
@@ -335,7 +352,7 @@ public:
             AnimateSprite(isInvincible);
         }
 
-        return isMoving; // Always return isMoving
+        return isMoving; 
 
     }
     void player_gravity(char** lvl)
@@ -1133,7 +1150,8 @@ public:
 
     bool movement(char** lvl) override {
        
-        if (Keyboard::isKeyPressed(Keyboard::F)) {
+        if (Keyboard::isKeyPressed(Keyboard::F))
+        {
             if (!isFlying) 
             {
                 isFlying = true;
@@ -1154,7 +1172,8 @@ public:
             std::cout << "Flying ended due to timeout." << std::endl;
         }
 
-        if (isFlying) {
+        if (isFlying)
+        {
             AnimateSprite(true);
             currentIndex = left ? 10 : 9;  
 			ESprite.setTexture(SpriteTex[currentIndex].T);

@@ -100,7 +100,8 @@ void Game::initWindow() {
     window.setFramerateLimit(120);
 }
 
-void Game::initTextures() {
+void Game::initTextures()
+{
     // Load textures
     backgroundTex.loadFromFile("Data/bg5.png");
     wallTex1.loadFromFile("Data/bl.jpg");
@@ -234,7 +235,8 @@ void Game::render() {
     window.display();
 }
 
-void Game::run() {
+void Game::run()
+{
     while (window.isOpen()) {
         processEvents();
         update();

@@ -21,7 +21,7 @@ void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, f
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes, Sprite& BreakableWallSprite, Sprite& rock, Sprite& J, Sprite& Crystals, Sprite & BlackCrystal, Sprite& PinkCrystal, Sprite& WhiteCrystal, Sprite& BlueCrystal, Sprite& voiletCrystal);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes, Sprite& BreakableWallSprite, Sprite& rock, Sprite& J, Sprite& Crystals, Sprite& BlackCrystal, Sprite& PinkCrystal, Sprite& WhiteCrystal, Sprite& BlueCrystal, Sprite& voiletCrystal);
 
 int main()
 {
@@ -74,14 +74,14 @@ int main()
 	BlackCrystalTex.loadFromFile("Data/crystal_black.png");
 	PinkCrystalTex.loadFromFile("Data/crystal_red-pink.png");
 	WhiteCrystalTex.loadFromFile("Data/crystal_white-gold.png");
-	blueCrystalTex.loadFromFile("Data/crystal_blue.png");	
+	blueCrystalTex.loadFromFile("Data/crystal_blue.png");
 	voiletCrystalTex.loadFromFile("Data/crystal_violet.png");
 	Sprite BlackCrystal(BlackCrystalTex), PinkCrystal(PinkCrystalTex), WhiteCrystal(WhiteCrystalTex), BlueCrystal(blueCrystalTex), voiletCrystal(voiletCrystalTex);
-	
+
 	Sonic sprite;
 	Maps map;
 	char** lvl = map.getMap();
-	
+
 
 	Texture wallTex1, wallTex2, wallTex3, Jelly;
 	wallTex1.loadFromFile("Data/bl.jpg");
@@ -97,7 +97,7 @@ int main()
 	BreakableWallTex2.loadFromFile("Data/brick8.png");
 	Sprite BreakableWallSprite2(BreakableWallTex2);
 	Sprite wallSprite1(wallTex1), wallSprite2(wallTex2), wallSprite3(wallTex3);
-	
+
 
 
 	Texture GreenBush;
@@ -111,7 +111,7 @@ int main()
 	Sprite spikeSprite(spikeTex);
 
 	wallSprite1.setScale(0.64, 0.64);
-	
+
 	RingCoin Coins(lvl);
 	ExtraLife diamonds(lvl);
 	SpecialBoost special(lvl);
@@ -266,7 +266,7 @@ void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int p
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2,  const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess, Sprite& BreakableWallSprite, Sprite& rock, Sprite& JELLY, Sprite& Crystals, Sprite& BlackCrystal, Sprite& PinkCrystal, Sprite& WhiteCrystal, Sprite& BlueCrystal, Sprite& voiletCrystal )
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2, const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess, Sprite& BreakableWallSprite, Sprite& rock, Sprite& JELLY, Sprite& Crystals, Sprite& BlackCrystal, Sprite& PinkCrystal, Sprite& WhiteCrystal, Sprite& BlueCrystal, Sprite& voiletCrystal)
 {
 	for (int i = 0; i < height; i += 1)
 	{
@@ -284,7 +284,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 			}
 			if (lvl[i][j] == 'q') {
 				wallSprite2.setScale(1, 1);
-				wallSprite2.setPosition(j * cell_size - offset, i * cell_size); 
+				wallSprite2.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(wallSprite2);
 			}
 
@@ -315,7 +315,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 			if (lvl[i][j] == 'R')
 			{
 				rock.setScale(1, 1);
-				
+
 				rock.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(rock);
 			}
@@ -334,7 +334,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 				Crystals.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(Crystals);
 			}
-			if (lvl[i][j]=='K')
+			if (lvl[i][j] == 'K')
 			{
 				BlackCrystal.setScale(1, 1);
 				BlackCrystal.setPosition(j * cell_size - offset, i * cell_size);

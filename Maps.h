@@ -9,7 +9,7 @@
 
 //const int cell_size = 64;
 const int height = 14;
-const int width = 250;
+const int width = 300;
 
 class Maps {
     // only making one map rn so there is one main class over here, else multiple classes based on the levels
@@ -28,16 +28,16 @@ public:
         }
        
         // Create the ground floor 
-        for (int i = 0; i < 250; i++)
+        for (int i = 0; i < 300; i++)
         {
             lvl[13][i] = 'w';
             lvl[12][i] = 'w';
            
         }
-        lvl[11][30] = 'R';
-        lvl[11][58] = 'R';
-        lvl[5][98] = 'R';
-        lvl[11][127] = 'R';
+        lvl[11][30] = 'w';
+        lvl[11][58] = 'K';
+        lvl[5][98] = 'W';
+        lvl[11][127] = 'P';
 
 
         // Fixed platforms (manually placed)
@@ -47,7 +47,7 @@ public:
         lvl[8][6] = 'w';
         lvl[8][6] = 'w';
 
-        lvl[5][68] = 'C';
+        lvl[5][68] = 'K';
 
 
         lvl[9][107] = 'w';
@@ -65,13 +65,17 @@ public:
             {
                 lvl[8][i] = 'J';
                 continue;
+                if (i == 139) 
+                {
+                    lvl[7][i] = 'V';
+                }
             }
             lvl[8][i] = 'w';
         }
 
 
 
-        lvl[11][10] = 'R';
+        lvl[11][10] = 'P';
 
         lvl[7][10] = 'w';
         lvl[7][11] = 'w';
@@ -119,6 +123,7 @@ public:
         for (int i = 140; i <= 143; i++)
         {
             lvl[5][i] = 'w';
+
             
         };
         //spikes
@@ -128,25 +133,34 @@ public:
         lvl[11][100] = 'k';
         lvl[11][150] = 'k';
         lvl[11][230] = 'k';
-
-
+        //Crystals
+		lvl[5][159] = 'K';
+        lvl[6][93] = 'V';
+        lvl[6][180] = 'W';
+        lvl[5][186] = 'P';
         for (int i = 148; i <= 150; i++) lvl[4][i] = 'w';
         for (int i = 155; i <= 160; i++) lvl[6][i] = 'w';
         for (int i = 170; i <= 180; i++) lvl[9][i] = 'w';
         for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
         for (int i = 186; i <= 190; i++) lvl[6][i] = 'w';
+
         for (int i = 189; i <= 191; i++)
         {
             
             lvl[4][i] = 'w';
+            if (i == 194) 
+            {
+				lvl[4][i] = 'U';
+				continue;
+            }
             
            
         }
         //breakable walls
         for (int i = 0; i < 12; i++)
         {
-            lvl[i][169] = 'b';
-            lvl[i][169] = 'b';
+          
+          //  lvl[i][169] = 'b';
         }
 
 
@@ -167,6 +181,7 @@ public:
         for (int i = 80; i <= 89; i++) lvl[7][i] = 'w';
         lvl[10][45] = 'w'; lvl[9][45] = 'w';
         lvl[10][100] = 'w'; lvl[9][100] = 'w';lvl[11][100] = 'w';
+		lvl[7][144] = 'U';
 
         // Ceiling platforms
       
@@ -182,7 +197,9 @@ public:
 
         for (int i = 130; i <= 135; i++) lvl[7][i] = 'w';
 
-
+        //Crystals in the end
+		lvl[11][193] = 'K';
+		lvl[11][199] = 'W';
 
 	
 

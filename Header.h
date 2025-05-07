@@ -42,6 +42,8 @@ protected:
     bool OnEdge = false; // Tracks if the player is on an edge
     bool gravFalse = false;
     bool Punch = false;
+	bool isFlying = false; // Tracks if the player is flying
+	bool isMoving = false; // Tracks if the player is moving
 
 
 public:
@@ -98,6 +100,20 @@ public:
             if (!left)
                 currentIndex = 9;
             ESprite.setTexture(SpriteTex[currentIndex].T);
+            return isMoving;
+        }
+
+        if (isFlying && left)
+        {
+            currentIndex = 10;
+            AnimateSprite(true);
+            return isMoving;
+        }
+        else if (isFlying && !left)
+
+        {
+            currentIndex = 9;
+            AnimateSprite(true);
             return isMoving;
         }
         if (Keyboard::isKeyPressed(Keyboard::Left))
@@ -1109,31 +1125,57 @@ public:
     }
 
     bool movement(char** lvl) override {
-        bool isMoving = MySprite::movement(lvl);
+       
+        if (Keyboard::isKeyPressed(Keyboard::F)) {
+            if (!isFlying) 
+            {
+                isFlying = true;
+                gravFalse = true;
+                flyingClock.restart();
+                std::cout << "Flying started!" << std::endl;
+            }
+            isMoving = true;
+            player_y -= 10;  
+            ESprite.setPosition(player_x, player_y);
+        }
 
-        if (flyingClock.getElapsedTime().asSeconds() >= maxFlyTime) {
+        // Timeout check: stop flying after max time
+        if (isFlying && flyingClock.getElapsedTime().asSeconds() >= maxFlyTime) {
             isFlying = false;
             gravFalse = false;
+            std::cout << "Flying ended due to timeout." << std::endl;
         }
 
-        if (Keyboard::isKeyPressed(Keyboard::F)) {
-            isFlying = true;
-            gravFalse = true;
-            isMoving = true;
-            flyingClock.restart();
-            //player_y -= 10;
-            //ESprite.setPosition(player_x, player_y);
+        if (isFlying) {
+            AnimateSprite(true);
+            currentIndex = left ? 10 : 9;  
+			ESprite.setTexture(SpriteTex[currentIndex].T);
+            return true;
         }
-        
-        return isMoving;
+
+      
+        bool isMovingBase = MySprite::movement(lvl);
+
+      
+        if (!isFlying) {
+            if (!onGround) {
+                currentIndex = left ? 4 : 5;  // jump animations
+            }
+            else if (!isMovingBase) {
+                currentIndex = left ? 0 : 2;  // idle animations
+            }
+        }
+
+        return isMovingBase;
     }
+
 
 
 
     void AnimateSprite(bool isMoving) override
     {
 
-        if (isMoving) {
+        if (isMoving || isFlying) {
 
             if (animationClock.getElapsedTime().asMilliseconds() > 80)
             {
@@ -1149,16 +1191,17 @@ public:
                 {
                     ESprite.setScale(2.54, 2.63);
                 }
-                else if ( currentIndex == 10)
+                else if ( currentIndex == 8)
                 {
                     ESprite.setScale(2.56, 2.70);
                 }
                 else
                 {
-                    ESprite.setScale(2.0, 1.75);
+                    ESprite.setScale(2.1, 2.63);
                 }
+				std::cout << "Current Index: " << currentIndex << std:: endl;
                 
-                updateTextureRectForCurrentIndex();
+                     updateTextureRectForCurrentIndex();
                     currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
@@ -1167,7 +1210,8 @@ public:
 
             }
         }
-        else {
+        else
+        {
             // reset to first frame of current strip
             currentFrame = 0;
             SpriteRect.left = 0;

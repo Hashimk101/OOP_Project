@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Collectables.h" />
     <ClInclude Include="Enemies.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="Maps.h" />
     <ClInclude Include="Menu.h" />

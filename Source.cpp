@@ -21,10 +21,11 @@ void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, f
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes, Sprite& BreakableWallSprite, Sprite& rock, Sprite& J, Sprite& Crystals);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes, Sprite& BreakableWallSprite, Sprite& rock, Sprite& J, Sprite& Crystals, Sprite & BlackCrystal, Sprite& PinkCrystal, Sprite& WhiteCrystal, Sprite& BlueCrystal, Sprite& voiletCrystal);
 
 int main()
 {
+
 	Knuckles K;
 	Tails tails;
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
@@ -32,14 +33,19 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex1, BackgroundTex2, BackgroundTex3;
+	BackgroundTex3.loadFromFile("Data/BlueSp.jpg");
 	BackgroundTex2.loadFromFile("Data/Bg.jpg");
-	sf::Sprite BackgroundSprite(BackgroundTex2);
+	sf::Sprite BackgroundSprite(BackgroundTex3);
+	BackgroundSprite.setScale(0.4, 0.5);
 	//For level 1, scale BackgroundSprite.setScale(1.8, 1.2);
+
+	//Level 2: BackgroundSprite.setScale(1, 0.45 );
+
+
 	Texture RockTex1, CrystalTex;
 	RockTex1.loadFromFile("Data/snowy_rock3.png");
 	CrystalTex.loadFromFile("Data/crystal.png");
 	Sprite rocks(RockTex1), Crystals(CrystalTex);
-	BackgroundSprite.setScale(1, 0.45 );
 	//BackgroundSprite.setPosition(100, 100);
 	/////////////////////////////////////////////////////////////////
 	// a cell is 64 by 64 pixels
@@ -58,8 +64,19 @@ int main()
 	// R is rocks
 	// C is crystals
 	//LVL 2
+	//K is black crystals
+	//P is pink crystals
+	//W is white crystals
+	//L IS BLUE CRYSTALS
+	//V IS VOILET
 
-
+	Texture BlackCrystalTex, PinkCrystalTex, WhiteCrystalTex, blueCrystalTex, voiletCrystalTex;
+	BlackCrystalTex.loadFromFile("Data/crystal_black.png");
+	PinkCrystalTex.loadFromFile("Data/crystal_red-pink.png");
+	WhiteCrystalTex.loadFromFile("Data/crystal_white-gold.png");
+	blueCrystalTex.loadFromFile("Data/crystal_blue.png");	
+	voiletCrystalTex.loadFromFile("Data/crystal_violet.png");
+	Sprite BlackCrystal(BlackCrystalTex), PinkCrystal(PinkCrystalTex), WhiteCrystal(WhiteCrystalTex), BlueCrystal(blueCrystalTex), voiletCrystal(voiletCrystalTex);
 	
 	Sonic sprite;
 	Maps map;
@@ -69,8 +86,8 @@ int main()
 	Texture wallTex1, wallTex2, wallTex3, Jelly;
 	wallTex1.loadFromFile("Data/bl.jpg");
 	wallTex2.loadFromFile("Data/brick6.png");
-	wallTex3.loadFromFile("Data/brick8.png");
-	Jelly.loadFromFile("Data/Jelly.png");
+	wallTex3.loadFromFile("Data/Sp_brick.png");
+	Jelly.loadFromFile("Data/jelly (2).png");
 	Sprite jellySp(Jelly);
 	//Level 1
 	Texture BreakableWallTex1, BreakableWallTex2;
@@ -120,7 +137,7 @@ int main()
 		BackgroundSprite.setPosition(-tails.getOffsetX() / 7, 0);
 		window.draw(BackgroundSprite);
 
-		display_level(window, height, width, lvl, wallSprite1, wallSprite2,  cell_size, tails.getOffsetX(),	BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite2, rocks, jellySp, Crystals);
+		display_level(window, height, width, lvl, wallSprite1, wallSprite3, cell_size, tails.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite2, rocks, jellySp, Crystals, BlackCrystal, PinkCrystal, WhiteCrystal, BlueCrystal, voiletCrystal);
 
 		m.draw(window);
 		m.animateSprite();
@@ -249,7 +266,7 @@ void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int p
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2,  const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess, Sprite& BreakableWallSprite, Sprite& rock, Sprite& JELLY, Sprite& Crystals)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2,  const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess, Sprite& BreakableWallSprite, Sprite& rock, Sprite& JELLY, Sprite& Crystals, Sprite& BlackCrystal, Sprite& PinkCrystal, Sprite& WhiteCrystal, Sprite& BlueCrystal, Sprite& voiletCrystal )
 {
 	for (int i = 0; i < height; i += 1)
 	{
@@ -261,7 +278,7 @@ void display_level(RenderWindow& window, const int height, const int width, char
 
 			if (lvl[i][j] == 'w')
 			{
-				wallSprite2.setScale(1, 1);
+				//wallSprite2.setScale(2, 2);
 				wallSprite2.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(wallSprite2);
 			}
@@ -317,6 +334,38 @@ void display_level(RenderWindow& window, const int height, const int width, char
 				Crystals.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(Crystals);
 			}
+			if (lvl[i][j]=='K')
+			{
+				BlackCrystal.setScale(1, 1);
+				BlackCrystal.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(BlackCrystal);
+			}
+			if (lvl[i][j] == 'P')
+			{
+				PinkCrystal.setScale(1, 1);
+				PinkCrystal.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(PinkCrystal);
+			}
+			if (lvl[i][j] == 'W')
+			{
+				WhiteCrystal.setScale(1, 1);
+				WhiteCrystal.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(WhiteCrystal);
+			}
+			if (lvl[i][j] == 'U')
+			{
+				BlueCrystal.setScale(1, 1);
+				BlueCrystal.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(BlueCrystal);
+			}
+			if (lvl[i][j] == 'V')
+			{
+				voiletCrystal.setScale(1, 1);
+				voiletCrystal.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(voiletCrystal);
+			}
+
+
 		}
 
 	}

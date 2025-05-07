@@ -32,14 +32,14 @@ int main()
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
 	sf::Texture BackgroundTex1, BackgroundTex2, BackgroundTex3;
-	BackgroundTex2.loadFromFile("Data/Bg.jpg");
+	BackgroundTex2.loadFromFile("Data/backg12.png");
 	sf::Sprite BackgroundSprite(BackgroundTex2);
 	//For level 1, scale BackgroundSprite.setScale(1.8, 1.2);
 	Texture RockTex1, CrystalTex;
 	RockTex1.loadFromFile("Data/snowy_rock3.png");
 	CrystalTex.loadFromFile("Data/crystal.png");
 	Sprite rocks(RockTex1), Crystals(CrystalTex);
-	BackgroundSprite.setScale(1, 0.45 );
+	BackgroundSprite.setScale(1.1,0.85);
 	//BackgroundSprite.setPosition(100, 100);
 	/////////////////////////////////////////////////////////////////
 	// a cell is 64 by 64 pixels
@@ -68,7 +68,7 @@ int main()
 
 	Texture wallTex1, wallTex2, wallTex3, Jelly;
 	wallTex1.loadFromFile("Data/bl.jpg");
-	wallTex2.loadFromFile("Data/brick6.png");
+	wallTex2.loadFromFile("Data/block1.png");
 	wallTex3.loadFromFile("Data/brick8.png");
 	Jelly.loadFromFile("Data/Jelly.png");
 	Sprite jellySp(Jelly);

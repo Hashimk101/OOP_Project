@@ -9,6 +9,7 @@
 #include "Collectables.h"
 #include "Enemies.h"
 #include "Menu.h"
+#include "ScoreBoard.h"
 
 using namespace sf;
 using namespace std;
@@ -20,23 +21,29 @@ void player_gravity(char** lvl, int& offset_y, int& velocityY, bool& onGround, f
 
 void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int player_y);
 
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes, Sprite& BreakableWallSprite);
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2, const int cell_size, int offset, Sprite& background, Sprite& Bush, Sprite& BrownTower, Sprite& spikes, Sprite& BreakableWallSprite, Sprite& rock, Sprite& J, Sprite& Crystals);
 
 int main()
 {
 	Knuckles K;
-
+	Tails tails;
 	RenderWindow window(VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", Style::Close);
+	//Menu menu(window);
 	window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(120);
-	sf::Texture BackgroundTex;
-	BackgroundTex.loadFromFile("Data/bg5.png");
-	sf::Sprite BackgroundSprite(BackgroundTex);
-	BackgroundSprite.setScale(1.8, 1.2);
+	sf::Texture BackgroundTex1, BackgroundTex2, BackgroundTex3;
+	BackgroundTex2.loadFromFile("Data/Bg.jpg");
+	sf::Sprite BackgroundSprite(BackgroundTex2);
+	//For level 1, scale BackgroundSprite.setScale(1.8, 1.2);
+	Texture RockTex1, CrystalTex;
+	RockTex1.loadFromFile("Data/snowy_rock3.png");
+	CrystalTex.loadFromFile("Data/crystal.png");
+	Sprite rocks(RockTex1), Crystals(CrystalTex);
+	BackgroundSprite.setScale(1, 0.45 );
 	//BackgroundSprite.setPosition(100, 100);
 	/////////////////////////////////////////////////////////////////
 	// a cell is 64 by 64 pixels
-
+	//'j' is for jelly
 	// 's' is regular space
 	// 'q' is wall1 or floor1
 	// 'w' is wall2 or floor2
@@ -45,21 +52,37 @@ int main()
 	// 'z' is spring
 
 	// Uppercase for not interactable background accessories
+	// LVL:1
 	//B is for greenBushes
-	// C is for crystals
 	//T is for brown tower
+	// R is rocks
+	// C is crystals
+	//LVL 2
+
+
+	
 	Sonic sprite;
 	Maps map;
 	char** lvl = map.getMap();
 	
 
-	Texture wallTex1;
+	Texture wallTex1, wallTex2, wallTex3, Jelly;
 	wallTex1.loadFromFile("Data/bl.jpg");
-	Texture BreakableWallTex;
-	BreakableWallTex.loadFromFile("Data/brick4.png");
-	Sprite BreakableWallSprite(BreakableWallTex);
+	wallTex2.loadFromFile("Data/brick6.png");
+	wallTex3.loadFromFile("Data/brick8.png");
+	Jelly.loadFromFile("Data/Jelly.png");
+	Sprite jellySp(Jelly);
+	//Level 1
+	Texture BreakableWallTex1, BreakableWallTex2;
+	BreakableWallTex1.loadFromFile("Data/brick4.png");
 
-	Sprite wallSprite1(wallTex1);
+	Sprite BreakableWallSprite(BreakableWallTex1);
+	BreakableWallTex2.loadFromFile("Data/brick8.png");
+	Sprite BreakableWallSprite2(BreakableWallTex2);
+	Sprite wallSprite1(wallTex1), wallSprite2(wallTex2), wallSprite3(wallTex3);
+	
+
+
 	Texture GreenBush;
 	GreenBush.loadFromFile("Data/GreenBush.png");
 	Sprite GreenBushSprite(GreenBush);
@@ -70,8 +93,8 @@ int main()
 	spikeTex.loadFromFile("Data/spike.png");
 	Sprite spikeSprite(spikeTex);
 
-
 	wallSprite1.setScale(0.64, 0.64);
+	
 	RingCoin Coins(lvl);
 	ExtraLife diamonds(lvl);
 	SpecialBoost special(lvl);
@@ -92,80 +115,95 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 		}
-		//menu.handleEvent(event);
 		window.clear(Color::Black);
-		BackgroundSprite.setPosition(-K.getOffsetX() / 7, 0);
+
+		BackgroundSprite.setPosition(-tails.getOffsetX() / 7, 0);
 		window.draw(BackgroundSprite);
-		display_level(window, height, width, lvl, wallSprite1, cell_size, K.getOffsetX(), BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite);
+
+		display_level(window, height, width, lvl, wallSprite1, wallSprite2,  cell_size, tails.getOffsetX(),	BackgroundSprite, GreenBushSprite, BrownTowerSprite, spikeSprite, BreakableWallSprite2, rocks, jellySp, Crystals);
 
 		m.draw(window);
 		m.animateSprite();
 		Bat.animateSprite();
 		Bat.draw(window);
+		m.move(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY());
+		Bat.move(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY());
 
-		m.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
-		Bat.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
-		int dmg2 = Bat.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
-		if (dmg2 > 0) K.takeDamage(dmg2);
-		//std::cout << "DMG 2" << dmg2 << std::endl;
+		int dmg2 = Bat.giveDamage(tails.getVelocityY(), tails.getX(), tails.getY(), tails.getOffsetX());
+		if (dmg2 > 0) tails.takeDamage(dmg2);
 
-		Buzz.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
-		int bombdmg = Buzz.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
-		if (bombdmg > 0) {
-			K.takeDamage(bombdmg);
-		}
+		Buzz.move(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY());
+		int bombdmg = Buzz.giveDamage(tails.getVelocityY(), tails.getX(), tails.getY(), tails.getOffsetX());
+		if (bombdmg > 0) tails.takeDamage(bombdmg);
 		Buzz.animateSprite();
 		Buzz.draw(window);
 
-		crab.move(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY());
+		crab.move(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY());
 		crab.draw(window);
-		// keep movement and drawing close to each other for better user experience :)
-		int dmg = m.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
-		if (dmg > 0)
-		{
-			K.takeDamage(dmg);
-		}
-		Bat.animateSprite();
-		Bat.draw(window);
 
-		K.movement(lvl);
-		//sprite.movement(lvl);
-		//sprite.player_gravity(lvl);
-		//sprite.update();
-		K.draw_player(window);
-		K.punching(lvl);
-		K.player_gravity(lvl);
-		K.update();
-		/*K.punching(lvl);*/
+		int dmg = m.giveDamage(tails.getVelocityY(), tails.getX(), tails.getY(), tails.getOffsetX());
+		if (dmg > 0) tails.takeDamage(dmg);
 
-		Coins.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
-		diamonds.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
-		special.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
-		
+		int dmg1 = crab.giveDamage(tails.getVelocityY(), tails.getX(), tails.getY(), tails.getOffsetX());
+		if (dmg1 > 0) tails.takeDamage(dmg1);
+
+		tails.movement(lvl);
+		tails.draw_player(window);
+		tails.player_gravity(lvl);
+		tails.update();
+
+		Coins.checkCollision(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY(), tails.gethitX(), tails.gethitY());
+		diamonds.checkCollision(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY(), tails.gethitX(), tails.gethitY());
+		special.checkCollision(tails.getX(), tails.getY(), tails.getOffsetX(), tails.getOffsetY(), tails.gethitX(), tails.gethitY());
 
 		Coins.animate();
 		diamonds.animate();
 		special.animate();
 
-		int dmg1 = crab.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
-		if (dmg1 > 0) K.takeDamage(dmg1);
+		Coins.draw(window, tails.getOffsetX());
+		diamonds.draw(window, tails.getOffsetX());
+		special.draw(window, tails.getOffsetX());
 
-		//K.update();
-		/*m.update();*/
-		//K.draw_player(window);
-		Coins.draw(window, K.getOffsetX());
-		diamonds.draw(window, K.getOffsetX());
-		special.draw(window, K.getOffsetX());
-		//crab2.draw(window);
-		//crab2.move(sprite.getX(), sprite.getY(), sprite.getOffsetX(), sprite.getOffsetY());
 
-		
-		//window.draw()
-	//	menu.draw(window);
+		// int dmg2 = Bat.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
+	// if (dmg2 > 0) K.takeDamage(dmg2);
+	// int bombdmg = Buzz.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
+	// if (bombdmg > 0) { K.takeDamage(bombdmg); }
+	// int dmg = m.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
+	// if (dmg > 0) { K.takeDamage(dmg); }
+	// Coins.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
+	// diamonds.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
+	// special.checkCollision(K.getX(), K.getY(), K.getOffsetX(), K.getOffsetY(), K.gethitX(), K.gethitY());
+	// int dmg1 = crab.giveDamage(K.getVelocityY(), K.getX(), K.getY(), K.getOffsetX());
+		// if (dmg1 > 0) K.takeDamage(dmg1);
+
+
+
+		// K.movement(lvl);
+	// K.draw_player(window);
+	// K.punching(lvl);
+	// K.player_gravity(lvl);
+	// K.update();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		window.display();
 	}
-
-
 	return 0;
 }
 
@@ -211,7 +249,7 @@ void draw_player(RenderWindow& window, Sprite& LstillSprite, int player_x, int p
 	window.draw(LstillSprite);
 
 }
-void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess, Sprite& BreakableWallSprite)
+void display_level(RenderWindow& window, const int height, const int width, char** lvl, Sprite& wallSprite1, Sprite& wallSprite2,  const int cell_size, int offset, Sprite& background, Sprite& GreenBushSprite, Sprite& BrownTowerSprite, Sprite& spikess, Sprite& BreakableWallSprite, Sprite& rock, Sprite& JELLY, Sprite& Crystals)
 {
 	for (int i = 0; i < height; i += 1)
 	{
@@ -219,21 +257,25 @@ void display_level(RenderWindow& window, const int height, const int width, char
 		// THE GREATEST PROGRAMMER THAT EVER LIVED
 		for (int j = offset / 64; j < (1300 + offset) / 64; j += 1)
 		{
+			if (j < 0 || j >= width) continue;  // skip out-of-bounds columns
+
 			if (lvl[i][j] == 'w')
 			{
-				wallSprite1.setPosition(j * cell_size - offset, i * cell_size);
-				window.draw(wallSprite1);
-				/*background.setPosition(0 - offset / 4, 0);*/
-				/*window.draw(background);*/
+				wallSprite2.setScale(1, 1);
+				wallSprite2.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(wallSprite2);
 			}
-			if (lvl[i][j] == 'B') // green bushes
+			if (lvl[i][j] == 'q') {
+				wallSprite2.setScale(1, 1);
+				wallSprite2.setPosition(j * cell_size - offset, i * cell_size); 
+				window.draw(wallSprite2);
+			}
+
+			if (lvl[i][j] == 'B')
 			{
 				GreenBushSprite.setScale(2, 2);
 				GreenBushSprite.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(GreenBushSprite);
-				/*else if (lvl[i][j] == 's') {
-					window.draw();
-				}*/
 			}
 			if (lvl[i][j] == 'T')
 			{
@@ -243,7 +285,6 @@ void display_level(RenderWindow& window, const int height, const int width, char
 			}
 			if (lvl[i][j] == 'k')
 			{
-
 				spikess.setScale(1.5, 1.5);
 				spikess.setPosition(j * cell_size - offset, i * cell_size - 10);
 				window.draw(spikess);
@@ -252,10 +293,31 @@ void display_level(RenderWindow& window, const int height, const int width, char
 			{
 				BreakableWallSprite.setPosition(j * cell_size - offset, i * cell_size);
 				window.draw(BreakableWallSprite);
+			}
+
+			if (lvl[i][j] == 'R')
+			{
+				rock.setScale(1, 1);
 				
-				/*background.setPosition(0 - offset / 4, 0);*/
-				/*window.draw(background);*/
+				rock.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(rock);
+			}
+			if (lvl[i][j] == 'J')
+			{
+				JELLY.setScale(1, 1);
+				JELLY.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(JELLY);
+			}
+
+
+
+			if (lvl[i][j] == 'C')
+			{
+				Crystals.setScale(1, 1);
+				Crystals.setPosition(j * cell_size - offset, i * cell_size);
+				window.draw(Crystals);
 			}
 		}
+
 	}
 }

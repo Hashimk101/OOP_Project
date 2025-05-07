@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
+#include "ScoreBoard.h"
 
 // Base Collectable class
 class Collectable {
@@ -130,7 +130,7 @@ public:
                             (playerY < collectY + collectableHeight) &&
                             (playerY + playerHeight > collectY))
                         {
-                            // Collision happened!
+
                             lvl[i][j] = 's';
                             sound.play();
                             onCollect(i, j);
@@ -218,7 +218,8 @@ public: ExtraLife(char** lvl): Collectable(lvl, 90, 94, 0.5, "Data/GreenPowerup.
             for (int j = 0; j < width; j++) {
                 if (lvl[i][j] == 's') {
                     // For diamonds, we'll use different placement criteria
-                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
+                    if ((i + 1 < height && lvl[i + 1][j] == 'w')) 
+                    {
                         validSpaces++;
                     }
                 }

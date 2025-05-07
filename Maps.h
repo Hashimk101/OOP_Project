@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-//#include <fstream>
+#include <fstream>
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -9,7 +9,7 @@
 
 //const int cell_size = 64;
 const int height = 14;
-const int width = 200;
+const int width = 250;
 
 class Maps {
     // only making one map rn so there is one main class over here, else multiple classes based on the levels
@@ -21,33 +21,24 @@ public:
         {
             lvl[i] = new char[width];
             // Initialize all cells to empty space
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < width; j++)
+            {
                 lvl[i][j] = 's'; // 's' for empty space
             }
         }
-
-        // Create the ground floor (width 200)
-        for (int i = 0; i < 200; i++)
+       
+        // Create the ground floor 
+        for (int i = 0; i < 250; i++)
         {
-            if (i >= 165 && i < 167)
-            {
-                lvl[12][i] = 'w';
-                lvl[13][i] = 'w';
-                continue;
-            }
-            if (i >= 64 && i < 66)
-            {
-                lvl[12][i] = 'w';
-                lvl[13][i] = 'w';
-                continue;
-            }
-
-
-
-            lvl[12][i] = 'w';
-            lvl[11][i] = 'B';
             lvl[13][i] = 'w';
+            lvl[12][i] = 'w';
+           
         }
+        lvl[11][30] = 'R';
+        lvl[11][58] = 'R';
+        lvl[5][98] = 'R';
+        lvl[11][127] = 'R';
+
 
         // Fixed platforms (manually placed)
         // Small platforms
@@ -55,11 +46,32 @@ public:
         lvl[8][5] = 'w';
         lvl[8][6] = 'w';
         lvl[8][6] = 'w';
-        lvl[7][4] = 'B';
-        lvl[7][5] = 'B';
-        lvl[7][6] = 'B';
+
+        lvl[5][68] = 'C';
 
 
+        lvl[9][107] = 'w';
+        lvl[8][107] = 'w';
+        lvl[10][107] = 'w';
+        lvl[11][107] = 'w';
+        lvl[8][108] = 'w';
+        lvl[8][109] = 'w';
+
+        //BIGG AA
+        for (int i = 107; i < 150; i++)
+        {
+         
+            if (i == 110 || i == 120 || i == 130 || i == 140 || i == 149) 
+            {
+                lvl[8][i] = 'J';
+                continue;
+            }
+            lvl[8][i] = 'w';
+        }
+
+
+
+        lvl[11][10] = 'R';
 
         lvl[7][10] = 'w';
         lvl[7][11] = 'w';
@@ -86,38 +98,58 @@ public:
         lvl[6][123] = 'w'; lvl[6][124] = 'w';
         lvl[7][126] = 'w'; /*lvl[7][127] = 'w';*/
 
+   
+        for (int i = 154; i <= 156; i++) {
+            lvl[4][i] = 'w';
+            lvl[7][i] = lvl[8][i] = lvl[9][i] = lvl[10][i] = lvl[11][i] = 'b';
+        }
+
+        for (int i = 0; i < width; i += 8) 
+        {
+            lvl[11][i] = 'j';  // jelly
+        }
+
+        for (int i = 0; i < width; i += 8) {
+            lvl[11][i] = 'r';
+        }
+
+
+        lvl[10][24] = 'J';
         // Floating islands
         for (int i = 140; i <= 143; i++)
         {
             lvl[5][i] = 'w';
-            lvl[4][i] = 'B';
+            
         };
-        //towers
-        lvl[8][26] = 'T';
-        //Wall below tower
-        lvl[11][27] = 'w';
-        lvl[11][47] = 'w';
-        lvl[11][107] = 'w';
-        lvl[11][196] = 'w';
-        lvl[8][46] = 'T';
-        lvl[8][106] = 'T';
-        lvl[8][195] = 'T';
-
         //spikes
         lvl[11][166] = 'k';
-        lvl[11][65] = 'k';
+   
+        lvl[11][50] = 'k';
+        lvl[11][100] = 'k';
+        lvl[11][150] = 'k';
+        lvl[11][230] = 'k';
+
 
         for (int i = 148; i <= 150; i++) lvl[4][i] = 'w';
         for (int i = 155; i <= 160; i++) lvl[6][i] = 'w';
-        for (int i = 160; i <= 167; i++) lvl[8][i] = 'w';
         for (int i = 170; i <= 180; i++) lvl[9][i] = 'w';
         for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
         for (int i = 186; i <= 190; i++) lvl[6][i] = 'w';
         for (int i = 189; i <= 191; i++)
         {
+            
             lvl[4][i] = 'w';
-            lvl[3][i] = 'B';
+            
+           
         }
+        //breakable walls
+        for (int i = 0; i < 12; i++)
+        {
+            lvl[i][169] = 'b';
+            lvl[i][169] = 'b';
+        }
+
+
         for (int i = 191; i <= 195; i++) lvl[6][i] = 'w';
 
         // Vertical pillars
@@ -137,87 +169,38 @@ public:
         lvl[10][100] = 'w'; lvl[9][100] = 'w';lvl[11][100] = 'w';
 
         // Ceiling platforms
-        for (int i = 110; i <= 115; i++) lvl[8][i] = 'w';
-        for (int i = 90; i <= 105; i++)
+      
+        for (int i = 90; i <= 100; i++)
         {
             lvl[6][i] = 'w';
-            lvl[5][i] = 'B';
-        };
-        for (int i = 130; i <= 135; i++) lvl[7][i] = 'w';
-        for (int i =126; i <= 128; i++)
+            
+        }
+        for (int i = 102; i < 105; i++)
         {
-            if (i == 128) 
-            {
-				lvl[2][i] = 'b';
-                lvl[3][i] = 'b';
-                lvl[4][i] = 'b';
-                lvl[5][i] = 'b';
-                lvl[6][i] = 'b';
-                lvl[7][i] = 'b';
-                lvl[8][i] = 'b';
-                lvl[9][i] = 'b';
-                lvl[10][i] = 'b';
-                lvl[11][i] = 'b';
-            }
-            else if(i==127)
-            {
-
-                lvl[3][i] = 'b';
-                lvl[4][i] = 'b';
-                lvl[5][i] = 'b';
-                lvl[6][i] = 'b';
-                lvl[7][i] = 'b';
-                lvl[8][i] = 'b';
-                lvl[9][i] = 'b';
-                lvl[10][i] = 'b';
-                lvl[11][i] = 'b';
-            }
-            else if (i == 126)
-            {
-
-                lvl[4][i] = 'b';
-                lvl[5][i] = 'b';
-                lvl[6][i] = 'b';
-                lvl[7][i] = 'b';
-                lvl[8][i] = 'b';
-                lvl[9][i] = 'b';
-                lvl[10][i] = 'b';
-                lvl[11][i] = 'b';
-            }
-      
+            lvl[7][i] = 'w';
         }
 
-
-		//breakable walls
-		for (int i = 148; i < 150; i++)
-		{
-
-                if (i == 148)
-                {
-                    lvl[11][i] = 'b';
-                    lvl[10][i] = 'b';
-                    lvl[9][i] = 'b';
-                    lvl[8][i] = 'b';
-                    lvl[7][i] = 'b';
-
-                }     
-                else 
-                {
-                    lvl[11][i] = 'b';
-                    lvl[10][i] = 'b';
-                    lvl[9][i] = 'b';
-                    lvl[8][i] = 'b';
-                    lvl[7][i] = 'b';
-                    lvl[6][i] = 'b';
-                    lvl[5][i] = 'b';
+        for (int i = 130; i <= 135; i++) lvl[7][i] = 'w';
 
 
-                }
 
-            
-		
-		}
+	
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     Maps(Maps& m)
     {
         lvl = m.lvl;

@@ -11,6 +11,7 @@ class Scores {
 	* each kill of a buzzbomber is worth 70 points
 	* passing a level will give 200 points
 	*/
+;
 	const int COIN_POINTS = 10;
 	const int MOTOBUG_POINTS = 40;
 	const int CRABMEAT_POINTS = 60;
@@ -21,10 +22,12 @@ class Scores {
 	std::string name;
 	int scores;
 public:
-	Scores() {
+	Scores()
+	{
 		scores = 0;
 		filepath = "Data/scores.txt";
 		//std::fstream fileopen(filepath, std::ios::app);
+
 	}
 	void addCoin() { scores += COIN_POINTS; }
 	void addMotoBugKill() { scores += MOTOBUG_POINTS; }

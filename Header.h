@@ -651,7 +651,7 @@ public:
             SpriteTex[0].frameNum = 1;
         }
         //LEFT RUN
-        if (!SpriteTex[1].T.loadFromFile("Data/Knuckles_Jog_Walk _L.png")) { //493x40 => 10 frames
+        if (!SpriteTex[1].T.loadFromFile("Data/Knuckles_Jog_Walk_L.png")) { //493x40 => 10 frames
             std::cout << "Failed to load Knuckles_Jog_Walk _L.png!" << std::endl;
 
         }
@@ -881,6 +881,20 @@ public:
 
     void AnimateSprite(bool isMoving) override
     {
+        if (Punch) {
+            if (animationClock.getElapsedTime().asMilliseconds() > 80) {
+                currentFrame++;
+                if (currentFrame >= SpriteTex[currentIndex].frameNum) {
+                    Punch = false;  
+                    currentFrame = 0;
+                }
+                else {
+                    SpriteRect.left = currentFrame * SpriteRect.width;
+                    ESprite.setTextureRect(SpriteRect);
+                }
+                animationClock.restart();
+            }
+        }
         std::cout << currentFrame << std::endl;
 
         if (isMoving) {
@@ -889,11 +903,23 @@ public:
             {
                 if (currentIndex == 1 || currentIndex == 3) 
                 {
-					ESprite.setScale(2.2, 2.5);
+					ESprite.setScale(2.3, 2.56);
                 }
-                else
+                else if (currentIndex == 6 || currentIndex == 7)
                 {
-                    ESprite.setScale(2.75, 2.75);
+                    ESprite.setScale(2.5, 2.5);
+                }
+                else if (currentIndex == 4 || currentIndex == 5)
+                {
+                    ESprite.setScale(2, 2.25);
+                }
+                else if (currentIndex == 9 || currentIndex == 10)
+                {
+                    ESprite.setScale(2.5, 2.4 );
+                }
+                else 
+                {
+                    ESprite.setScale(2.0, 1.75);
                 }
                 if (currentIndex == 10) 
                 {
@@ -919,7 +945,7 @@ public:
             currentFrame = 0;
             SpriteRect.left = 0;
             ESprite.setTextureRect(SpriteRect);
-            ESprite.setScale(2.75, 2.75);
+            ESprite.setScale(2.5, 2.5);
         }
         
     }
@@ -974,7 +1000,7 @@ public:
 			SpriteTex[3].frameNum = 10;
 		}
         // Load texture for jump left 
-        if (!SpriteTex[4].T.loadFromFile("Data/Tail_Jump"))
+        if (!SpriteTex[4].T.loadFromFile("Data/Tail_Jump.png"))
         {
             std::cout << "Failed to load Tail_Jump.png!" << std::endl;
 			
@@ -984,7 +1010,7 @@ public:
             SpriteTex[4].frameNum = 6;
         }
         // Load texture for jump right 
-        if (!SpriteTex[5].T.loadFromFile("Data/Tail_Jump"))
+        if (!SpriteTex[5].T.loadFromFile("Data/Tail_Jump.png"))
         {
             std::cout << "Failed to load Tail_Jump.png!" << std::endl;
            
@@ -1014,17 +1040,18 @@ public:
             SpriteTex[7].frameNum = 8;
 
         }
-        // Load texture for fly left
-		if (!SpriteTex[8].T.loadFromFile("Data/Tails_Fly_L.png"))
-		{
-			std::cout << "Failed to load Tails_Fly_L.png!" << std::endl;
-		}
-		else
-		{
-			SpriteTex[8].frameNum = 4;
-		}
+        // Load texture for injured
+        if (!SpriteTex[8].T.loadFromFile("Data/Tails_Hurt.png"))
+        {
+            std::cout << "Failed to load Tails_Hurt.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[8].frameNum = 5;
+        }
+
         // Load texture for fly right
-        if (!SpriteTex[9].T.loadFromFile("Data/Tails_Fly_R.png"))
+        if (!SpriteTex[9].T.loadFromFile("Data/Tail_Fly_R.png"))
         {
             std::cout << "Failed to load Tails_Fly_R.png!" << std::endl;
         }
@@ -1032,16 +1059,16 @@ public:
         {
             SpriteTex[9].frameNum = 4;
         }
-
-        // Load texture for injured
-        if (!SpriteTex[10].T.loadFromFile("Data/Tails_Hurt.png"))
+        // Load texture for fly left
+        if (!SpriteTex[10].T.loadFromFile("Data/Tail_Fly_L.png"))
         {
-            std::cout << "Failed to load Tails_Hurt.png!" << std::endl;
+            std::cout << "Failed to load Tails_Fly_L.png!" << std::endl;
         }
         else
         {
-            SpriteTex[9].frameNum = 5;
+            SpriteTex[10].frameNum = 4;
         }
+   
 
         // Initialize variables
         velocityY = 0;
@@ -1098,6 +1125,69 @@ public:
         
         return isMoving;
     }
+
+
+
+    void AnimateSprite(bool isMoving) override
+    {
+
+        if (isMoving) {
+
+            if (animationClock.getElapsedTime().asMilliseconds() > 80)
+            {
+                if (currentIndex == 1 || currentIndex == 3)
+                {
+                    ESprite.setScale(2.56, 2.63);
+                }
+                else if (currentIndex == 6 || currentIndex == 7)
+                {
+                    ESprite.setScale(3.205, 2.63);
+                }
+                else if (currentIndex == 4 || currentIndex == 5)
+                {
+                    ESprite.setScale(2.54, 2.63);
+                }
+                else if ( currentIndex == 10)
+                {
+                    ESprite.setScale(2.56, 2.70);
+                }
+                else
+                {
+                    ESprite.setScale(2.0, 1.75);
+                }
+                
+                updateTextureRectForCurrentIndex();
+                    currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
+                    SpriteRect.left = currentFrame * SpriteRect.width;
+                    ESprite.setTextureRect(SpriteRect);
+                    animationClock.restart();
+                
+
+            }
+        }
+        else {
+            // reset to first frame of current strip
+            currentFrame = 0;
+            SpriteRect.left = 0;
+            ESprite.setTextureRect(SpriteRect);
+            ESprite.setScale(2.5, 2.5);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 };
 
 

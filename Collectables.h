@@ -5,6 +5,9 @@
 #include <iostream>
 #include "ScoreBoard.h"
 
+const int height = 14;
+const int width = 200;
+
 // Base Collectable class
 class Collectable {
 protected:

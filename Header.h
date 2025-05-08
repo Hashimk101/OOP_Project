@@ -124,6 +124,7 @@ public:
         ESprite.setTexture(SpriteTex[currentIndex].T);
         if (Keyboard::isKeyPressed(Keyboard::Left))
         {
+            left = true;
             // Collision checks go brrrrr
             bool leftCollision = false;
 
@@ -246,10 +247,10 @@ public:
                 // Movement logic
                 if (player_x >= 750) {
                     offset_x += velocityX; //velocity is positive so no need to apply any negative
-                    if (offset_x > 11600) {
+                    if (offset_x > (totalWidth * 64 - 800)) {
                         player_x += velocityX;
                         if (player_x > 1100) player_x = 1100;
-                        offset_x = 11600;
+                        offset_x = (totalWidth * 64 - 800);
                     }
                 }
                 else {
@@ -271,10 +272,10 @@ public:
                     if (player_x < 5) player_x = 5;
                     offset_x = 0;
                 }
-                if (offset_x > 11600) {
+                if (offset_x > (totalWidth * 64 - 800)) {
                     player_x += velocityX;
                     if (player_x > 1100) player_x = 1100;
-                    offset_x = 11600;
+                    offset_x = (totalWidth * 64 - 800);
 
                 }
             }
@@ -470,9 +471,13 @@ public:
 
     void borderCheck()
     {
-        if (player_y < 32) {
-            player_y = 42;
+        if (player_y < 22) {
+            player_y = 22;
         }
+        else if (player_y >= 785) {
+            std::cout << "dead\n";
+        }
+        std::cout << player_y << std::endl;
     }
 
 
@@ -534,10 +539,17 @@ public:
     }
     sf::Vector2f getPos() {
         return Vector2f(player_x, player_y);
+        // maybe add an offx to this too
     }
 
     void setWidth(int width) {
         totalWidth = width;
+    }
+    void setOffsetX(float x) {
+        offset_x = x;
+    }
+    void setVelocityY(float y) {
+        velocityY = y;
     }
 };
 class Sonic : public MySprite

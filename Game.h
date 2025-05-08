@@ -71,7 +71,7 @@ public:
 
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
-    map(1),     
+    map(2),     
     coins(map.getMap()),
     diamonds(map.getMap()),
     special(map.getMap()),
@@ -124,6 +124,11 @@ void Game::initTextures()
 }
 
 void Game::initGameObjects() {
+    int thislvlWidth = map.GetLevelWidth();
+    std::cout << thislvlWidth << std::endl;
+    for (int i = 0; i < 3; i++) {
+        players[i]->setWidth(thislvlWidth); // Set width for Sonic, Knuckles, Tails
+    }
     lvl = map.getMap();
     coins.place();
     diamonds.place();
@@ -248,11 +253,20 @@ void Game::run()
 void Game::switchPlayer() {
     if (Keyboard::isKeyPressed(Keyboard::C)) {
         if (playerChange.getElapsedTime().asSeconds() >= 1.5f) {
-            currentPlayer++;
-            if (currentPlayer >= 3) {
-                currentPlayer = 0;
-            }
+            sf::Vector2f pos = player->getPos();
+            float velocityY = player->getVelocityY();
+            float offsetX = player->getOffsetX();
+
+            // Switch to next character
+            currentPlayer = (currentPlayer + 1) % 3;
             player = players[currentPlayer];
+
+            // Apply position and state to new character
+            player->setPos(pos.x, pos.y);
+            player->setOffsetX(offsetX);
+
+            // Optional: Apply velocity to maintain momentum
+            player->setVelocityY(velocityY);
             playerChange.restart();
         }
     }

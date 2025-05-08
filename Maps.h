@@ -10,8 +10,7 @@
 
 //const int cell_size = 64;
 //Heights of all levels are same
-const int height = 14;
-const int width = 200;
+
 
 
 class Maps {
@@ -21,6 +20,7 @@ class Maps {
     int level;
    std:: string* FilePath=nullptr;
    std:: string File="";
+   int height = 14;
 public:
    
     Maps(int levl) : widthLvl((levl == 1) ? 200 : ((levl == 2) ? 250 : 300))

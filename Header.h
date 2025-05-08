@@ -42,9 +42,11 @@ protected:
     bool OnEdge = false; // Tracks if the player is on an edge
     bool gravFalse = false;
     bool Punch = false;
-	bool isFlying = false; // Tracks if the player is flying
-	bool isMoving = false; // Tracks if the player is moving
+    bool isFlying = false; // Tracks if the player is flying
+    bool isMoving = false; // Tracks if the player is moving
     int totalWidth;
+    sf::Vector2f lastOnGround;
+    float lastx;
 
 public:
     // Constructor to initialize the sprite with the texture
@@ -90,7 +92,7 @@ public:
         ESprite.setTextureRect(SpriteRect);
     }
 
-    virtual bool movement(char** lvl) 
+    virtual bool movement(char** lvl)
     {
         //std::cout << isFlying << std::endl;
         borderCheck();
@@ -110,16 +112,16 @@ public:
         {
             currentIndex = 10;
             isMoving = true;
-           // AnimateSprite(true);
-            
+            // AnimateSprite(true);
+
         }
         else if (isFlying && !left)
 
         {
             currentIndex = 9;
             isMoving = true;
-           // AnimateSprite(true);
-         
+            // AnimateSprite(true);
+
         }
         ESprite.setTexture(SpriteTex[currentIndex].T);
         if (Keyboard::isKeyPressed(Keyboard::Left))
@@ -170,13 +172,13 @@ public:
                     currentIndex = 1;
                     isMoving = true;
                     left = true;
-                
+
                     updateTextureRectForCurrentIndex();
                     AnimateSprite(isMoving);
                 }
 
                 // Movement logic lol pata nai kaise ban gai
-                if (player_x <= 450) 
+                if (player_x <= 450)
                 {
                     offset_x += velocityX; // Scroll world (velocityX is negative)
                     if (offset_x < 0) {
@@ -229,12 +231,12 @@ public:
                 if (velocityX > max_speed) velocityX = max_speed;
 
                 // Animation be like ......
-                if (onGround && !isFlying && !gravFalse) 
+                if (onGround && !isFlying && !gravFalse)
                 {
                     currentIndex = 3;
                     ESprite.setTexture(SpriteTex[3].T);
                 }
-                else if(!gravFalse)
+                else if (!gravFalse)
                 {
                     currentIndex = 5;
                     ESprite.setTexture(SpriteTex[5].T);
@@ -283,7 +285,7 @@ public:
             if (std::abs(velocityX) < 0.1f) {
                 velocityX = 0;
             }
-            if (isOnEdge(lvl)) 
+            if (isOnEdge(lvl))
             {
                 // choose left or right edge pose
                 currentIndex = left ? 6 : 7;            // 6 = edgeL strip, 7 = edgeR strip
@@ -324,7 +326,7 @@ public:
 
                 ESprite.setTexture(SpriteTex[4].T);
             }
-            else if ((currentIndex == 2 || currentIndex == 3)) 
+            else if ((currentIndex == 2 || currentIndex == 3))
             {
                 currentIndex = 5;
 
@@ -334,7 +336,7 @@ public:
 
         }
 
-        if (gravFalse) 
+        if (gravFalse)
         {
             //std::cout << "HELLO\n";
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
@@ -359,7 +361,7 @@ public:
             AnimateSprite(isInvincible);
         }
 
-        return isMoving; 
+        return isMoving;
 
     }
     void player_gravity(char** lvl)
@@ -396,6 +398,9 @@ public:
             player_y = check_y * cell_size - (hit_box_factor_y + Pheight);
             onGround = true;
             velocityY = 0;
+            lastOnGround.x = player_x;
+            lastOnGround.y = player_y;
+            lastx = offset_x;
             //std::cout << "On ground: " << player_y << std::endl;
         }
         else
@@ -428,7 +433,7 @@ public:
 
     virtual  void AnimateSprite(bool isMoving) {
 
-        if (isMoving) 
+        if (isMoving)
         {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
@@ -471,13 +476,18 @@ public:
 
     void borderCheck()
     {
+        std::cout << player_y << std::endl;
+        //std::cout << lastOnGround.x + lastx << " " << lastOnGround.y << std::endl;
         if (player_y < 22) {
             player_y = 22;
         }
-        else if (player_y >= 785) {
-            std::cout << "dead\n";
+        else if (player_y >= 770) {
+            player_x = lastOnGround.x;
+            player_y = lastOnGround.y;
+            offset_x = lastx;
+            ESprite.setPosition(lastOnGround.x + lastx, lastOnGround.y);
         }
-        std::cout << player_y << std::endl;
+        //std::cout << player_y << std::endl;
     }
 
 
@@ -768,7 +778,7 @@ public:
         {
             SpriteTex[5].frameNum = 10;
         }
-        
+
         if (!SpriteTex[6].T.loadFromFile("Data/Knuckles_Tripping_L.png")) //240x40=> 6 frames
         {
             std::cout << "Failed to load Knuckles_Tripping_L.png!" << std::endl;
@@ -778,7 +788,7 @@ public:
         {
             SpriteTex[6].frameNum = 6;
         }
-       
+
         if (!SpriteTex[7].T.loadFromFile("Data/Knuckles_Tripping_R.png")) //240x40=> 6 frames
         {
             std::cout << "Failed to load Knuckles_Tripping_R.png!" << std::endl;
@@ -892,38 +902,38 @@ public:
         return isMoving;
     }
 
-  
+
     void punching(char** lvl) override
     {
         //std::cout << Punch << std::endl;
         //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
-        if (Keyboard::isKeyPressed(Keyboard::T)) 
+        if (Keyboard::isKeyPressed(Keyboard::T))
         {
             Punch = true;
             int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
             int targetYRight = (player_y + hit_box_factor_y) / cell_size;
             int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
             int targetYLeft = (player_y + hit_box_factor_y) / cell_size;
-           
+
             if (lvl[targetYRight][targetXRight] == 'b')
             {
                 lvl[targetYRight][targetXRight] = 's';
-              
+
             }
             if (lvl[targetYRight + 1][targetXRight] == 'b')
             {
                 lvl[targetYRight + 1][targetXRight] = 's';
-                
+
             }
             if (lvl[targetYLeft][targetXLeft] == 'b')
             {
                 lvl[targetYLeft][targetXLeft] = 's';
-                
+
             }
             if (lvl[targetYLeft + 1][targetXLeft] == 'b')
             {
                 lvl[targetYLeft + 1][targetXLeft] = 's';
-                
+
             }
             if (left && Punch)
             {
@@ -941,12 +951,12 @@ public:
                 AnimateSprite(true);
             }
         }
-        
-        else{
-        Punch = false;
+
+        else {
+            Punch = false;
         }
     }
-    
+
 
 
     void AnimateSprite(bool isMoving) override
@@ -955,7 +965,7 @@ public:
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame++;
                 if (currentFrame >= SpriteTex[currentIndex].frameNum) {
-                    Punch = false;  
+                    Punch = false;
                     currentFrame = 0;
                 }
                 else {
@@ -968,12 +978,12 @@ public:
         //std::cout << currentFrame << std::endl;
 
         if (isMoving) {
-            
+
             if (animationClock.getElapsedTime().asMilliseconds() > 80)
             {
-                if (currentIndex == 1 || currentIndex == 3) 
+                if (currentIndex == 1 || currentIndex == 3)
                 {
-					ESprite.setScale(2.3, 2.56);
+                    ESprite.setScale(2.3, 2.56);
                 }
                 else if (currentIndex == 6 || currentIndex == 7)
                 {
@@ -985,16 +995,16 @@ public:
                 }
                 else if (currentIndex == 9 || currentIndex == 10)
                 {
-                    ESprite.setScale(2.5, 2.4 );
+                    ESprite.setScale(2.5, 2.4);
                 }
-                else 
+                else
                 {
                     ESprite.setScale(2.0, 1.75);
                 }
-                if (currentIndex == 10) 
+                if (currentIndex == 10)
                 {
                     currentFrame = SpriteTex[10].frameNum;
-                    
+
                     currentFrame = (currentFrame - 1) % SpriteTex[currentIndex].frameNum;
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
@@ -1017,7 +1027,7 @@ public:
             ESprite.setTextureRect(SpriteRect);
             ESprite.setScale(2.5, 2.5);
         }
-        
+
     }
 
 
@@ -1036,22 +1046,22 @@ public:
     {
         SpriteTex = new SpriteSheet[11];
         // Load texture for idle left
-		if (!SpriteTex[0].T.loadFromFile("Data/Tails_Idle_L.png")) { //40x40 => 1 frame
-			std::cout << "Failed to load Tails_Idle_L.png!" << std::endl;
-		}
-		else
-		{
-			SpriteTex[0].frameNum = 1;
-		}
+        if (!SpriteTex[0].T.loadFromFile("Data/Tails_Idle_L.png")) { //40x40 => 1 frame
+            std::cout << "Failed to load Tails_Idle_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[0].frameNum = 1;
+        }
         // Load texture for jog/walk left
-		if (!SpriteTex[1].T.loadFromFile("Data/Tails_Jog_L.png"))
-		{
-			std::cout << "Failed to load Tails_Jog_L.png!" << std::endl;
-		}
-		else
-		{
-			SpriteTex[1].frameNum = 10;
-		}
+        if (!SpriteTex[1].T.loadFromFile("Data/Tails_Jog_L.png"))
+        {
+            std::cout << "Failed to load Tails_Jog_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[1].frameNum = 10;
+        }
         // Load texture for idle right
         if (!SpriteTex[2].T.loadFromFile("Data/Tails_Idle_R.png")) { //40x40 => 1 frame
             std::cout << "Failed to load Tails_Idle_R.png!" << std::endl;
@@ -1061,19 +1071,19 @@ public:
             SpriteTex[2].frameNum = 1;
         }
         // Load texture for jog/walk right
-		if (!SpriteTex[3].T.loadFromFile("Data/Tails_Jog_R.png"))
-		{
-			std::cout << "Failed to load Tails_Jog_R.png!" << std::endl;
-		}
-		else
-		{
-			SpriteTex[3].frameNum = 10;
-		}
+        if (!SpriteTex[3].T.loadFromFile("Data/Tails_Jog_R.png"))
+        {
+            std::cout << "Failed to load Tails_Jog_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[3].frameNum = 10;
+        }
         // Load texture for jump left 
         if (!SpriteTex[4].T.loadFromFile("Data/Tail_Jump.png"))
         {
             std::cout << "Failed to load Tail_Jump.png!" << std::endl;
-			
+
         }
         else
         {
@@ -1083,20 +1093,20 @@ public:
         if (!SpriteTex[5].T.loadFromFile("Data/Tail_Jump.png"))
         {
             std::cout << "Failed to load Tail_Jump.png!" << std::endl;
-           
+
         }
         else
         {
             SpriteTex[5].frameNum = 6;
         }
-         // Load texture for edge left
-        if (!SpriteTex[6].T.loadFromFile("Data/Tails_Edge_L.png")) 
+        // Load texture for edge left
+        if (!SpriteTex[6].T.loadFromFile("Data/Tails_Edge_L.png"))
         {
-			std::cout << "Failed to load Tails_Edge_L.png!" << std::endl;
-		}
-		else
-		{
-			SpriteTex[6].frameNum = 8;
+            std::cout << "Failed to load Tails_Edge_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[6].frameNum = 8;
 
         }
         // Load texture for edge right
@@ -1138,7 +1148,7 @@ public:
         {
             SpriteTex[10].frameNum = 4;
         }
-   
+
 
         // Initialize variables
         velocityY = 0;
@@ -1184,7 +1194,7 @@ public:
 
         if (Keyboard::isKeyPressed(Keyboard::F))
         {
-            if (!isFlying) 
+            if (!isFlying)
             {
                 isFlying = true;
                 gravFalse = true;
@@ -1193,7 +1203,7 @@ public:
                 isMoving = true;
                 player_y -= 10;
             }
-            
+
             ESprite.setPosition(player_x, player_y);
         }
 
@@ -1207,14 +1217,14 @@ public:
         if (isFlying)
         {
             AnimateSprite(true);
-            currentIndex = left ? 10 : 9;  
-			ESprite.setTexture(SpriteTex[currentIndex].T);
+            currentIndex = left ? 10 : 9;
+            ESprite.setTexture(SpriteTex[currentIndex].T);
             return true;
         }
 
-      
 
-      
+
+
         if (!isFlying) {
             if (!onGround) {
                 currentIndex = left ? 4 : 5;  // jump animations
@@ -1249,23 +1259,23 @@ public:
                 {
                     ESprite.setScale(2.54, 2.63);
                 }
-                else if ( currentIndex == 8)
+                else if (currentIndex == 8)
                 {
                     ESprite.setScale(2.56, 2.70);
                 }
-                else if(currentIndex == 9 || currentIndex == 10)
+                else if (currentIndex == 9 || currentIndex == 10)
                 {
                     ESprite.setScale(2.1, 2.63);
                 }
-				
-                
-                     updateTextureRectForCurrentIndex();
-                    currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
-                    std::cout << "Current frame: " << currentFrame << std:: endl;
-                    SpriteRect.left = currentFrame * SpriteRect.width;
-                    ESprite.setTextureRect(SpriteRect);
-                    animationClock.restart();
-                
+
+
+                updateTextureRectForCurrentIndex();
+                currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
+                std::cout << "Current frame: " << currentFrame << std::endl;
+                SpriteRect.left = currentFrame * SpriteRect.width;
+                ESprite.setTextureRect(SpriteRect);
+                animationClock.restart();
+
 
             }
         }

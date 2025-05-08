@@ -5,6 +5,8 @@
 #include "Collectables.h"
 #include "Enemies.h"
 #include "Menu.h"
+#include "ScoreBoard.h"
+
 #include <SFML/Graphics.hpp>
 
 
@@ -36,7 +38,8 @@
 
 
 
-class Game {
+class Game
+{
 private:
     // Window settings
     const int screen_x = 1200;
@@ -86,6 +89,8 @@ private:
 
     //Common obstackle
     sf::Sprite spikeSprite;
+    //Score object
+    Scores score;
 
     // Window
     sf::RenderWindow window;
@@ -100,14 +105,14 @@ private:
     void render();
     void switchPlayer();
 
+
 public:
     Game();
     ~Game();
     void run();
 };
 
-// Game.cpp
-#include "Game.h"
+
 
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
@@ -118,7 +123,7 @@ Game::Game() :
     motoBug(2600, 730, map.getMap()),
     crab(5500, 400, map.getMap()),
     bat(400, 300, map.getMap()),
-    buzz(10000, 100, map.getMap()) {
+    buzz(10000, 100, map.getMap()), score(window) {
 
     //player = new Sonic();
     players[0] = new Sonic();
@@ -126,6 +131,9 @@ Game::Game() :
     players[2] = new Tails();
     currentPlayer = 0;
     player = players[currentPlayer];
+    Vector2f curPos = player->getPos();
+    players[1]->setPos(curPos.x - 20, curPos.y);
+    players[2]->setPos(curPos.x - 30, curPos.y);
     initWindow();
     initTextures();
     initGameObjects();
@@ -135,13 +143,19 @@ Game::~Game() {
     // Clean up if needed
 }
 
-void Game::initWindow() {
+void Game::initWindow()
+{
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(120);
 }
 
 void Game::initTextures()
 {
+    for (int i = 0; i < 3; i++)
+    {
+        players[i]->setWidth(map.GetLevelWidth());
+    }
+   
     // Load textures
     if (currentLevel == 1) 
     {
@@ -154,8 +168,8 @@ void Game::initTextures()
     }
     if (currentLevel == 2) 
     {
-        backgroundTex.loadFromFile("Data/Bg.jpg");
-        wallTex1.loadFromFile("Data/block1.png");
+        backgroundTex.loadFromFile("Data/backg12.png");
+        wallTex1.loadFromFile("Data/block.png");
         breakableWallTex.loadFromFile("Data/brick8.png");
     }
     if (currentLevel == 3)
@@ -195,15 +209,23 @@ void Game::initTextures()
     }
     else if (currentLevel == 2) 
     {
-        backgroundSprite.setScale(1, 0.45);
+        backgroundSprite.setScale(1, 1);
     }
     else if (currentLevel == 3) 
     {
-        backgroundSprite.setScale(0.4, 0.5);
+        backgroundSprite.setScale(0.6, 0.5);
     }
   
     wallSprite1.setTexture(wallTex1);
-    wallSprite1.setScale(1, 1);
+  
+    if (currentLevel == 1) 
+    {
+        wallSprite1.setScale(0.63, 0.63);
+    }
+    else
+    {
+        wallSprite1.setScale(1, 1);
+    }
 
 
     breakableWallSprite.setTexture(breakableWallTex);
@@ -233,36 +255,71 @@ void Game::processEvents() {
     }
 }
 
-void Game::update() {
+void Game::update() 
+{
     // Update player
-    player->movement(lvl);
-    player->punching(lvl);
+    bool ismoving = player->movement(lvl, true);
+    player->punching(lvl, true);
     player->player_gravity(lvl);
     player->update();
 
+    for (int i = 0; i < 3; i++)
+    {
+        if (i != currentPlayer) {
+            players[i]->setOffsetX(player->getOffsetX());
+            if (player->getDirection()) {
+                players[i]->setX(player->getX() + 10);
+            }
+            else {
+                players[i]->setX(player->getX() - 10);
+            }
+            players[i]->movement(lvl, false);
+            players[i]->punching(lvl, false);
+            players[i]->player_gravity(lvl);
+            players[i]->update();
+
+            ///////
+            ///////
+            ///////
+            ///////
+
+            if (currentPlayer == 0) {
+                players[i]->setSpeed(12);
+            }
+            else if (currentPlayer == 1) {
+                players[i]->setSpeed(10);
+            }
+            else if (currentPlayer == 2) {
+                players[i]->setSpeed(8);
+            }
+
+        }
+    }
+
+
     // Update enemies
-    motoBug.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
-    bat.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
-    buzz.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
-    crab.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY());
+    motoBug.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+    bat.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+    buzz.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+    crab.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
 
     // Check collisions with enemies
-    int dmg = motoBug.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    int dmg = motoBug.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
     if (dmg > 0) player->takeDamage(dmg);
 
-    int dmg2 = bat.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    int dmg2 = bat.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
     if (dmg2 > 0) player->takeDamage(dmg2);
 
-    int bombdmg = buzz.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    int bombdmg = buzz.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
     if (bombdmg > 0) player->takeDamage(bombdmg);
 
-    int dmg1 = crab.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX());
+    int dmg1 = crab.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
     if (dmg1 > 0) player->takeDamage(dmg1);
 
     // Check collectable collisions
-    coins.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY());
-    diamonds.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY());
-    special.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY());
+    coins.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
+    diamonds.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
+    special.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
 
     // Animate collectables
     coins.animate();
@@ -379,14 +436,21 @@ void Game::render() {
 
     crab.draw(window);
 
+
     // Draw player
+    //player->draw_player(window);
+    for (int i = 0; i < 3; i++) {
+        if (i != currentPlayer) {
+            players[i]->draw_player(window);
+        }
+    }
     player->draw_player(window);
 
     // Draw collectables
     coins.draw(window, player->getOffsetX());
     diamonds.draw(window, player->getOffsetX());
     special.draw(window, player->getOffsetX());
-
+    score.DisplayScoreWin(*player);
     window.display();
 }
 

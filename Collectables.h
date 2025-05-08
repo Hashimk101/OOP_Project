@@ -9,7 +9,8 @@ const int height = 14;
 const int width = 200;
 
 // Base Collectable class
-class Collectable {
+class Collectable
+{
 protected:
     // Common properties
     int collect_width, collect_height;
@@ -102,7 +103,7 @@ public:
         }
     }
 
-    virtual void checkCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY)
+    virtual void checkCollision(int playerX, int playerY, int offsetX, int offsetY, int hitX, int hitY, Scores& score, MySprite& Activeplayer)
     {
         // Player dimensions (unchanged from original)
         int playerWidth = 40 * 2.5;
@@ -126,16 +127,34 @@ public:
             if (lvl[gridY][gridX] == levelChar)
             {
                 // Calculate collectable's screen position
+
+                if (levelChar == 'c') 
+                {
+                    score.addCoin();
+                }
+                if (levelChar == 'L')
+                {
+                    Activeplayer.AddHp();
+                }
                     lvl[gridY][gridX] = 's';
                     sound.play();
                     onCollect(gridY, gridX);
             }
             if (lvl[gridY - 1][gridX] == levelChar)
             {
+                if (levelChar == 'c')
+                {
+                    score.addCoin();
+                }
+                if (levelChar == 'L')
+                {
+                    Activeplayer.AddHp();
+                }
                 // Calculate collectable's screen position
                 lvl[gridY - 1][gridX] = 's';
                 sound.play();
                 onCollect(gridY - 1, gridX);
+
             }
         }
     }

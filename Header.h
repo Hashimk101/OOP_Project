@@ -92,7 +92,7 @@ public:
         ESprite.setTextureRect(SpriteRect);
     }
 
-    virtual bool movement(char** lvl)
+    virtual bool movement(char** lvl, bool check)
     {
         //std::cout << isFlying << std::endl;
         borderCheck();
@@ -450,6 +450,13 @@ public:
         }
     }
 
+    void AddHp()
+    {
+        hp += 5;
+        if (hp > 100) hp = 100;
+
+    }
+
     void takeDamage(int dmg)
     {
         if (isInvincible)
@@ -476,15 +483,15 @@ public:
 
     void borderCheck()
     {
-        std::cout << player_y << std::endl;
+        //std::cout << player_y << std::endl;
         //std::cout << lastOnGround.x + lastx << " " << lastOnGround.y << std::endl;
         if (player_y < 22) {
             player_y = 22;
         }
         else if (player_y >= 770) {
-            player_x = lastOnGround.x-40;
+            player_x = lastOnGround.x - 40;
             player_y = lastOnGround.y - 200;
-            offset_x = lastx  - 24;
+            offset_x = lastx - 24;
             ESprite.setPosition(player_x + offset_x, player_y);
         }
         //std::cout << player_y << std::endl;
@@ -510,6 +517,12 @@ public:
     }
     int getY() const {
         return player_y;
+    }
+    void setX(float x) {
+        player_x = x;
+    }
+    void setY(float y) {
+        player_y = y;
     }
     void draw_player(RenderWindow& window) {
         ESprite.setPosition(player_x, player_y);
@@ -542,7 +555,7 @@ public:
         return velocityY;
     }
 
-    virtual void punching(char** lvl) = 0;
+    virtual void punching(char** lvl, bool check) = 0;
     void setPos(float x, float y) {
         player_x = x;
         player_y = y;
@@ -561,6 +574,39 @@ public:
     void setVelocityY(float y) {
         velocityY = y;
     }
+    void setVelocityX(float x) {
+        velocityX = x;
+    }
+    float getVelocityX() {
+        return velocityX;
+    }
+    void setSpeed(float speed) {
+        max_speed = speed;
+    }
+    float getSpeed() {
+        return max_speed;
+    }
+    bool getDirection() {
+        return left;
+    }
+    void setDirection(bool dir) {
+        left = dir;
+    }
+    void setcurrentIndex(int index) {
+        currentIndex = index;
+    }
+    int getcurrentIndex() {
+        return currentIndex;
+    }
+
+    int GetHp() {
+        return hp;
+    }
+
+
+
+
+
 };
 class Sonic : public MySprite
 {
@@ -707,7 +753,7 @@ public:
         }
     }
 
-    void punching(char** lvl) override {
+    void punching(char** lvl, bool check) override {
 
     }
 };
@@ -879,10 +925,10 @@ public:
 
     }
 
-    bool movement(char** lvl) override {
+    bool movement(char** lvl, bool check) override {
         //std::cout << player_x + offset_x << " " << player_y << std::endl;
-        bool isMoving = MySprite::movement(lvl);
-        if (!isGliding && Keyboard::isKeyPressed(Keyboard::F)) {
+        bool isMoving = MySprite::movement(lvl, check);
+        if (!isGliding && Keyboard::isKeyPressed(Keyboard::F) && check) {
             //velocityX = velocityX > 0 ? +10 : -10;
             velocityY = -3;
 
@@ -903,11 +949,11 @@ public:
     }
 
 
-    void punching(char** lvl) override
+    void punching(char** lvl, bool check) override
     {
         //std::cout << Punch << std::endl;
         //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
-        if (Keyboard::isKeyPressed(Keyboard::T))
+        if (Keyboard::isKeyPressed(Keyboard::T) && check)
         {
             Punch = true;
             int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
@@ -1159,7 +1205,7 @@ public:
         window_y = 0;
         acceleration = 1.1;
         max_speed = 8;
-        hp = 90;
+        hp = 100;
         isInvincible = false;
         onGround = false;
         gravity = 1;
@@ -1188,11 +1234,11 @@ public:
         ESprite.setScale(scale_x, scale_y);
     }
 
-    bool movement(char** lvl) override
+    bool movement(char** lvl, bool check) override
     {
-        bool isMovingBase = MySprite::movement(lvl);
+        bool isMovingBase = MySprite::movement(lvl, check);
 
-        if (Keyboard::isKeyPressed(Keyboard::F))
+        if (Keyboard::isKeyPressed(Keyboard::F) && check)
         {
             if (!isFlying)
             {
@@ -1271,7 +1317,7 @@ public:
 
                 updateTextureRectForCurrentIndex();
                 currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
-                std::cout << "Current frame: " << currentFrame << std::endl;
+                //std::cout << "Current frame: " << currentFrame << std::endl;
                 SpriteRect.left = currentFrame * SpriteRect.width;
                 ESprite.setTextureRect(SpriteRect);
                 animationClock.restart();
@@ -1290,7 +1336,7 @@ public:
 
     }
 
-    void punching(char** lvl) override {
+    void punching(char** lvl, bool check) override {
 
     }
 

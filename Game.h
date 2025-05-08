@@ -41,7 +41,7 @@ private:
     // Window settings
     const int screen_x = 1200;
     const int screen_y = 900;
-    int currentLevel;
+    int currentLevel=3;
     // Game objects
     Maps map;
     MySprite* players[3];
@@ -154,7 +154,7 @@ void Game::initTextures()
     }
     if (currentLevel == 2) 
     {
-        backgroundTex.loadFromFile("Data/Bg.png");
+        backgroundTex.loadFromFile("Data/Bg.jpg");
         wallTex1.loadFromFile("Data/block1.png");
         breakableWallTex.loadFromFile("Data/brick8.png");
     }
@@ -203,7 +203,7 @@ void Game::initTextures()
     }
   
     wallSprite1.setTexture(wallTex1);
-    wallSprite1.setScale(0.64, 0.64);
+    wallSprite1.setScale(1, 1);
 
 
     breakableWallSprite.setTexture(breakableWallTex);

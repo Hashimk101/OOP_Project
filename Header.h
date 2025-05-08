@@ -482,10 +482,10 @@ public:
             player_y = 22;
         }
         else if (player_y >= 770) {
-            player_x = lastOnGround.x;
-            player_y = lastOnGround.y;
-            offset_x = lastx;
-            ESprite.setPosition(lastOnGround.x + lastx, lastOnGround.y);
+            player_x = lastOnGround.x-40;
+            player_y = lastOnGround.y - 200;
+            offset_x = lastx  - 24;
+            ESprite.setPosition(player_x + offset_x, player_y);
         }
         //std::cout << player_y << std::endl;
     }
@@ -979,7 +979,7 @@ public:
 
         if (isMoving) {
 
-            if (animationClock.getElapsedTime().asMilliseconds() > 80)
+            if (animationClock.getElapsedTime().asMilliseconds() > 60)
             {
                 if (currentIndex == 1 || currentIndex == 3)
                 {

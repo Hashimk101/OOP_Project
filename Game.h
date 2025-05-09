@@ -44,7 +44,7 @@ private:
     // Window settings
     const int screen_x = 1200;
     const int screen_y = 900;
-    int currentLevel=3;
+    int currentLevel = 2;
     // Game objects
     Maps map;
     MySprite* players[3];
@@ -63,6 +63,7 @@ private:
     CrabMeat crab;
     BatBrain bat;
     BuzzBomber buzz;
+    EggStinger EgStinger;
 
     // Sprites and textures
     sf::Texture backgroundTex;
@@ -73,7 +74,7 @@ private:
     sf::Texture greenBushTex;
     sf::Texture brownTowerTex;
     sf::Texture spikeTex;
-    
+    //GENERAL SHI
     sf::Sprite wallSprite1;
     sf::Sprite breakableWallSprite;
 
@@ -82,11 +83,12 @@ private:
     sf::Sprite greenBushSprite;
     //Level:2
     Texture RockTex1, CrystalTex, JellyTex;
-	Sprite Rock1, Crystal1, Jelly;
-	//Level:3
-   sf:: Texture BlackCrystalTex, PinkCrystalTex, WhiteCrystalTex, blueCrystalTex, voiletCrystalTex;
-   sf::Sprite BlackCrystal, PinkCrystal, WhiteCrystal, BlueCrystal, voiletCrystal;
-
+    Sprite Rock1, Crystal1, Jelly;
+    //Level:3
+    sf::Texture BlackCrystalTex, PinkCrystalTex, WhiteCrystalTex, blueCrystalTex, voiletCrystalTex;
+    sf::Sprite BlackCrystal, PinkCrystal, WhiteCrystal, BlueCrystal, voiletCrystal;
+    //Boss Level
+ 
     //Common obstackle
     sf::Sprite spikeSprite;
     //Score object
@@ -104,8 +106,7 @@ private:
     void update();
     void render();
     void switchPlayer();
-    //
-    Menu menu;
+
 
 public:
     Game();
@@ -117,14 +118,14 @@ public:
 
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
-    map(3),
+    map(2),
     coins(map),
     diamonds(map),
     special(map),
     motoBug(2600, 730, map.getMap()),
     crab(5500, 400, map.getMap()),
     bat(400, 300, map.getMap()),
-    buzz(10000, 100, map.getMap()), score(window), menu(window) {
+    buzz(10000, 100, map.getMap()), score(window), EgStinger(300, 300, map.getMap()) {
 
     //player = new Sonic();
     players[0] = new Sonic();
@@ -132,9 +133,11 @@ Game::Game() :
     players[2] = new Tails();
     currentPlayer = 0;
     player = players[currentPlayer];
-    Vector2f curPos = player->getPos();
-    players[1]->setPos(curPos.x - 20, curPos.y);
-    players[2]->setPos(curPos.x - 30, curPos.y);
+    //Vector2f curPos = player->getPos();
+    float x = player->getX();
+    float y = player->getY();
+    players[1]->setPos(x - 20, y);
+    players[2]->setPos(x - 30, y);
     initWindow();
     initTextures();
     initGameObjects();
@@ -156,18 +159,18 @@ void Game::initTextures()
     {
         players[i]->setWidth(map.GetLevelWidth());
     }
-   
+
     // Load textures
-    if (currentLevel == 1) 
+    if (currentLevel == 1)
     {
-        if (!backgroundTex.loadFromFile("Data/bg5.png")) 
+        if (!backgroundTex.loadFromFile("Data/bg5.png"))
         {
             cout << "Could not load Texture. \n";
         }
         wallTex1.loadFromFile("Data/bl.jpg");
         breakableWallTex.loadFromFile("Data/brick4.png");
     }
-    if (currentLevel == 2) 
+    if (currentLevel == 2)
     {
         backgroundTex.loadFromFile("Data/backg12.png");
         wallTex1.loadFromFile("Data/block.png");
@@ -177,49 +180,61 @@ void Game::initTextures()
     {
         backgroundTex.loadFromFile("Data/BlueSp.jpg");
         wallTex1.loadFromFile("Data/Sp_brick.png");
+
         breakableWallTex.loadFromFile("Data/brick9.png");
     }
+    if (currentLevel == 4)
+    {
+        backgroundTex.loadFromFile("Data/Boss Bg.jpg");
+        wallTex1.loadFromFile("Data/FireBrick.png");
+    }
 
-	//Level 1
+    //Level 1
     greenBushTex.loadFromFile("Data/GreenBush.png");
     brownTowerTex.loadFromFile("Data/BrownTower.png");
     spikeTex.loadFromFile("Data/spike.png");
-	//Level 2
+    //Level 2
     RockTex1.loadFromFile("Data/snowy_rock3.png");
     CrystalTex.loadFromFile("Data/crystal.png");
     JellyTex.loadFromFile("Data/jelly (2).png");
     //Load sprites
-	Rock1.setTexture(RockTex1);
-	Crystal1.setTexture(CrystalTex);
-	Jelly.setTexture(JellyTex);
+    Rock1.setTexture(RockTex1);
+    Crystal1.setTexture(CrystalTex);
+    Jelly.setTexture(JellyTex);
 
-	//Level 3
+    //Level 3
     BlackCrystalTex.loadFromFile("Data/crystal_black.png");
     PinkCrystalTex.loadFromFile("Data/crystal_red-pink.png");
     WhiteCrystalTex.loadFromFile("Data/crystal_white-gold.png");
     blueCrystalTex.loadFromFile("Data/crystal_blue.png");
     voiletCrystalTex.loadFromFile("Data/crystal_violet.png");
 
-	// Load sprites
+    // Load sprites
     BlackCrystal.setTexture(BlackCrystalTex), PinkCrystal.setTexture(PinkCrystalTex), WhiteCrystal.setTexture(WhiteCrystalTex), BlueCrystal.setTexture(blueCrystalTex), voiletCrystal.setTexture(voiletCrystalTex);
     // Set up sprites
     backgroundSprite.setTexture(backgroundTex);
-    if (currentLevel == 1) 
+    if (currentLevel == 1)
     {
         backgroundSprite.setScale(1.8, 1.2);
     }
-    else if (currentLevel == 2) 
+    else if (currentLevel == 2)
     {
         backgroundSprite.setScale(1, 1);
+        wallSprite1.setScale(2, 2);
     }
-    else if (currentLevel == 3) 
+    else if (currentLevel == 3)
     {
-        backgroundSprite.setScale(0.6, 0.5);
+       backgroundSprite.setScale(0.6, 0.5);
+       
     }
-  
+    else if (currentLevel==4)
+    {
+        backgroundSprite.setScale(0.2, 0.375);
+    }
+
     wallSprite1.setTexture(wallTex1);
-  
-    if (currentLevel == 1) 
+
+    if (currentLevel == 1)
     {
         wallSprite1.setScale(0.63, 0.63);
     }
@@ -250,44 +265,36 @@ void Game::initGameObjects() {
 
 void Game::processEvents() {
     sf::Event event;
-    while (window.pollEvent(event))
-    {
+    while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed)
             window.close();
-		menu.handleEvent(event);
     }
 }
 
-void Game::update() 
+void Game::update()
 {
     // Update player
     bool ismoving = player->movement(lvl, true, false);
-    
     bool isflying = player->getIsFlying();
-    std::cout << currentPlayer << " " << isflying << std::endl;
+   
     player->punching(lvl, true);
     player->player_gravity(lvl);
     player->update();
 
     for (int i = 0; i < 3; i++)
     {
-        if (i != currentPlayer) 
-        {
+        if (i != currentPlayer) {
             players[i]->setOffsetX(player->getOffsetX());
-            if (player->getDirection())
-            {
+            if (player->getDirection()) {
                 players[i]->setX(player->getX() + 40);
             }
-            else
-            {
+            else {
                 players[i]->setX(player->getX() - 40);
             }
-            if (isflying) 
-            {
+            if (isflying) {
                 players[i]->hang(player->getX(), player->getY(), player->getOffsetX());
             }
-            else
-            {
+            else {
                 players[i]->movement(lvl, false, false);
             }
             players[i]->punching(lvl, false);
@@ -345,12 +352,10 @@ void Game::update()
 
 void Game::render() {
     window.clear(sf::Color::Black);
-    
+
     // Draw background
     backgroundSprite.setPosition(-player->getOffsetX() / 7, 0);
-   
     window.draw(backgroundSprite);
-    
 
     // Draw level
     for (int i = 0; i < height; i += 1) {
@@ -389,7 +394,7 @@ void Game::render() {
 
             if (lvl[i][j] == 'R')
             {
-                Rock1.setScale(1, 1);
+                Rock1.setScale(1.25, 1.25);
 
                 Rock1.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(Rock1);
@@ -405,7 +410,7 @@ void Game::render() {
 
             if (lvl[i][j] == 'C')
             {
-                Crystal1.setScale(1, 1);
+                Crystal1.setScale(1.25, 1.25);
                 Crystal1.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(Crystal1);
             }
@@ -453,7 +458,8 @@ void Game::render() {
     buzz.animateSprite();
 
     crab.draw(window);
-
+   // EgStinger.draw(window);
+   // EgStinger.animateSprite();
 
     // Draw player
     //player->draw_player(window);
@@ -469,7 +475,6 @@ void Game::render() {
     diamonds.draw(window, player->getOffsetX());
     special.draw(window, player->getOffsetX());
     score.DisplayScoreWin(*player);
-  
     window.display();
 }
 
@@ -486,7 +491,9 @@ void Game::run()
 void Game::switchPlayer() {
     if (Keyboard::isKeyPressed(Keyboard::C)) {
         if (playerChange.getElapsedTime().asSeconds() >= 1.5f) {
-            sf::Vector2f pos = player->getPos();
+            //sf::Vector2f pos = player->getPos();
+            float x = player->getX();
+            float y = player->getY();
             float velocityY = player->getVelocityY();
             float offsetX = player->getOffsetX();
 
@@ -495,7 +502,7 @@ void Game::switchPlayer() {
             player = players[currentPlayer];
 
             // Apply position and state to new character
-            player->setPos(pos.x, pos.y);
+            player->setPos(x, y);
             player->setOffsetX(offsetX);
 
             // Optional: Apply velocity to maintain momentum

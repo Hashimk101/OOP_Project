@@ -866,7 +866,7 @@ public:
 			(P_y / 64) == y / 64)
 		{
 			if (invincibilityClock.getElapsedTime().asSeconds() >= INVINCIBILITY_DURATION) {
-				takeDamage(3, s);
+				takeDamage(hp, s);
 				//std::cout << invincibilityClock.getElapsedTime().asSeconds() << std::endl;
 			}
 		}

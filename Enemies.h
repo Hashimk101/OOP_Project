@@ -939,5 +939,61 @@ public:
 
 class EggStinger : public Enemies
 {
-	
+
+public: 
+	EggStinger(int x, int y, char** lvl) : Enemies("Data/EggStinger.png", 89, 86)
+	{
+		this->x = x;
+		this->y = y;
+		this->lvl = lvl;
+		enemySprite.setPosition(x, y);
+	}
+	void move (int P_x, int P_y, int off_x, int off_y, Scores& s) override
+	{}
+	 void draw(sf::RenderWindow& window)override 
+	 {
+		 window.draw(enemySprite);
+	 }
+	 void takeDamage(int damage, Scores& s) override {}
+	 void animateSprite() override
+	 {
+		 const int delay_ms = 400; // Delay in milliseconds for frame change
+
+		 int frameWidths[4] = { 89, 121, 121, 128 };
+		 int frameOffset[4];
+
+		 frameOffset[0] = 0;
+		 //Offset for each itrect
+		 for (int i = 1;i < 4;i++)
+		 {
+			 frameOffset[i] = frameOffset[i - 1] + frameWidths[i - 1];
+		 }
+
+		 if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
+			 return;
+
+
+		 currentFrame = (currentFrame + 1) % frameCount;
+		 int w = frameWidths[currentFrame];
+		 int l = frameOffset[currentFrame];
+
+		 // update the rect
+		 frameRect = sf::IntRect(l, 0, w, frameRect.height);
+		 enemySprite.setTextureRect(frameRect);
+
+		 // re-center origin on that new width
+		 enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
+		 enemySprite.setScale(2, 2);
+
+
+		 animationClock.restart();
+	 }
+	 bool proximityCheck(int P_x, int P_y)  override
+	 {
+		 return true;
+	 }
+	 int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
+	 {
+		 return 0;
+	 }
 };

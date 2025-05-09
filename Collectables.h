@@ -6,7 +6,7 @@
 #include "ScoreBoard.h"
 
 const int height = 14;
-const int width = 200;
+
 
 // Base Collectable class
 class Collectable
@@ -18,6 +18,7 @@ protected:
     int collect_hit_box_factor_x = 4, collect_hit_box_factor_y = 4;
     int currentFrame;
     sf::Clock collectableClock;
+    Maps &map;
 
     // Sprite components
     sf::Sprite sprite;
@@ -38,7 +39,7 @@ protected:
 
 public:
     // Memebr Initializer List with parameters for width, height, and other properties
-    Collectable(char** lvl, int width, int height, float scale,  const std::string& texturePath, const std::string& soundPath, char levelIdentifier) : collect_width(width), collect_height(height), currentFrame(0),  scaleFactor(scale), levelChar(levelIdentifier) 
+    Collectable(Maps &m, int width, int height, float scale,  const std::string& texturePath, const std::string& soundPath, char levelIdentifier) :map(m),  collect_width(width), collect_height(height), currentFrame(0),  scaleFactor(scale), levelChar(levelIdentifier) 
     {
 
         textureRect = sf::IntRect(0, 0, width, height);
@@ -53,8 +54,7 @@ public:
         sprite.setTexture(texture);
         sprite.setTextureRect(textureRect);
         sprite.setScale(scale, scale);
-
-        this->lvl = lvl;
+        this->lvl = m.getMap();
         sizeOfSpritesheet = texture.getSize();
 
         if (!soundBuffer.loadFromFile(soundPath)) {
@@ -84,7 +84,7 @@ public:
 
     virtual void draw(sf::RenderWindow& window, int offset) {
         for (int i = 0; i < height; i++) {
-            for (int j = offset / 64; j < (offset + 1300) / 64 && j < width; j++) {
+            for (int j = offset / 64; j < (offset + 1300) / 64 && j < map.GetLevelWidth(); j++) {
                 if (lvl[i][j] == levelChar) {
                     sprite.setPosition(j * cell_size - offset, i * cell_size);
                     window.draw(sprite);
@@ -122,7 +122,7 @@ public:
         int gridY = playerCenterY / cell_size;
 
         // Boundary check
-        if (gridX >= 0 && gridX < width && gridY >= 0 && gridY < height)
+        if (gridX >= 0 && gridX < map.GetLevelWidth() && gridY >= 0 && gridY < height)
         {
             if (lvl[gridY][gridX] == levelChar)
             {
@@ -135,6 +135,13 @@ public:
                 if (levelChar == 'L')
                 {
                     Activeplayer.AddHp();
+                }
+                if (levelChar == 'd' && Activeplayer.isKnuckles)
+                {
+                    cout << "You are now invisible!" << endl;
+                    cout << "active player" << Activeplayer.isKnuckles << endl;
+                    Activeplayer.MakeInvisible();
+
                 }
                     lvl[gridY][gridX] = 's';
                     sound.play();
@@ -150,6 +157,16 @@ public:
                 {
                     Activeplayer.AddHp();
                 }
+				if (levelChar == 'd' && Activeplayer.isKnuckles)
+				{
+                    cout << "You are now invisible!" << endl;
+					cout << "active player" << Activeplayer.isKnuckles << endl;
+				
+                    Activeplayer.MakeInvisible();
+                    
+
+					
+				}
                 // Calculate collectable's screen position
                 lvl[gridY - 1][gridX] = 's';
                 sound.play();
@@ -168,8 +185,8 @@ public:
 // Child class for rings/coins
 class RingCoin : public Collectable {
 public:
-    RingCoin(char** lvl)
-        : Collectable(lvl, 16, 16, 2.5, "Data/Ring.png", "Data/Ring.wav", 'c') {
+    RingCoin(Maps& m)
+        : Collectable(m, 16, 16, 2.5, "Data/Ring.png", "Data/Ring.wav", 'c') {
     }
 
     void place() override
@@ -178,7 +195,7 @@ public:
 
         int validSpaces = 0;
         for (int i = 3; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < map.GetLevelWidth(); j++) {
                 if (lvl[i][j] == 's') {
                     if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
                         validSpaces++;
@@ -196,7 +213,7 @@ public:
 
         // Randomly place coins
         while (coinsPlaced < numCoins) {
-            int j = rand() % width;
+            int j = rand() % map.GetLevelWidth();
             int i = rand() % (height - 3) + 3; 
 
             if (lvl[i][j] == 's') {
@@ -217,7 +234,7 @@ public:
 // Child class for diamonds
 class ExtraLife : public Collectable 
 {
-public: ExtraLife(char** lvl): Collectable(lvl, 90, 94, 0.5, "Data/GreenPowerup.png", "Data/SpecialRing.wav", 'L')
+public: ExtraLife(Maps& m): Collectable(m, 90, 94, 0.5, "Data/GreenPowerup.png", "Data/SpecialRing.wav", 'L')
 {
  }
 
@@ -233,7 +250,7 @@ public: ExtraLife(char** lvl): Collectable(lvl, 90, 94, 0.5, "Data/GreenPowerup.
 
         int validSpaces = 0;
         for (int i = 3; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < map.GetLevelWidth(); j++) {
                 if (lvl[i][j] == 's') {
                     // For diamonds, we'll use different placement criteria
                     if ((i + 1 < height && lvl[i + 1][j] == 'w')) 
@@ -254,7 +271,7 @@ public: ExtraLife(char** lvl): Collectable(lvl, 90, 94, 0.5, "Data/GreenPowerup.
 
         // Randomly place diamonds - try to place in harder-to-reach areas
         while (ExtraLifePlaced < ExtraLifeNume) {
-            int j = rand() % width;
+            int j = rand() % map.GetLevelWidth();
             int i = rand() % (height - 3) + 3; // Start from row 3
 
             // Make diamonds appear higher up or in more challenging locations
@@ -277,7 +294,7 @@ public: ExtraLife(char** lvl): Collectable(lvl, 90, 94, 0.5, "Data/GreenPowerup.
 class SpecialBoost : public Collectable
 {
 public:
-    SpecialBoost(char** lvl) : Collectable(lvl, 48, 48, 1.5, "Data/diamonds.png", "Data/Ring.wav", 'd')
+    SpecialBoost(Maps& m) : Collectable(m, 48, 48, 1.5, "Data/diamonds.png", "Data/Ring.wav", 'd')
     {
 
     }
@@ -293,7 +310,7 @@ public:
 
         int validSpaces = 0;
         for (int i = 3; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < map.GetLevelWidth(); j++) {
                 if (lvl[i][j] == 's') {
                     // For diamonds, we'll use different placement criteria
                     if ((i + 1 < height && lvl[i + 1][j] == 'w')) {
@@ -313,7 +330,7 @@ public:
 
         // Randomly place diamonds - try to place in harder-to-reach areas
         while (diamondsPlaced < numDiamonds) {
-            int j = rand() % width;
+            int j = rand() % map.GetLevelWidth();
             int i = rand() % (height - 3) + 3; // Start from row 3
 
             // Make diamonds appear higher up or in more challenging locations

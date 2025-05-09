@@ -65,6 +65,8 @@ public:
             text[i].setFont(Monaco);
             text[i].setString(options[i]);
             text[i].setCharacterSize(60);
+			text[i].setOutlineThickness(3);
+			text[i].setOutlineColor(sf::Color::Black);
             text[i].setFillColor(sf::Color::White);
             text[i].setPosition(450, 325 + i * 150);
         }
@@ -84,6 +86,8 @@ public:
         TlTxt = "Sonic Classic Heroes";
         Title.setCharacterSize(120);
         Title.setFont(Monaco);
+        Title.setOutlineThickness(5);
+		Title.setOutlineColor(sf::Color::Cyan);
         Title.setFillColor(sf::Color::White);
         Title.setPosition(105, 100);
         Title.setString(TlTxt);
@@ -140,6 +144,8 @@ public:
             Levels[i].setFont(Monaco);
             Levels[i].setString(levelsTxt[i]);
             Levels[i].setCharacterSize(60);
+			Levels[i].setOutlineThickness(3);
+			Levels[i].setOutlineColor(sf::Color::Black);
             Levels[i].setFillColor(i == selected - 1 ? lightBlue : sf::Color::White);
             Levels[i].setPosition(450, 325 + i * 150);
         }
@@ -190,8 +196,10 @@ public:
             levelSelectionTitle.setFont(Monaco);
             levelSelectionTitle.setString("Select Level");
             levelSelectionTitle.setCharacterSize(100);
+			levelSelectionTitle.setOutlineThickness(5);
+			levelSelectionTitle.setOutlineColor(sf::Color::Black);
             levelSelectionTitle.setFillColor(sf::Color::White);
-            levelSelectionTitle.setPosition(450, 200);
+            levelSelectionTitle.setPosition(400, 200);
             window.draw(levelSelectionTitle);
 
             // Draw all level options

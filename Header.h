@@ -45,10 +45,14 @@ protected:
     bool isFlying = false; // Tracks if the player is flying
     bool isMoving = false; // Tracks if the player is moving
     int totalWidth;
+	bool InvspowerUp = false; // Tracks if the player has a power-up
+    sf::Clock KnuInvClock;
+	 // Tracks if the player is Knuckles
     sf::Vector2f lastOnGround;
     float lastx;
-
+    sf::Clock powerUPCLK;
 public:
+    bool isKnuckles = true;
     // Constructor to initialize the sprite with the texture
     MySprite()
     {
@@ -92,9 +96,12 @@ public:
         ESprite.setTextureRect(SpriteRect);
     }
 
-    virtual bool movement(char** lvl, bool check)
+    virtual bool movement(char** lvl, bool check, bool check2)
     {
         //std::cout << isFlying << std::endl;
+        /*if (check2) {
+            return true;
+        }*/
         borderCheck();
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
@@ -166,7 +173,7 @@ public:
                 velocityX -= acceleration;
                 if (velocityX < -max_speed) velocityX = -max_speed;
                 // Animation
-                if (!isFlying && !gravFalse)
+                if (!isFlying)
                 {
                     ESprite.setTexture(SpriteTex[1].T);
                     currentIndex = 1;
@@ -231,12 +238,12 @@ public:
                 if (velocityX > max_speed) velocityX = max_speed;
 
                 // Animation be like ......
-                if (onGround && !isFlying && !gravFalse)
+                if (onGround && !isFlying)
                 {
                     currentIndex = 3;
                     ESprite.setTexture(SpriteTex[3].T);
                 }
-                else if (!gravFalse)
+                else if (!isFlying)
                 {
                     currentIndex = 5;
                     ESprite.setTexture(SpriteTex[5].T);
@@ -294,7 +301,7 @@ public:
                 AnimateSprite(true);                    // cycle through its frames
                 return true;
             }
-            if (!gravFalse)
+            if (!isFlying)
 
             {
                 currentIndex = (currentIndex == 1) ? 0 : 2;
@@ -313,13 +320,13 @@ public:
 
         }
 
-        if (onGround && !gravFalse)
+        if (onGround && !isFlying)
         {
             if ((Keyboard::isKeyPressed(Keyboard::Up)) || (Keyboard::isKeyPressed(Keyboard::Space))) {
                 velocityY = -20;
             }
         }
-        else if (!onGround && !gravFalse)
+        else if (!onGround && !isFlying)
         {
             if ((currentIndex == 0 || currentIndex == 1)) {
                 currentIndex = 4;
@@ -336,7 +343,7 @@ public:
 
         }
 
-        if (gravFalse)
+        if (isFlying)
         {
             //std::cout << "HELLO\n";
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
@@ -364,6 +371,15 @@ public:
         return isMoving;
 
     }
+
+    void MakeInvisible()
+    {
+		InvspowerUp = true;
+        ESprite.setColor(sf::Color(255, 255, 255, 40));
+		KnuInvClock.restart();
+        
+    }
+
     void player_gravity(char** lvl)
     {
         if (gravFalse) {
@@ -431,7 +447,11 @@ public:
         return frameNum;
     }
 
-    virtual  void AnimateSprite(bool isMoving) {
+    virtual  void AnimateSprite(bool isMoving) 
+    {
+        if (isInvincible && !InvspowerUp)
+            ESprite.setColor({ 255,255,255,200 });
+
 
         if (isMoving)
         {
@@ -506,10 +526,14 @@ public:
             isInvincible = false;
             ESprite.setColor(sf::Color(255, 255, 255, 255));
         }
-
+        if (InvspowerUp && KnuInvClock.getElapsedTime().asSeconds()>=10.0)
+        {
+            InvspowerUp = false;
+            ESprite.setColor(sf::Color(255, 255, 255, 255));
+        }
 
     }
-
+    virtual void hang(float x, float y, float off_x) = 0;
 
 
     int getX() const {
@@ -550,6 +574,9 @@ public:
     }
     bool getonGround() const {
         return onGround;
+    }
+    bool getIsFlying() {
+        return isFlying;
     }
     int getVelocityY() const {
         return velocityY;
@@ -612,6 +639,7 @@ class Sonic : public MySprite
 {
 private:
     bool isGliding;
+	
 
 public:
     Sonic() : MySprite()
@@ -722,6 +750,8 @@ public:
         offset_x = 0;
         offset_y = 0;
         isGliding = false;
+        InvspowerUp = false;
+		isKnuckles = false;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 49, 49);
@@ -734,6 +764,28 @@ public:
         ESprite.setPosition(player_x, player_y);
         ESprite.setScale(scale_x, scale_y);
     }
+
+
+    void hang(float x, float y, float off_x) override {
+        // Implement hanging behavior for Sonic, or leave empty if not needed
+        this->player_x = x - 10;
+        this->player_y = y + 64;
+        this->offset_x = off_x;
+        ESprite.setTexture(SpriteTex[1].T);
+        currentIndex = 1;
+        updateTextureRectForCurrentIndex();
+        AnimateSprite(true);
+        ESprite.setScale(2.5, 2.5);
+        ESprite.setPosition(player_x, player_y);
+    }
+
+
+
+
+
+
+
+
 
     void AnimateSprite(bool isMoving)override
     {
@@ -911,6 +963,8 @@ public:
         offset_x = 0;
         offset_y = 0;
         isGliding = false;
+        InvspowerUp = false;
+		isKnuckles = true;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -924,10 +978,23 @@ public:
 
 
     }
+    void hang(float x, float y, float off_x) override {
+        // Implement hanging behavior for Sonic, or leave empty if not needed
+        this->player_x = x + 30;
+        this->player_y = y + 64;
+        this->offset_x = off_x;
+        ESprite.setTexture(SpriteTex[11].T);
+        currentIndex = 11;
+        updateTextureRectForCurrentIndex();
+        AnimateSprite(true);
+        ESprite.setScale(2.5, 2.5);
+        ESprite.setPosition(player_x, player_y);
+        //std::cout << player_x << " " << player_y << std::endl;
+    }
 
-    bool movement(char** lvl, bool check) override {
+    bool movement(char** lvl, bool check, bool check2) override {
         //std::cout << player_x + offset_x << " " << player_y << std::endl;
-        bool isMoving = MySprite::movement(lvl, check);
+        bool isMoving = MySprite::movement(lvl, check, check2);
         if (!isGliding && Keyboard::isKeyPressed(Keyboard::F) && check) {
             //velocityX = velocityX > 0 ? +10 : -10;
             velocityY = -3;
@@ -947,7 +1014,6 @@ public:
 
         return isMoving;
     }
-
 
     void punching(char** lvl, bool check) override
     {
@@ -1021,7 +1087,11 @@ public:
                 animationClock.restart();
             }
         }
-        //std::cout << currentFrame << std::endl;
+        if (InvspowerUp) 
+        {
+            ESprite.setColor(sf::Color(255, 255, 255, 40));
+        }
+     
 
         if (isMoving) {
 
@@ -1075,7 +1145,12 @@ public:
         }
 
     }
+	void MakeInvisible()
+	{
 
+			ESprite.setColor(sf::Color(255, 255, 255, 200));
+
+	}
 
 
 };
@@ -1222,6 +1297,8 @@ public:
         offset_x = 0;
         offset_y = 0;
         isFlying = false;
+        InvspowerUp = false;
+        isKnuckles = false;
 
         // Set up sprite rectangle
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -1234,16 +1311,17 @@ public:
         ESprite.setScale(scale_x, scale_y);
     }
 
-    bool movement(char** lvl, bool check) override
+
+    bool movement(char** lvl, bool check, bool check2) override
     {
-        bool isMovingBase = MySprite::movement(lvl, check);
+        bool isMovingBase = MySprite::movement(lvl, check, check2);
 
         if (Keyboard::isKeyPressed(Keyboard::F) && check)
         {
             if (!isFlying)
             {
                 isFlying = true;
-                gravFalse = true;
+                isFlying = true;
                 flyingClock.restart();
                 std::cout << "Flying started!" << std::endl;
                 isMoving = true;
@@ -1256,7 +1334,7 @@ public:
         // Timeout check: stop flying after max time
         if (isFlying && flyingClock.getElapsedTime().asSeconds() >= maxFlyTime) {
             isFlying = false;
-            gravFalse = false;
+            isFlying = false;
             std::cout << "Flying ended due to timeout." << std::endl;
         }
 
@@ -1345,7 +1423,10 @@ public:
 
 
 
-
+    void hang(float x, float y, float off_x) override
+    {
+        // Implement hanging behavior for Sonic, or leave empty if not needed
+    }
 
 
 

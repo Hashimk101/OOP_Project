@@ -104,7 +104,8 @@ private:
     void update();
     void render();
     void switchPlayer();
-
+    //
+    Menu menu;
 
 public:
     Game();
@@ -117,13 +118,13 @@ public:
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
     map(3),
-    coins(map.getMap()),
-    diamonds(map.getMap()),
-    special(map.getMap()),
+    coins(map),
+    diamonds(map),
+    special(map),
     motoBug(2600, 730, map.getMap()),
     crab(5500, 400, map.getMap()),
     bat(400, 300, map.getMap()),
-    buzz(10000, 100, map.getMap()), score(window) {
+    buzz(10000, 100, map.getMap()), score(window), menu(window) {
 
     //player = new Sonic();
     players[0] = new Sonic();
@@ -249,16 +250,19 @@ void Game::initGameObjects() {
 
 void Game::processEvents() {
     sf::Event event;
-    while (window.pollEvent(event)) {
+    while (window.pollEvent(event))
+    {
         if (event.type == sf::Event::Closed)
             window.close();
+		menu.handleEvent(event);
     }
 }
 
 void Game::update() 
 {
     // Update player
-    bool ismoving = player->movement(lvl, true);
+    bool ismoving = player->movement(lvl, true, false);
+    bool isflying = player->getIsFlying();
     player->punching(lvl, true);
     player->player_gravity(lvl);
     player->update();
@@ -268,12 +272,18 @@ void Game::update()
         if (i != currentPlayer) {
             players[i]->setOffsetX(player->getOffsetX());
             if (player->getDirection()) {
-                players[i]->setX(player->getX() + 10);
+                players[i]->setX(player->getX() + 40);
             }
             else {
-                players[i]->setX(player->getX() - 10);
+                players[i]->setX(player->getX() - 40);
             }
-            players[i]->movement(lvl, false);
+            if (isflying) 
+            {
+                players[i]->hang(player->getX(), player->getY(), player->getOffsetX());
+            }
+            else {
+                players[i]->movement(lvl, false, false);
+            }
             players[i]->punching(lvl, false);
             players[i]->player_gravity(lvl);
             players[i]->update();
@@ -329,10 +339,12 @@ void Game::update()
 
 void Game::render() {
     window.clear(sf::Color::Black);
-
+    
     // Draw background
     backgroundSprite.setPosition(-player->getOffsetX() / 7, 0);
+   
     window.draw(backgroundSprite);
+    
 
     // Draw level
     for (int i = 0; i < height; i += 1) {
@@ -451,6 +463,7 @@ void Game::render() {
     diamonds.draw(window, player->getOffsetX());
     special.draw(window, player->getOffsetX());
     score.DisplayScoreWin(*player);
+  
     window.display();
 }
 

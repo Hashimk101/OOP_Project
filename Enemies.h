@@ -199,7 +199,6 @@ public:
 };
 
 
-
 class CrabMeat : public Enemies
 {
 private:
@@ -505,6 +504,8 @@ public:
 		return false;
 	}
 };
+
+
 class BatBrain : public Enemies
 {
 private:
@@ -934,4 +935,9 @@ public:
 
 		return false;
 	}
+};
+
+class EggStinger : public Enemies
+{
+	
 };

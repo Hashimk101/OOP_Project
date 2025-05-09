@@ -256,16 +256,13 @@ public:
 
 
 
-
-
-
-
     Maps(Maps& m) : widthLvl(m.widthLvl)   
     {
         lvl = new char* [height];
         for (int i = 0; i < height; i++) {
             lvl[i] = new char[widthLvl];
-            for (int j = 0; j < widthLvl; j++) {
+            for (int j = 0; j < widthLvl; j++)
+            {
                 lvl[i][j] = m.lvl[i][j]; // Copy the map data  
             }
         }

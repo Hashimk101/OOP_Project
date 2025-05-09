@@ -262,26 +262,32 @@ void Game::update()
 {
     // Update player
     bool ismoving = player->movement(lvl, true, false);
+    
     bool isflying = player->getIsFlying();
+   
     player->punching(lvl, true);
     player->player_gravity(lvl);
     player->update();
 
     for (int i = 0; i < 3; i++)
     {
-        if (i != currentPlayer) {
+        if (i != currentPlayer) 
+        {
             players[i]->setOffsetX(player->getOffsetX());
-            if (player->getDirection()) {
+            if (player->getDirection())
+            {
                 players[i]->setX(player->getX() + 40);
             }
-            else {
+            else
+            {
                 players[i]->setX(player->getX() - 40);
             }
             if (isflying) 
             {
                 players[i]->hang(player->getX(), player->getY(), player->getOffsetX());
             }
-            else {
+            else
+            {
                 players[i]->movement(lvl, false, false);
             }
             players[i]->punching(lvl, false);

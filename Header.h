@@ -644,7 +644,7 @@ private:
 public:
     Sonic() : MySprite()
     {
-        SpriteTex = new SpriteSheet[9];
+        SpriteTex = new SpriteSheet[11];
         // Load textures into the array
         if (!SpriteTex[0].T.loadFromFile("Data/0left_still.png"))
         {
@@ -721,6 +721,25 @@ public:
         {
             SpriteTex[8].frameNum = 6;
         }
+        //Hang to tails
+        //left
+        if (!SpriteTex[9].T.loadFromFile("Data/Sonic Hang_L.png")) {
+            std::cout << "Failed to load Sonic Hang_L.png!" << std::endl;
+
+        }
+        else
+        {
+            SpriteTex[9].frameNum = 8;
+        }
+        //right
+        if (!SpriteTex[10].T.loadFromFile("Data/Sonic Hang_R.png")) {
+            std::cout << "Failed to load Sonic Hang_R.png!" << std::endl;
+
+        }
+        else
+        {
+            SpriteTex[10].frameNum = 8;
+        }
 
 
 
@@ -771,11 +790,20 @@ public:
         this->player_x = x - 10;
         this->player_y = y + 64;
         this->offset_x = off_x;
-        ESprite.setTexture(SpriteTex[1].T);
-        currentIndex = 1;
+
+		if (left) {
+			currentIndex = 9;
+			ESprite.setTexture(SpriteTex[currentIndex].T);
+		}
+		else {
+			currentIndex = 10;
+			ESprite.setTexture(SpriteTex[currentIndex].T);
+		}
+
+    
         updateTextureRectForCurrentIndex();
         AnimateSprite(true);
-        ESprite.setScale(2.5, 2.5);
+        ESprite.setScale(2.10, 2.30);
         ESprite.setPosition(player_x, player_y);
     }
 
@@ -792,7 +820,7 @@ public:
         if (isMoving) {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
                 currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
-                SpriteRect.left = currentFrame * SpriteRect.width;
+                SpriteRect.left = currentFrame * GetFrameWidth(SpriteTex[currentIndex]);
                 ESprite.setTextureRect(SpriteRect);
                 animationClock.restart();
             }
@@ -818,7 +846,7 @@ public:
     Knuckles() : MySprite()
     {
 
-        SpriteTex = new SpriteSheet[12];
+        SpriteTex = new SpriteSheet[13];
         //  IDLE
         if (!SpriteTex[0].T.loadFromFile("Data/Knuckles_Idle_L.png")) { //40x40 => 1 frame
             std::cout << "Failed to load Knuckles_Idle_L.png!" << std::endl;
@@ -928,14 +956,24 @@ public:
             SpriteTex[10].frameNum = 17;
         }
         //HANG TO TAILS
-        if (!SpriteTex[11].T.loadFromFile("Data/Knuckles_Hang.png")) //966x50 =>20 frames
+        //Left
+        if (!SpriteTex[11].T.loadFromFile("Data/Knuckles_Hang_L.png")) //966x50 =>20 frames
         {
 
-            std::cout << "Failed to load Knuckles_Hang.png!" << std::endl;
+            std::cout << "Failed to load Knuckles_Hang_L.png!" << std::endl;
         }
         else
         {
             SpriteTex[11].frameNum = 20;
+        }
+        if (!SpriteTex[12].T.loadFromFile("Data/Knuckles_Hang_r.png")) //966x50 =>20 frames
+        {
+
+            std::cout << "Failed to load Knuckles_Hang_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[12].frameNum = 20;
         }
         // Initialize variables
         velocityY = 0;
@@ -978,18 +1016,18 @@ public:
 
 
     }
-    void hang(float x, float y, float off_x) override {
+    void hang(float x, float y, float off_x) override 
+    {
         // Implement hanging behavior for Sonic, or leave empty if not needed
         this->player_x = x + 30;
         this->player_y = y + 64;
         this->offset_x = off_x;
-        ESprite.setTexture(SpriteTex[11].T);
-        currentIndex = 11;
+		currentIndex = (left) ? 11 : 12;
+        ESprite.setTexture(SpriteTex[currentIndex].T);
+      // animationClock.restart();
         updateTextureRectForCurrentIndex();
         AnimateSprite(true);
-        ESprite.setScale(2.5, 2.5);
         ESprite.setPosition(player_x, player_y);
-        //std::cout << player_x << " " << player_y << std::endl;
     }
 
     bool movement(char** lvl, bool check, bool check2) override {
@@ -1112,6 +1150,10 @@ public:
                 else if (currentIndex == 9 || currentIndex == 10)
                 {
                     ESprite.setScale(2.5, 2.4);
+                }
+                else if (currentIndex == 11 || currentIndex == 12)
+                {
+                    ESprite.setScale(2.07, 2);
                 }
                 else
                 {

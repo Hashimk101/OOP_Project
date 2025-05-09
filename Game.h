@@ -264,7 +264,7 @@ void Game::update()
     bool ismoving = player->movement(lvl, true, false);
     
     bool isflying = player->getIsFlying();
-   
+    std::cout << currentPlayer << " " << isflying << std::endl;
     player->punching(lvl, true);
     player->player_gravity(lvl);
     player->update();

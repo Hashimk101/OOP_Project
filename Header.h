@@ -40,7 +40,7 @@ protected:
     // Sprites for different characters
     sf::Sprite ESprite;
     bool OnEdge = false; // Tracks if the player is on an edge
-    bool gravFalse = false;
+    //bool isFlying = false;
     bool Punch = false;
     bool isFlying = false; // Tracks if the player is flying
     bool isMoving = false; // Tracks if the player is moving
@@ -382,7 +382,7 @@ public:
 
     void player_gravity(char** lvl)
     {
-        if (gravFalse) {
+        if (isFlying) {
             return;
         }
         // Store previous position
@@ -1200,7 +1200,6 @@ public:
 class Tails : public MySprite
 {
 private:
-    bool isFlying;
     sf::Clock flyingClock;
     const float maxFlyTime = 7;
 
@@ -1363,7 +1362,6 @@ public:
             if (!isFlying)
             {
                 isFlying = true;
-                isFlying = true;
                 flyingClock.restart();
                 std::cout << "Flying started!" << std::endl;
                 isMoving = true;
@@ -1375,7 +1373,6 @@ public:
 
         // Timeout check: stop flying after max time
         if (isFlying && flyingClock.getElapsedTime().asSeconds() >= maxFlyTime) {
-            isFlying = false;
             isFlying = false;
             std::cout << "Flying ended due to timeout." << std::endl;
         }

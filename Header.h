@@ -846,7 +846,7 @@ class Knuckles : public MySprite
 {
 private:
     bool isGliding;
-public:
+    public:
     Knuckles() : MySprite()
     {
 

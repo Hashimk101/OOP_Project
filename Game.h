@@ -98,6 +98,10 @@ private:
     sf::Texture CompleteLevelBoardTex;
 	sf::Sprite CompleteLevelBoardSprite;
 
+    sf::Texture levelBackgroundTexture;
+    sf::Sprite levelBackgroundSprite;
+
+
     //Level 1
     sf::Sprite brownTowerSprite;
     sf::Sprite greenBushSprite;
@@ -117,7 +121,7 @@ private:
     sf::Text      levelLabel;
     sf::Clock     levelClock;
     bool          showLevelText = false;
-    float         levelTextDuration = 0.5;   
+    float         levelTextDuration = 2.5;   
 
     //Menu tracker
     bool ActivateMenu;
@@ -271,6 +275,7 @@ Game::Game() :
     MotobugCount = 0;
     CrabCount = 0;
     buzzerCount = 0;
+   
 }
 Game::~Game()
 {
@@ -313,6 +318,11 @@ void Game::initTextures()
 		std::cout << "Failed to load Data/CrabMeatBall.png\n";
 	if (!Projectile.loadFromFile("Data/egg.png"))
 		std::cout << "Failed to load Data/egg.png\n";
+    
+    if (!levelBackgroundTexture.loadFromFile("Data/landscape.jpg"))
+        std::cout << "Failed to load Data/landscape.jpg\n";
+	levelBackgroundSprite.setTexture(levelBackgroundTexture);
+    levelBackgroundSprite.setScale(1.21, 1.23);
 
     // Load textures
     if (currentLevel == 1)
@@ -614,8 +624,10 @@ void Game::render()
     window.clear(sf::Color::Black);
     if (showLevelText)
     {
+        window.draw(levelBackgroundSprite);
         window.draw(levelLabel);
         window.display();
+        return;
     }
 
     if (isInMenu)

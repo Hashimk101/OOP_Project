@@ -72,7 +72,7 @@ private:
 	int buzzerCount;
 
     EggStinger* EgStinger;
-
+    int EggStCount;
     // Enemy textures
     sf::Texture motoBugTex;
     sf::Texture crabTex;
@@ -876,24 +876,29 @@ void Game::configureEnemies()
        BatCount = 1;  
        MotobugCount = 2;  
        buzzerCount = 1;  
+       EggStCount = 0;
        break;  
    case 2:  
        CrabCount = 2;  
        BatCount = 1;  
        MotobugCount = 2;  
-       buzzerCount = 1;  
+       buzzerCount = 1; 
+       EggStCount = 0;
        break;  
    case 3:  
        CrabCount = 2;  
        BatCount = 1;  
        MotobugCount = 3;  
        buzzerCount = 2;  
+       EggStCount = 0;
        break;  
    default:  
-       CrabCount = 1;  
-       BatCount = 1;  
-       MotobugCount = 1;  
-       buzzerCount = 1;  
+       CrabCount = 0;  
+       BatCount = 0;  
+       MotobugCount = 0;  
+       buzzerCount = 0; 
+       EggStCount = 1;
+
    }  
 
    // 3) allocate new arrays  
@@ -924,6 +929,10 @@ void Game::configureEnemies()
        buzzers[i] = BuzzBomber(7000 * (i + 1), 100, map->getMap());
        buzzers[i].getEnemySprite().setTexture(buzzBomberTex);
        buzzers[i].getProjSprite().setTexture(Projectile);
+   }
+   for (int i = 0; i < EggStCount; i++)
+   {
+       EgStinger[i] = EggStinger(10, 10, map->getMap());
    }
 }
 

@@ -873,23 +873,23 @@ void Game::configureEnemies()
    {  
    case 1:  
        CrabCount = 1;  
-       BatCount = 1;  
+       BatCount = 2;  
        MotobugCount = 2;  
        buzzerCount = 1;  
        EggStCount = 0;
        break;  
    case 2:  
        CrabCount = 2;  
-       BatCount = 1;  
+       BatCount = 2;  
        MotobugCount = 2;  
-       buzzerCount = 1; 
+       buzzerCount = 2; 
        EggStCount = 0;
        break;  
    case 3:  
-       CrabCount = 2;  
-       BatCount = 1;  
-       MotobugCount = 3;  
-       buzzerCount = 2;  
+       CrabCount = 3;  
+       BatCount = 4;  
+       MotobugCount = 4;  
+       buzzerCount = 3;  
        EggStCount = 0;
        break;  
    default:  
@@ -910,22 +910,58 @@ void Game::configureEnemies()
    // 4) (optional) initialize each with its spawn point or map reference  
    for (int i = 0; i < CrabCount; ++i)
    {
+       if (i == 0 && currentLevel == 2)
+       {
+           crabs[i] = CrabMeat(5500 * (i + 1), 350, map->getMap());
+       }
+       else if (i == 1) 
+       {
+           crabs[i] = CrabMeat(4500 * (i + 1), 750, map->getMap());
+           if (currentLevel == 3) 
+           {
+               crabs[i] = CrabMeat(4500 * (i + 1), 490, map->getMap());
+           }
+       }
+       else  if (i == 2) 
+       {
+           crabs[i] = CrabMeat(5500 * (i + 1), 480, map->getMap());
+       }
+       else
        crabs[i] = CrabMeat(5500 * (i + 1), 400, map->getMap());
        crabs[i].getEnemySprite().setTexture(crabTex);
        crabs[i].getMeatBall().setTexture(MeatBallTex);
    }
    for (int i = 0; i < BatCount; ++i)
    {
-       bats[i] = BatBrain(400 * (i + 1), 300, map->getMap()); 
+	   if (i == 1)
+	   {
+		   bats[i] = BatBrain(5200 * (i + 1), 300, map->getMap());
+	   }
+	   else
+       bats[i] = BatBrain(700 * (i + 1), 300, map->getMap()); 
 	   bats[i].getEnemySprite().setTexture(batBrainTex);
    }
    for (int i = 0; i < MotobugCount; ++i)
    {
+       if (i == 1)
+       {
+           motoBugs[i] = MotoBug(4000 * (i + 1), 730, map->getMap());
+           if (currentLevel == 3) 
+           {
+               motoBugs[i] = MotoBug(3600 * (i + 1), 490, map->getMap());
+           }
+       }
+       
+       else
        motoBugs[i] = MotoBug(3600 * (i + 1), 730, map->getMap());
        motoBugs[i].getEnemySprite().setTexture(motoBugTex);
    }
    for (int i = 0; i < buzzerCount; ++i)
    {
+       if (i == 1 && currentLevel == 2) 
+       {
+           buzzers[i] = BuzzBomber(10000 * (i + 1), 100, map->getMap());
+       }
        buzzers[i] = BuzzBomber(7000 * (i + 1), 100, map->getMap());
        buzzers[i].getEnemySprite().setTexture(buzzBomberTex);
        buzzers[i].getProjSprite().setTexture(Projectile);

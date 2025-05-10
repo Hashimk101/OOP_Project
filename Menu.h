@@ -90,7 +90,7 @@ public:
         Title.setCharacterSize(120);
         Title.setFont(Monaco);
         Title.setOutlineThickness(5);
-        Title.setOutlineColor(sf::Color::Cyan);
+        Title.setOutlineColor(sf::Color::Black);
         Title.setFillColor(sf::Color::White);
         Title.setPosition(105, 100);
         Title.setString(TlTxt);
@@ -210,11 +210,11 @@ public:
             sf::Text levelSelectionTitle;
             levelSelectionTitle.setFont(Monaco);
             levelSelectionTitle.setString("Select Level");
-            levelSelectionTitle.setCharacterSize(100);
+            levelSelectionTitle.setCharacterSize(120);
             levelSelectionTitle.setOutlineThickness(5);
             levelSelectionTitle.setOutlineColor(sf::Color::Black);
             levelSelectionTitle.setFillColor(sf::Color::White);
-            levelSelectionTitle.setPosition(400, 200);
+            levelSelectionTitle.setPosition(350, 100);
             window.draw(levelSelectionTitle);
 
             // Draw all level options

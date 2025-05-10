@@ -14,15 +14,18 @@
 
 
 class Maps {
-    const  int widthLvl;
+     int widthLvl;
     // only making one map rn so there is one main class over here, else multiple classes based on the levels
     char** lvl;
     int level;
-   std:: string* FilePath=nullptr;
-   std:: string File="";
-   int height = 14;
+    std::string* FilePath = nullptr;
+    std::string File = "";
+    int height = 14;
 public:
-   
+Maps() : lvl(nullptr), widthLvl(0), level(0), FilePath(nullptr), File("")
+{
+
+}
     Maps(int levl) : level(levl)
         , widthLvl((levl == 1) ? 200
             : (levl == 2) ? 250
@@ -47,7 +50,7 @@ public:
         FilePath[3] = "Data/Boss_Level.txt";
         this->level = levl;
 
-        File = (levl == 1) ? FilePath[0] : ((levl == 2) ? FilePath[1] : (levl == 3)? FilePath[2] : FilePath[3]);
+        File = (levl == 1) ? FilePath[0] : ((levl == 2) ? FilePath[1] : (levl == 3) ? FilePath[2] : FilePath[3]);
 
 
         std::ifstream file(File);
@@ -86,17 +89,42 @@ public:
 
 
 
-    Maps(Maps& m) : widthLvl(m.widthLvl)   
+    Maps(Maps& m) : widthLvl(m.widthLvl), level(m.level), File(m.File), height(m.height)
     {
         lvl = new char* [height];
         for (int i = 0; i < height; i++) {
             lvl[i] = new char[widthLvl];
             for (int j = 0; j < widthLvl; j++)
             {
-                lvl[i][j] = m.lvl[i][j]; // Copy the map data  
+                lvl[i][j] = m.lvl[i][j];
             }
         }
+        FilePath = new std::string[4];
+        for (int i = 0; i < 4; i++) {
+            FilePath[i] = m.FilePath[i];
+        }
     }
+	//Maps& operator=(const Maps& m) {
+	//	if (this != &m) {
+	//		for (int i = 0; i < height; i++) {
+	//			delete[] lvl[i];
+	//		}
+	//		delete[] lvl;
+	//		widthLvl = m.widthLvl;
+	//		level = m.level;
+	//		height = m.height;
+	//		File = m.File;
+	//		lvl = new char* [height];
+	//		for (int i = 0; i < height; i++) {
+	//			lvl[i] = new char[widthLvl];
+	//			for (int j = 0; j < widthLvl; j++)
+	//			{
+	//				lvl[i][j] = m.lvl[i][j];
+	//			}
+	//		}
+	//	}
+	//	return *this;
+	//}
     char** getMap() {
         return lvl;
     }

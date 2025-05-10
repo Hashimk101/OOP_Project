@@ -129,7 +129,7 @@ void DisplayScoreWin(MySprite& currentPlayer)
 		DisplayTxt[i].setOutlineColor(sf::Color::Black);
 		DisplayTxt[i].setFont(Monaco);  
 		DisplayTxt[i].setString(DisplayScore[i]);  
-		DisplayTxt[i].setCharacterSize(60);  
+		DisplayTxt[i].setCharacterSize(50);  
 		DisplayTxt[i].setPosition(10, 0 + i * 65);  
 		w.draw(DisplayTxt[i]);  
 	}  

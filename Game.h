@@ -6,9 +6,8 @@
 #include "Enemies.h"
 #include "Menu.h"
 #include "ScoreBoard.h"
-
+#include "Timer.h"
 #include <SFML/Graphics.hpp>
-
 
     /////////////////////////////////////////////////////////////////
     // a cell is 64 by 64 pixels
@@ -44,9 +43,9 @@ private:
     // Window settings
     const int screen_x = 1200;
     const int screen_y = 900;
-    int currentLevel = 2;
+    int currentLevel;
     // Game objects
-    Maps map;
+    Maps* map;
     MySprite* players[3];
     int currentPlayer;
     MySprite* player;
@@ -54,16 +53,34 @@ private:
     char** lvl;
 
     // Collectables
-    RingCoin coins;
-    ExtraLife diamonds;
-    SpecialBoost special;
+    RingCoin* coins;
+    ExtraLife* diamonds;
+    SpecialBoost* special;
 
     // Enemies
-    MotoBug motoBug;
-    CrabMeat crab;
-    BatBrain bat;
-    BuzzBomber buzz;
-    EggStinger EgStinger;
+    MotoBug* motoBugs;
+	int MotobugCount;
+    int* MotoBugDmg;
+    CrabMeat* crabs;
+	int CrabCount ;
+	int* CrabDmg;
+    BatBrain* bats;
+	int BatCount ;
+	int* BatDmg;
+    BuzzBomber* buzzers;
+	int buzzerCount;
+	int* BuzzDmg;
+    EggStinger* EgStinger;
+
+    // Enemy textures
+    sf::Texture motoBugTex;
+    sf::Texture crabTex;
+    sf::Texture batBrainTex;
+    sf::Texture buzzBomberTex;
+    sf::Texture eggStingerTex;
+    sf::Texture MeatBallTex;
+    sf::Texture Projectile;
+
 
     // Sprites and textures
     sf::Texture backgroundTex;
@@ -77,6 +94,8 @@ private:
     //GENERAL SHI
     sf::Sprite wallSprite1;
     sf::Sprite breakableWallSprite;
+    sf::Texture CompleteLevelBoardTex;
+	sf::Sprite CompleteLevelBoardSprite;
 
     //Level 1
     sf::Sprite brownTowerSprite;
@@ -91,13 +110,24 @@ private:
  
     //Common obstackle
     sf::Sprite spikeSprite;
+
+    //Menu tracker
+    bool ActivateMenu;
     //Score object
     Scores score;
-
     // Window
     sf::RenderWindow window;
     sf::Clock playerChange;
-
+    //Time to record gameplay time
+    Timer timer;
+    //Transitioning stated in game
+    bool isRunning;
+    bool isPlaying;
+    bool isPaused;
+    bool isGameOver;
+    bool isInMenu;
+    //Menu Pointer
+    Menu* menu=nullptr;
     // Private methods
     void initWindow();
     void initTextures();
@@ -106,45 +136,135 @@ private:
     void update();
     void render();
     void switchPlayer();
+   void renderGameOver();
+    void handleGameplayEvents(const sf::Event& event)
+    {
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Escape)
+            {
+                pauseGame();
+            }
+            // Add other gameplay controls here
+        }
+    }
 
+    void handlePausedEvents(const sf::Event& event) 
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Escape) {
+                resumeGame();
+            }
+            else if (event.key.code == sf::Keyboard::M) {
+                returnToMenu();
+            }
+        }
+    }
+
+    void handleGameOverEvents(const sf::Event& event)
+    {
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Enter) {
+                returnToMenu();
+            }
+        }
+    }
+
+    void pauseGame()
+    {
+        isPlaying = false;
+        isPaused = true;
+    }
+
+    void resumeGame()
+    {
+        isPlaying = true;
+        isPaused = false;
+    }
+
+    void gameOver() {
+        isPlaying = false;
+        isGameOver = true;
+    }
+
+    void returnToMenu() 
+    {
+        isPlaying = false;
+        isPaused = false;
+        isGameOver = false;
+        isInMenu = true;
+    }
+    void configureEnemies();
+    void cleanupEnemies();
 
 public:
     Game();
     ~Game();
     void run();
+    void showHighScores() {}
+    void openOptions() {}
+    void resume() {}
+    void startNewGame(int level)
+    {
+        currentLevel = level;
+        map = new  Maps(currentLevel);   
+		coins = new  RingCoin(*map);
+		diamonds = new ExtraLife(*map);
+		special = new SpecialBoost(*map);
+        lvl = map->getMap();
+        initWindow();
+        initTextures();
+        initGameObjects();
+        currentPlayer = 0;
+        player = players[currentPlayer];
+        player->setOffsetX(0);
+   
+        player->setPos(100, 300);
+        timer.reset();
+        timer.start();
+        cleanupEnemies();          
+        configureEnemies();
+
+    }
 };
 
 
 
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
-    map(2),
-    coins(map),
-    diamonds(map),
-    special(map),
-    motoBug(2600, 730, map.getMap()),
-    crab(5500, 400, map.getMap()),
-    bat(400, 300, map.getMap()),
-    buzz(10000, 100, map.getMap()), score(window), EgStinger(300, 300, map.getMap()) {
-
-    //player = new Sonic();
+    menu(new Menu(window)),
+    timer(300, "Data/Tricky Jimmy.ttf", 10, 2 * 65),
+    motoBugs(nullptr), crabs(nullptr), bats(nullptr), buzzers(nullptr),
+    EgStinger(nullptr), lvl(nullptr),
+    isInMenu(true), isRunning(true), isPlaying(false), isPaused(false), isGameOver(false),
+    score(window),
+    coins(nullptr), diamonds(nullptr), special(nullptr) // Add these
+{
     players[0] = new Sonic();
     players[1] = new Knuckles();
     players[2] = new Tails();
     currentPlayer = 0;
     player = players[currentPlayer];
-    //Vector2f curPos = player->getPos();
     float x = player->getX();
     float y = player->getY();
     players[1]->setPos(x - 20, y);
     players[2]->setPos(x - 30, y);
-    initWindow();
-    initTextures();
-    initGameObjects();
+    ActivateMenu = true;
+    BatCount = 0;
+    MotobugCount = 0;
+    CrabCount = 0;
+    buzzerCount = 0;
 }
-
-Game::~Game() {
-    // Clean up if needed
+Game::~Game()
+{
+    for (int i = 0; i < 3; i++) {
+        delete players[i];
+    }
+    delete menu;
+    if (coins) delete coins;
+    if (diamonds) delete diamonds;
+    if (special) delete special;
+    cleanupEnemies();
 }
 
 void Game::initWindow()
@@ -157,8 +277,25 @@ void Game::initTextures()
 {
     for (int i = 0; i < 3; i++)
     {
-        players[i]->setWidth(map.GetLevelWidth());
+        players[i]->setWidth(map->GetLevelWidth());
     }
+
+    //Enemy textures
+  
+    if (!motoBugTex.loadFromFile("Data/motobug.png"))
+        std::cout << "Failed to load Data/motobug.png\n";
+    if (!crabTex.loadFromFile("Data/CrabMeat.png"))
+        std::cout << "Failed to load Data/CrabMeat.png\n";
+    if (!batBrainTex.loadFromFile("Data/BatBrain.png"))
+        std::cout << "Failed to load Data/BatBrain.png\n";
+    if (!buzzBomberTex.loadFromFile("Data/BuzzBomber.png"))
+        std::cout << "Failed to load Data/BuzzBomber.png\n";
+    if (!eggStingerTex.loadFromFile("Data/EggStinger.png"))
+        std::cout << "Failed to load Data/EggStinger.png\n";
+	if (!MeatBallTex.loadFromFile("Data/CrabMeatBall.png"))
+		std::cout << "Failed to load Data/CrabMeatBall.png\n";
+	if (!Projectile.loadFromFile("Data/egg.png"))
+		std::cout << "Failed to load Data/egg.png\n";
 
     // Load textures
     if (currentLevel == 1)
@@ -242,37 +379,99 @@ void Game::initTextures()
     {
         wallSprite1.setScale(1, 1);
     }
-
+    //Board
+	CompleteLevelBoardTex.loadFromFile("Data/GameEnd.png");
+	CompleteLevelBoardSprite.setTexture(CompleteLevelBoardTex);
 
     breakableWallSprite.setTexture(breakableWallTex);
     greenBushSprite.setTexture(greenBushTex);
     brownTowerSprite.setTexture(brownTowerTex);
     spikeSprite.setTexture(spikeTex);
+
+
+
+
+
+
+
+
+
 }
 
-void Game::initGameObjects() {
-    int thislvlWidth = map.GetLevelWidth();
+void Game::initGameObjects() 
+{
+    int thislvlWidth = map->GetLevelWidth();
     std::cout << thislvlWidth << std::endl;
     for (int i = 0; i < 3; i++) {
         players[i]->setWidth(thislvlWidth); // Set width for Sonic, Knuckles, Tails
     }
-    lvl = map.getMap();
-    coins.place();
-    diamonds.place();
-    special.place();
+    lvl = map->getMap();
+    coins->place();
+    diamonds->place();
+    special->place();
     playerChange.restart();
 }
 
-void Game::processEvents() {
+void Game::processEvents()
+{
     sf::Event event;
-    while (window.pollEvent(event)) {
+    while (window.pollEvent(event))
+    {
         if (event.type == sf::Event::Closed)
+        {
             window.close();
+            isRunning = false;
+        }
+
+        if (isInMenu)
+        {
+            menu->draw(window);
+            menu->handleEvent(event);
+            if (menu->isEnterPressed())
+            {
+                int choice = menu->getSelectedIndex();
+                menu->resetEnter();
+
+                switch (choice) {
+                case 0: {   // New Game
+                    int level = menu->selectLevel();
+                    if (level > 0) {
+                        startNewGame(level);
+                        isInMenu = false;
+                        isPlaying = true;
+                    }
+                    break;
+                }
+                case 1:     // Resume
+                    resume();    isInMenu = false;  break;
+                case 2:     // Options
+                    openOptions(); break;
+                case 3:     // High Scores
+                    showHighScores(); break;
+                case 4:     // Exit
+                    window.close();  break;
+                }
+            }
+        
+        }
+        else if (isPlaying) 
+        {
+            handleGameplayEvents(event);
+        }
+        else if (isPaused)
+        {
+            handlePausedEvents(event);
+        }
+        else if (isGameOver)
+        {
+            handleGameOverEvents(event);
+        }
     }
 }
 
 void Game::update()
 {
+    if (!player || !lvl) return;
     // Update player
     bool ismoving = player->movement(lvl, true, false);
     bool isflying = player->getIsFlying();
@@ -301,10 +500,7 @@ void Game::update()
             players[i]->player_gravity(lvl);
             players[i]->update();
 
-            ///////
-            ///////
-            ///////
-            ///////
+
 
             if (currentPlayer == 0) {
                 players[i]->setSpeed(12);
@@ -318,45 +514,62 @@ void Game::update()
 
         }
     }
-
-
+    timer.update();
+    if (!motoBugs || !buzzers || !bats || !crabs) 
+    {
+        return;
+    }
     // Update enemies
-    motoBug.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-    bat.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-    buzz.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-    crab.move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-
-    // Check collisions with enemies
-    int dmg = motoBug.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
-    if (dmg > 0) player->takeDamage(dmg);
-
-    int dmg2 = bat.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
-    if (dmg2 > 0) player->takeDamage(dmg2);
-
-    int bombdmg = buzz.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
-    if (bombdmg > 0) player->takeDamage(bombdmg);
-
-    int dmg1 = crab.giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
-    if (dmg1 > 0) player->takeDamage(dmg1);
+    for (int i = 0; i < MotobugCount; ++i) {
+        motoBugs[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+        // Check collisions with enemies
+        int dmg = motoBugs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        if (dmg > 0) player->takeDamage(dmg);
+    }
+    for (int i = 0; i < BatCount; i++)
+    {
+        bats[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);     
+        int dmg = bats[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        if (dmg > 0) player->takeDamage(dmg);
+    }
+    for (int i = 0; i < buzzerCount; i++)
+    {
+        buzzers[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+        int dmg = buzzers[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        if (dmg > 0) player->takeDamage(dmg);
+    }
+    for (int i = 0; i < CrabCount; i++)
+    {
+        crabs[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+        int dmg = crabs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        if (dmg > 0) player->takeDamage(dmg);
+    }
 
     // Check collectable collisions
-    coins.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
-    diamonds.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
-    special.checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
+    coins->checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
+    diamonds->checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
+    special->checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
 
     // Animate collectables
-    coins.animate();
-    diamonds.animate();
-    special.animate();
+    coins->animate();
+    diamonds->animate();
+    special->animate();
+    ActivateMenu = true;
 }
 
-void Game::render() {
+void Game::render()
+{
     window.clear(sf::Color::Black);
+
+    if (isInMenu)
+    {
+        menu->draw(window);
+    }
 
     // Draw background
     backgroundSprite.setPosition(-player->getOffsetX() / 7, 0);
     window.draw(backgroundSprite);
-
+    
     // Draw level
     for (int i = 0; i < height; i += 1) {
         for (int j = player->getOffsetX() / 64; j < (1300 + player->getOffsetX()) / 64; j += 1) {
@@ -444,20 +657,36 @@ void Game::render() {
                 voiletCrystal.setPosition(j * cell_size - player->getOffsetX(), i * cell_size);
                 window.draw(voiletCrystal);
             }
+            if (lvl[i][j]=='E')
+            {
+                CompleteLevelBoardSprite.setScale(1.5, 1.5);
+                CompleteLevelBoardSprite.setPosition(j* cell_size - player->getOffsetX(), i* cell_size);
+                window.draw(CompleteLevelBoardSprite);
+            }
         }
     }
 
     // Draw enemies
-    motoBug.draw(window);
-    motoBug.animateSprite();
+    for (int i = 0; i < MotobugCount; ++i) {
+        motoBugs[i].draw(window);
+        motoBugs[i].animateSprite();
+    }
+	for (int i = 0; i < BatCount; ++i) {
+		bats[i].draw(window);
+		bats[i].animateSprite();
+	}
 
-    bat.draw(window);
-    bat.animateSprite();
+    for (int i = 0; i < buzzerCount; i++)
+    {
+        buzzers[i].draw(window);
+		buzzers[i].animateSprite();
+    }
 
-    buzz.draw(window);
-    buzz.animateSprite();
-
-    crab.draw(window);
+    for (int i = 0; i < CrabCount; i++)
+    {
+        crabs[i].draw(window);
+		crabs[i].animateSprite();
+    }
    // EgStinger.draw(window);
    // EgStinger.animateSprite();
 
@@ -471,25 +700,41 @@ void Game::render() {
     player->draw_player(window);
 
     // Draw collectables
-    coins.draw(window, player->getOffsetX());
-    diamonds.draw(window, player->getOffsetX());
-    special.draw(window, player->getOffsetX());
+    coins->draw(window, player->getOffsetX());
+    diamonds->draw(window, player->getOffsetX());
+    special->draw(window, player->getOffsetX());
     score.DisplayScoreWin(*player);
+	timer.draw(window);
     window.display();
 }
 
 void Game::run()
 {
-    while (window.isOpen()) {
+    while (window.isOpen())
+    {
         processEvents();
-        update();
-        render();
-        switchPlayer();
+
+        if (isInMenu)
+        {
+            window.clear();
+            menu->draw(window);
+            window.display();
+        }
+        else if (isPlaying)
+        {
+            update();
+            render();    // only after we’ve set up everything
+            switchPlayer();
+        }
     }
 }
 
-void Game::switchPlayer() {
-    if (Keyboard::isKeyPressed(Keyboard::C)) {
+
+
+void Game::switchPlayer()
+{
+    if (Keyboard::isKeyPressed(Keyboard::C))
+    {
         if (playerChange.getElapsedTime().asSeconds() >= 1.5f) {
             //sf::Vector2f pos = player->getPos();
             float x = player->getX();
@@ -511,3 +756,112 @@ void Game::switchPlayer() {
         }
     }
 }
+void  Game::renderGameOver() {
+    // Draw game over screen
+    sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
+    background.setFillColor(sf::Color(50, 0, 0));
+    window.draw(background);
+
+    // Draw game over text
+    sf::Font font;
+    if (font.loadFromFile("Data/Tricky Jimmy.ttf")) {
+        sf::Text gameOverText;
+        gameOverText.setFont(font);
+        gameOverText.setString("GAME OVER");
+        gameOverText.setCharacterSize(100);
+        gameOverText.setFillColor(sf::Color::White);
+        gameOverText.setPosition(
+            window.getSize().x / 2 - gameOverText.getLocalBounds().width / 2,
+            window.getSize().y / 2 - gameOverText.getLocalBounds().height / 2 );
+        window.draw(gameOverText);
+    }
+}
+
+void Game::configureEnemies()  
+{  
+   // 1) first delete any old arrays (if reconfiguring mid-game)  
+   cleanupEnemies();  
+
+   // 2) pick counts for this level  
+   switch (currentLevel)  
+   {  
+   case 1:  
+       CrabCount = 1;  
+       BatCount = 1;  
+       MotobugCount = 2;  
+       buzzerCount = 1;  
+       break;  
+   case 2:  
+       CrabCount = 2;  
+       BatCount = 1;  
+       MotobugCount = 2;  
+       buzzerCount = 1;  
+       break;  
+   case 3:  
+       CrabCount = 2;  
+       BatCount = 1;  
+       MotobugCount = 3;  
+       buzzerCount = 2;  
+       break;  
+   default:  
+       CrabCount = 1;  
+       BatCount = 1;  
+       MotobugCount = 1;  
+       buzzerCount = 1;  
+   }  
+
+   // 3) allocate new arrays  
+   crabs = new CrabMeat[CrabCount];  
+   bats = new BatBrain[BatCount];  
+   motoBugs = new MotoBug[MotobugCount];  
+   buzzers = new BuzzBomber[buzzerCount];  
+
+   // 4) (optional) initialize each with its spawn point or map reference  
+   for (int i = 0; i < CrabCount; ++i)
+   {
+       crabs[i] = CrabMeat(5500 * (i + 1), 400, map->getMap());
+       crabs[i].getEnemySprite().setTexture(crabTex);
+       crabs[i].getMeatBall().setTexture(MeatBallTex);
+   }
+   for (int i = 0; i < BatCount; ++i)
+   {
+       bats[i] = BatBrain(400 * (i + 1), 300, map->getMap()); 
+	   bats[i].getEnemySprite().setTexture(batBrainTex);
+   }
+   for (int i = 0; i < MotobugCount; ++i)
+   {
+       motoBugs[i] = MotoBug(3600 * (i + 1), 730, map->getMap());
+       motoBugs[i].getEnemySprite().setTexture(motoBugTex);
+   }
+   for (int i = 0; i < buzzerCount; ++i)
+   {
+       buzzers[i] = BuzzBomber(7000 * (i + 1), 100, map->getMap());
+       buzzers[i].getEnemySprite().setTexture(buzzBomberTex);
+       buzzers[i].getProjSprite().setTexture(Projectile);
+   }
+}
+
+void Game::cleanupEnemies()
+{
+    if (crabs) {
+        delete[] crabs;
+        crabs = nullptr;
+        CrabCount = 0;
+    }
+    if (bats) {
+        delete[] bats;
+        bats = nullptr;
+        BatCount = 0;
+    }
+    if (motoBugs) {
+        delete[] motoBugs;
+        motoBugs = nullptr;
+        MotobugCount = 0;
+    }
+    if (buzzers) {
+        delete[] buzzers;
+        buzzers = nullptr;
+        buzzerCount = 0;
+    }
+}
+

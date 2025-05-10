@@ -45,12 +45,13 @@ protected:
     bool isFlying = false; // Tracks if the player is flying
     bool isMoving = false; // Tracks if the player is moving
     int totalWidth;
-	bool InvspowerUp = false; // Tracks if the player has a power-up
+    bool InvspowerUp = false; // Tracks if the player has a power-up
     sf::Clock KnuInvClock;
-	 // Tracks if the player is Knuckles
+    // Tracks if the player is Knuckles
     sf::Vector2f lastOnGround;
     float lastx;
     sf::Clock powerUPCLK;
+    int power;
 public:
     bool isKnuckles = true;
     // Constructor to initialize the sprite with the texture
@@ -374,10 +375,10 @@ public:
 
     void MakeInvisible()
     {
-		InvspowerUp = true;
+        InvspowerUp = true;
         ESprite.setColor(sf::Color(255, 255, 255, 40));
-		KnuInvClock.restart();
-        
+        KnuInvClock.restart();
+
     }
 
     void player_gravity(char** lvl)
@@ -447,7 +448,7 @@ public:
         return frameNum;
     }
 
-    virtual  void AnimateSprite(bool isMoving) 
+    virtual  void AnimateSprite(bool isMoving)
     {
         if (isInvincible && !InvspowerUp)
             ESprite.setColor({ 255,255,255,200 });
@@ -526,7 +527,7 @@ public:
             isInvincible = false;
             ESprite.setColor(sf::Color(255, 255, 255, 255));
         }
-        if (InvspowerUp && KnuInvClock.getElapsedTime().asSeconds()>=10.0)
+        if (InvspowerUp && KnuInvClock.getElapsedTime().asSeconds() >= 10.0)
         {
             InvspowerUp = false;
             ESprite.setColor(sf::Color(255, 255, 255, 255));
@@ -629,7 +630,9 @@ public:
     int GetHp() {
         return hp;
     }
-
+    int getPower() {
+        return power;
+    }
 
 
 
@@ -638,8 +641,8 @@ public:
 class Sonic : public MySprite
 {
 private:
-    bool isGliding;
-	
+    //bool isGliding;
+
 
 public:
     Sonic() : MySprite()
@@ -768,9 +771,10 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
-        isGliding = false;
+        //isGliding = false;
+        power = 10;
         InvspowerUp = false;
-		isKnuckles = false;
+        isKnuckles = false;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 49, 49);
@@ -791,16 +795,16 @@ public:
         this->player_y = y + 64;
         this->offset_x = off_x;
 
-		if (left) {
-			currentIndex = 9;
-			ESprite.setTexture(SpriteTex[currentIndex].T);
-		}
-		else {
-			currentIndex = 10;
-			ESprite.setTexture(SpriteTex[currentIndex].T);
-		}
+        if (left) {
+            currentIndex = 9;
+            ESprite.setTexture(SpriteTex[currentIndex].T);
+        }
+        else {
+            currentIndex = 10;
+            ESprite.setTexture(SpriteTex[currentIndex].T);
+        }
 
-    
+
         updateTextureRectForCurrentIndex();
         AnimateSprite(true);
         ESprite.setScale(2.10, 2.30);
@@ -1000,9 +1004,10 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
+        power = 10;
         isGliding = false;
         InvspowerUp = false;
-		isKnuckles = true;
+        isKnuckles = true;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -1016,15 +1021,15 @@ public:
 
 
     }
-    void hang(float x, float y, float off_x) override 
+    void hang(float x, float y, float off_x) override
     {
         // Implement hanging behavior for Sonic, or leave empty if not needed
         this->player_x = x + 30;
         this->player_y = y + 64;
         this->offset_x = off_x;
-		currentIndex = (left) ? 11 : 12;
+        currentIndex = (left) ? 11 : 12;
         ESprite.setTexture(SpriteTex[currentIndex].T);
-      // animationClock.restart();
+        // animationClock.restart();
         updateTextureRectForCurrentIndex();
         AnimateSprite(true);
         ESprite.setPosition(player_x, player_y);
@@ -1125,11 +1130,11 @@ public:
                 animationClock.restart();
             }
         }
-        if (InvspowerUp) 
+        if (InvspowerUp)
         {
             ESprite.setColor(sf::Color(255, 255, 255, 40));
         }
-     
+
 
         if (isMoving) {
 
@@ -1187,12 +1192,12 @@ public:
         }
 
     }
-	void MakeInvisible()
-	{
+    void MakeInvisible()
+    {
 
-			ESprite.setColor(sf::Color(255, 255, 255, 200));
+        ESprite.setColor(sf::Color(255, 255, 255, 200));
 
-	}
+    }
 
 
 };
@@ -1337,6 +1342,7 @@ public:
         hit_box_factor_y = 5 * scale_y;
         offset_x = 0;
         offset_y = 0;
+        power = 10;
         isFlying = false;
         InvspowerUp = false;
         isKnuckles = false;
@@ -1365,7 +1371,7 @@ public:
                 flyingClock.restart();
                 std::cout << "Flying started!" << std::endl;
                 isMoving = true;
-                player_y -= 10;
+                player_y -= 5;
             }
 
             ESprite.setPosition(player_x, player_y);
@@ -1388,14 +1394,14 @@ public:
 
 
 
-        if (!isFlying) {
-            if (!onGround) {
-                currentIndex = left ? 4 : 5;  // jump animations
-            }
-            else if (!isMovingBase) {
-                currentIndex = left ? 0 : 2;  // idle animations
-            }
-        }
+        //if (!isFlying) {
+        //    if (!onGround) {
+        //        currentIndex = left ? 4 : 5;  // jump animations
+        //    }
+        //    else if (!isMovingBase) {
+        //        currentIndex = left ? 0 : 2;  // idle animations
+        //    }
+        //}
 
         return isMovingBase;
     }
@@ -1473,5 +1479,189 @@ public:
 
 };
 
+
+class GOKU : public MySprite
+{
+    bool isGliding;
+    sf::Clock flyingClock;
+    const float maxFlyTime = 7.0f;
+
+
+public:
+    GOKU() : MySprite()
+    {
+        SpriteTex = new SpriteSheet[11];
+        // Load textures into the array
+        if (!SpriteTex[0].T.loadFromFile("Data/Goku_Idle_L.png")) {
+            std::cout << "Failed to load Goku_Idle_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[0].frameNum = 1;
+        }
+        if (!SpriteTex[1].T.loadFromFile("Data/Goku_Jog_L.png")) {
+            std::cout << "Failed to load Goku_Jog_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[1].frameNum = 10;
+        }
+        if (!SpriteTex[2].T.loadFromFile("Data/Goku_Idle_R.png")) {
+            std::cout << "Failed to load Goku_Idle_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[2].frameNum = 1;
+        }
+        if (!SpriteTex[3].T.loadFromFile("Data/Goku_Jog_R.png")) {
+            std::cout << "Failed to load Goku_Jog_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[3].frameNum = 10;
+        }
+        velocityY = 0;
+        velocityX = 0;
+        player_x = 100;
+        player_y = 100;
+        window_x = 0;
+        window_y = 0;
+        acceleration = 1.1;
+        max_speed = 12; // Sonic's speed
+        hp = 100;
+        power = 20; // Initialize power
+        isInvincible = false;
+        onGround = false;
+        gravity = 1;
+        friction = 0.80;
+        terminal_Velocity = 20;
+        scale_x = 2.5;
+        scale_y = 2.5;
+        raw_img_x = 24;
+        raw_img_y = 35;
+        Pheight = raw_img_y * scale_y;
+        Pwidth = raw_img_x * scale_x;
+        hit_box_factor_x = 8 * scale_x;
+        hit_box_factor_y = 5 * scale_y;
+        offset_x = 0;
+        offset_y = 0;
+        isGliding = false;
+        isFlying = false;
+        InvspowerUp = false;
+        isKnuckles = false;
+
+        // Set up sprite rectangle
+        SpriteRect = IntRect(0, 0, 40, 40);
+        ESprite.setTextureRect(SpriteRect);
+
+        // Set up Goku sprite
+        ESprite.setTexture(SpriteTex[0].T); // Start with idle left
+        ESprite.setTextureRect(SpriteRect);
+        ESprite.setPosition(player_x, player_y);
+        ESprite.setScale(scale_x, scale_y);
+    }
+    bool movement(char** lvl, bool check, bool check2) override
+    {
+        isMoving = MySprite::movement(lvl, check, check2);
+
+        if (Keyboard::isKeyPressed(Keyboard::F) && check)
+        {
+            if (!isFlying)
+            {
+                isFlying = true;
+                flyingClock.restart();
+                std::cout << "Flying started!" << std::endl;
+                isMoving = true;
+                player_y -= 5;
+            }
+
+            ESprite.setPosition(player_x, player_y);
+        }
+
+        // Timeout check: stop flying after max time
+        if (isFlying && flyingClock.getElapsedTime().asSeconds() >= maxFlyTime) {
+            isFlying = false;
+            std::cout << "Flying ended due to timeout." << std::endl;
+        }
+
+        if (isFlying)
+        {
+            AnimateSprite(true);
+            currentIndex = left ? 10 : 9;
+            ESprite.setTexture(SpriteTex[currentIndex].T);
+            return true;
+        }
+
+        if (!isGliding && Keyboard::isKeyPressed(Keyboard::G) && check) {
+            //velocityX = velocityX > 0 ? +10 : -10;
+            velocityY = -3;
+
+            isGliding = true;
+        }
+        if (isGliding) {
+            gravity = 0.15;
+        }
+
+        if (onGround) {
+            isGliding = false;
+            gravity = 1;
+        }
+        return isMoving;
+    }
+    void punching(char** lvl, bool check) override
+    {
+        //std::cout << Punch << std::endl;
+        //std::cout << ((player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size) << std::endl;
+        if (Keyboard::isKeyPressed(Keyboard::T) && check)
+        {
+            Punch = true;
+            int targetXRight = (player_x + hit_box_factor_x + Pwidth + offset_x + 15) / cell_size;
+            int targetYRight = (player_y + hit_box_factor_y) / cell_size;
+            int targetXLeft = (player_x + hit_box_factor_x - Pwidth + offset_x) / cell_size;
+            int targetYLeft = (player_y + hit_box_factor_y) / cell_size;
+
+            if (lvl[targetYRight][targetXRight] == 'b')
+            {
+                lvl[targetYRight][targetXRight] = 's';
+
+            }
+            if (lvl[targetYRight + 1][targetXRight] == 'b')
+            {
+                lvl[targetYRight + 1][targetXRight] = 's';
+
+            }
+            if (lvl[targetYLeft][targetXLeft] == 'b')
+            {
+                lvl[targetYLeft][targetXLeft] = 's';
+
+            }
+            if (lvl[targetYLeft + 1][targetXLeft] == 'b')
+            {
+                lvl[targetYLeft + 1][targetXLeft] = 's';
+
+            }
+            if (left && Punch)
+            {
+                ESprite.setTexture(SpriteTex[10].T);
+                currentIndex = 10;
+                //std::cout << currentIndex << std::endl;
+                updateTextureRectForCurrentIndex();
+                AnimateSprite(true);
+            }
+            else if (!left && Punch)
+            {
+                ESprite.setTexture(SpriteTex[9].T);
+                currentIndex = 9;
+                updateTextureRectForCurrentIndex();
+                AnimateSprite(true);
+            }
+        }
+
+        else {
+            Punch = false;
+        }
+    }
+
+};
 
 

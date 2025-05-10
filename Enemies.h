@@ -40,6 +40,10 @@ public:
 	virtual void animateSprite() = 0;
 	virtual bool proximityCheck(int P_x, int P_y) = 0;
 	virtual int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) = 0;
+	Sprite& getEnemySprite() 
+	{
+		return enemySprite;
+	}
 };
 
 Enemies::~Enemies() {
@@ -48,6 +52,8 @@ Enemies::~Enemies() {
 
 class MotoBug : public Enemies {
 public:
+	MotoBug() : Enemies("Data/motobug.png", 40, 30) {
+	}
 	MotoBug(int x, int y, char** lvl) : Enemies("Data/motobug.png", 40, 30)
 	{
 		hp = 2;
@@ -225,6 +231,10 @@ private:
 	bool projectileActive = false;
 
 public:
+	// Constructor
+	CrabMeat() : Enemies("Data/CrabMeat.png", 44, 30)
+	{
+	}
 	CrabMeat(int x, int y, char** lvl) : Enemies("Data/CrabMeat.png", 44, 30)
 	{
 		hp = 4;
@@ -503,6 +513,10 @@ public:
 		}
 		return false;
 	}
+	Sprite& getMeatBall() 
+	{
+		return ProjectileSprite;
+	}
 };
 
 
@@ -516,6 +530,7 @@ private:
 	bool isReturning;
 	float originX, originY;
 public:
+	BatBrain() : Enemies("Data/BatBrain.png", 32, 33) {}
 	BatBrain(int x, int y, char** lvl) : Enemies("Data/BatBrain.png", 32, 33)
 	{
 		originX = x;
@@ -723,12 +738,33 @@ private:
 	int proj_x, proj_y;
 	int proj_vx, proj_vy;
 	int targetX, targetY;
-	const float PROJ_SPEED = 8.0f; // Constant projectile speed
+	 float PROJ_SPEED = 8.0f; // Constant projectile speed
 	bool isInvincible; // for cases of multiple hits to the buzz
 	sf::Clock invincibilityClock;  // Added to track invincibility duration
-	const float INVINCIBILITY_DURATION = 1.5f; // 1.5 second of invincibility after being hit
+	 float INVINCIBILITY_DURATION = 1.5f; // 1.5 second of invincibility after being hit
 
 public:
+	BuzzBomber() : Enemies("Data/BuzzBomber.png", 47, 22)
+	{}
+	BuzzBomber(BuzzBomber& Other) : Enemies("Data/BuzzBomber.png", 47, 22)
+	{
+		hp = Other.hp;
+		x = Other.x;
+		y = Other.y;
+		lvl = Other.lvl;
+		isActive = Other.isActive;
+		proximity = Other.proximity;
+		speed = Other.speed;
+		isPlayerRight = Other.isPlayerRight;
+		direction = Other.direction;
+		frameCount = Other.frameCount;
+		frameRect = Other.frameRect;
+		spriteScale = Other.spriteScale;
+		projText.loadFromFile("Data/egg.png");
+		projSprite.setTexture(projText);
+		projSprite.setScale(0.03, 0.03);
+		isInvincible = false;
+	}
 	BuzzBomber(int x, int y, char** lvl) : Enemies("Data/BuzzBomber.png", 47, 22)
 	{
 		hp = 5;
@@ -789,7 +825,10 @@ public:
 	}
 
 
-
+	Sprite& getProjSprite() 
+	{
+		return projSprite;
+	}
 
 	void move(int P_x, int P_y, int off_x, int off_y, Scores& s) override
 	{
@@ -939,61 +978,172 @@ public:
 
 class EggStinger : public Enemies
 {
-
-public: 
+	sf::Clock stayTime;
+	float maxStayTime = 10.0f;
+	bool right, attack, down;
+	bool stay; // dont let me leave MURPH!!!!!!
+	float speed = 2.5f;
+	int destroyedIndex = 0;
+	float maxCeiling = 3;
+public:
 	EggStinger(int x, int y, char** lvl) : Enemies("Data/EggStinger.png", 89, 86)
 	{
 		this->x = x;
 		this->y = y;
 		this->lvl = lvl;
 		enemySprite.setPosition(x, y);
+		right = false;
+		down = false;
+		attack = false;
+		stay = true;
+		stayTime.restart();
+		hp = 200;
 	}
-	void move (int P_x, int P_y, int off_x, int off_y, Scores& s) override
-	{}
-	 void draw(sf::RenderWindow& window)override 
-	 {
-		 window.draw(enemySprite);
-	 }
-	 void takeDamage(int damage, Scores& s) override {}
-	 void animateSprite() override
-	 {
-		 const int delay_ms = 400; // Delay in milliseconds for frame change
+	void move(int P_x, int P_y, int off_x, int off_y, Scores& s) override
+	{
+		if (destroyedIndex >= 9) {
+			std::cout << "No platform to stand on\n";
+		}
+		if (stayTime.getElapsedTime().asSeconds() >= maxStayTime && !attack) {
+			stay = false;
+			stayTime.restart();
+		}
+		if (stayTime.getElapsedTime().asSeconds() >= maxStayTime / 3 && attack) {
+			stay = false;
+			destroyBlock();
+			right = !right;
+			attack = false;
+			down = false;
+			stayTime.restart();
+			destroyedIndex++;
+		}
+		if (stay) {
+			return;
+		}
 
-		 int frameWidths[4] = { 89, 121, 121, 128 };
-		 int frameOffset[4];
+		if (!down && y / 64 <= maxCeiling) {
+			y -= speed;
+		}
+		if (right && !down) {
+			x += 2 * speed;
+			if (x / 64 >= 17 - destroyedIndex) {
+				down = true;
+			}
+		}
+		else if (right && down) {
+			y += speed;
+			if (lvl[(y / 64) + 1][x / 64] == 'w') {
+				attack = true;
+				stay = true;
+				stayTime.restart();
+			}
+		}
 
-		 frameOffset[0] = 0;
-		 //Offset for each itrect
-		 for (int i = 1;i < 4;i++)
-		 {
-			 frameOffset[i] = frameOffset[i - 1] + frameWidths[i - 1];
-		 }
+		else if (!right && !down) {
+			x -= 2 * speed;
+			if (x / 64 >= destroyedIndex) {
+				down = true;
+			}
+		}
+		else if (!right && down) {
+			y += speed;
+			if (lvl[(y / 64) + 1][x / 64] == 'w') {
+				attack = true;
+				stay = true;
+				stayTime.restart();
+			}
+		}
+	}
+	void destroyBlock() {
+		lvl[(y / 64) + 1][x / 64] == 's';
+	}
+	void draw(sf::RenderWindow& window)override
+	{
+		window.draw(enemySprite);
+	}
 
-		 if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
-			 return;
+	void takeDamage(int damage, Scores& s) override
+	{
+		hp -= damage;
+		if (hp <= 0)
+		{
+			s.addBatBrainKill();
+			isActive = false;
+		}
+
+	}
+
+	void animateSprite() override
+	{
+		const int delay_ms = 400; // Delay in milliseconds for frame change
+
+		int frameWidths[4] = { 89, 121, 121, 128 };
+		int frameOffset[4];
+
+		frameOffset[0] = 0;
+		//Offset for each itrect
+		for (int i = 1;i < 4;i++)
+		{
+			frameOffset[i] = frameOffset[i - 1] + frameWidths[i - 1];
+		}
+
+		if (animationClock.getElapsedTime().asMilliseconds() < delay_ms)
+			return;
 
 
-		 currentFrame = (currentFrame + 1) % frameCount;
-		 int w = frameWidths[currentFrame];
-		 int l = frameOffset[currentFrame];
+		currentFrame = (currentFrame + 1) % frameCount;
+		int w = frameWidths[currentFrame];
+		int l = frameOffset[currentFrame];
 
-		 // update the rect
-		 frameRect = sf::IntRect(l, 0, w, frameRect.height);
-		 enemySprite.setTextureRect(frameRect);
+		// update the rect
+		frameRect = sf::IntRect(l, 0, w, frameRect.height);
+		enemySprite.setTextureRect(frameRect);
 
-		 // re-center origin on that new width
-		 enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
-		 enemySprite.setScale(2, 2);
+		// re-center origin on that new width
+		enemySprite.setOrigin(w * 0.5, frameRect.height * 0.5);
+		enemySprite.setScale(2, 2);
 
 
-		 animationClock.restart();
-	 }
-	 bool proximityCheck(int P_x, int P_y)  override
-	 {
-		 return true;
-	 }
-	 int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
-	 {
-		 return 0;
-	 }
+		animationClock.restart();
+	}
+	bool proximityCheck(int P_x, int P_y)  override
+	{
+		return true;
+	}
+	bool checkCollision(int P_x, int P_y)
+	{
+		float enemyTop = y - 89 / 2.0f;
+		float enemyBottom = y + 89 / 2.0f;
+		float enemyLeft = x - 89 / 2.0f;
+		float enemyRight = x + 89 / 2.0f;
+
+		float playerTop = P_y;
+		float playerBottom = P_y + 40;
+		float playerLeft = P_x;
+		float playerRight = P_x + 40;
+
+		if (playerRight > enemyLeft &&
+			playerLeft < enemyRight &&
+			playerBottom > enemyTop &&
+			playerTop < enemyBottom)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
+	{
+		if (upVelocity == 0) {
+			return 15;
+		}
+		else {
+			if (checkCollision(P_x + off_x, P_y)) {
+				takeDamage(10, s);
+				return 0;
+			}
+		}
+		return 0;
+	}
 };

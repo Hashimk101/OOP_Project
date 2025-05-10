@@ -43,6 +43,7 @@ private:
     // Window settings
     const int screen_x = 1200;
     const int screen_y = 900;
+    const int MAX_LEVELS = 4;
     int currentLevel;
     // Game objects
     Maps* map;
@@ -60,16 +61,16 @@ private:
     // Enemies
     MotoBug* motoBugs;
 	int MotobugCount;
-    int* MotoBugDmg;
+ 
     CrabMeat* crabs;
 	int CrabCount ;
-	int* CrabDmg;
+
     BatBrain* bats;
 	int BatCount ;
-	int* BatDmg;
+
     BuzzBomber* buzzers;
 	int buzzerCount;
-	int* BuzzDmg;
+
     EggStinger* EgStinger;
 
     // Enemy textures
@@ -110,6 +111,13 @@ private:
  
     //Common obstackle
     sf::Sprite spikeSprite;
+    //Level Text
+
+    sf::Font      Monaco;            
+    sf::Text      levelLabel;
+    sf::Clock     levelClock;
+    bool          showLevelText = false;
+    float         levelTextDuration = 0.5;   
 
     //Menu tracker
     bool ActivateMenu;
@@ -145,7 +153,7 @@ private:
             {
                 pauseGame();
             }
-            // Add other gameplay controls here
+            
         }
     }
 
@@ -196,6 +204,7 @@ private:
     }
     void configureEnemies();
     void cleanupEnemies();
+    void advanceToNextLevel();
 
 public:
     Game();
@@ -224,6 +233,14 @@ public:
         timer.start();
         cleanupEnemies();          
         configureEnemies();
+       
+        levelLabel.setString("Level " + std::to_string(currentLevel) +
+            ((currentLevel == 1) ? "\nLabyrinth Zone" :
+                (currentLevel == 2) ? "\nIce Cap Zone" :
+                "\nDeath Egg Zone"));
+
+        showLevelText = true;
+        levelClock.restart();
 
     }
 };
@@ -388,10 +405,15 @@ void Game::initTextures()
     brownTowerSprite.setTexture(brownTowerTex);
     spikeSprite.setTexture(spikeTex);
 
+    if (!Monaco.loadFromFile("Data/Tricky Jimmy.ttf"))
+        std::cout << "Could not load font\n";
 
-
-
-
+    levelLabel.setFont(Monaco);
+    levelLabel.setCharacterSize(100);
+    levelLabel.setOutlineThickness(5);
+    levelLabel.setOutlineColor(sf::Color::Black);
+    levelLabel.setFillColor(sf::Color::White);
+    levelLabel.setPosition(450, 300);
 
 
 
@@ -471,6 +493,23 @@ void Game::processEvents()
 
 void Game::update()
 {
+    if (showLevelText)
+    {
+        float t = levelClock.getElapsedTime().asSeconds();
+        if (t >= levelTextDuration)
+        {
+            showLevelText = false;
+        }
+        else
+        {
+          
+            levelLabel.setFillColor(sf::Color::White);
+
+        }
+       
+       
+    }
+
     if (!player || !lvl) return;
     // Update player
     bool ismoving = player->movement(lvl, true, false);
@@ -555,17 +594,37 @@ void Game::update()
     diamonds->animate();
     special->animate();
     ActivateMenu = true;
+
+    //Check if end reached
+    float centerX = player->getX() + 40 / 2;
+    float centerY = player->getY() + 40 / 2;
+    int ti = centerY / cell_size;
+    int tj = (centerX + player->getOffsetX()) / cell_size;
+
+    if (ti >= 0 && ti < 14 && tj >= 0 && tj < map->GetLevelWidth() && lvl[ti][tj] == 'E') {
+        advanceToNextLevel();
+    }
+
+
+
 }
 
 void Game::render()
 {
     window.clear(sf::Color::Black);
+    if (showLevelText)
+    {
+        window.draw(levelLabel);
+        window.display();
+    }
 
     if (isInMenu)
     {
         menu->draw(window);
     }
+ 
 
+   
     // Draw background
     backgroundSprite.setPosition(-player->getOffsetX() / 7, 0);
     window.draw(backgroundSprite);
@@ -776,6 +835,21 @@ void  Game::renderGameOver() {
         window.draw(gameOverText);
     }
 }
+void Game::advanceToNextLevel() {
+  //sAVE SCORE AND SHI
+    int next = currentLevel + 1;
+    if (next > MAX_LEVELS)
+    {
+       
+        gameOver();
+    }
+    else {
+        startNewGame(next);
+        isInMenu = false;
+        isPlaying = true;
+    }
+}
+
 
 void Game::configureEnemies()  
 {  

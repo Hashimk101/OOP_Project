@@ -81,7 +81,8 @@ private:
     sf::Texture eggStingerTex;
     sf::Texture MeatBallTex;
     sf::Texture Projectile;
- 
+ //Musics
+
 
 
 
@@ -805,9 +806,11 @@ void Game::run()
 
         if (isInMenu)
         {
+            
             window.clear();
             menu->draw(window);
             window.display();
+            
         }
         else if (isPlaying)
         {

@@ -21,10 +21,15 @@ private:
     string TlTxt;
     int SelectedIndex;
     static const int numOptions = 5;
+
     
     sf::Color lightBlue;
     sf::Texture BannerTxture;
     sf::Sprite* OptionBanners;
+    sf::SoundBuffer MenuBgMusic;
+    sf::Sound MenuMus;
+    sf::SoundBuffer OptionBuffer;
+    sf::Sound OptionScrollSound;
 
     bool keyHandled = false;
     bool enterPressed = false;
@@ -48,6 +53,20 @@ public:
 
         BackgroundSprite.setTexture(BackgroundTex);
         BackgroundSprite.setScale(2, 2.25);
+        if (!MenuBgMusic.loadFromFile("Data/01-Title Screen.ogg"))
+           std::cout << "Failed to load 01-Title Screen.ogg" << std::endl;
+        MenuMus.setBuffer(MenuBgMusic);
+        MenuMus.setVolume(70);
+        MenuMus.setLoop(true);
+        MenuMus.play();
+        if (!OptionBuffer.loadFromFile("Data/MenuButton.wav"))
+        {
+            std::cout << "Failed to load MenuButton.wav" << std::endl;
+        }
+        OptionScrollSound.setBuffer(OptionBuffer);
+        OptionScrollSound.setVolume(60);
+        OptionScrollSound.setLoop(true);
+
 
         options = new sf::String[numOptions];
         options[0] = "New Game";
@@ -124,6 +143,7 @@ public:
             SelectedIndex--;
         }
         text[SelectedIndex].setFillColor(lightBlue);
+        OptionScrollSound.play();
     }
 
     void moveDown()
@@ -139,6 +159,7 @@ public:
             SelectedIndex++;
         }
         text[SelectedIndex].setFillColor(lightBlue);
+        OptionScrollSound.play();
     }
     int selectLevel()
     {
@@ -200,7 +221,9 @@ public:
                         delete[] Levels;
                         return -1; // canceled
                     }
+                  
                 }
+                OptionScrollSound.play();
             }
 
             window.clear();

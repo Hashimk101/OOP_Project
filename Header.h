@@ -485,6 +485,10 @@ public:
 
             return;                // ignore if still invincible
         }
+        if (isKnuckles && InvspowerUp) 
+        {
+            return;
+        }
         std::cout << dmg << std::endl;
         if (dmg != 0) {
             hp -= dmg;
@@ -816,9 +820,6 @@ public:
 
 
 
-
-
-
     void AnimateSprite(bool isMoving)override
     {
         if (isMoving) {
@@ -979,6 +980,8 @@ private:
         {
             SpriteTex[12].frameNum = 20;
         }
+        //Glide
+        
         // Initialize variables
         velocityY = 0;
         velocityX = 0;
@@ -1504,7 +1507,7 @@ public:
         }
         else
         {
-            SpriteTex[1].frameNum = 10;
+            SpriteTex[1].frameNum = 4;
         }
         if (!SpriteTex[2].T.loadFromFile("Data/Goku_Idle_R.png")) {
             std::cout << "Failed to load Goku_Idle_R.png!" << std::endl;
@@ -1518,7 +1521,70 @@ public:
         }
         else
         {
-            SpriteTex[3].frameNum = 10;
+            SpriteTex[3].frameNum = 4;
+        }
+        if (!SpriteTex[4].T.loadFromFile("Data/Goku_0up_L.png")) 
+        {
+            std::cout << "Failed to load Goku_0up_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[4].frameNum = 4;
+        }
+        if (!SpriteTex[5].T.loadFromFile("Data/Goku_0up_R.png"))
+        {
+            std::cout << "Failed to load Goku_0up_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[5].frameNum = 4;
+        }
+
+        //No tripping pose
+        // Punching left
+        if (!SpriteTex[6].T.loadFromFile("Data/Goku_Punch_L.png"))
+        {
+            std::cout << "Failed to load Goku_Punch_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[6].frameNum = 5;
+        }
+        // Punching right
+        if (!SpriteTex[7].T.loadFromFile("Data/Goku_Punch_R.png"))
+        {
+            std::cout << "Failed to load Goku_Punch_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[7].frameNum = 5;
+        }
+        //He believes he can fly
+        if (!SpriteTex[8].T.loadFromFile("Data/Goku_Fly_L.png"))
+        {
+            std::cout << "Failed to load Goku_Fly_L.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[8].frameNum = 7;
+        }
+        //He believes he can fly
+        if (!SpriteTex[9].T.loadFromFile("Data/Goku_Fly_R.png"))
+        {
+            std::cout << "Failed to load Goku_Fly_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[9].frameNum = 7;
+        }
+        //Injured
+        if (!SpriteTex[10].T.loadFromFile("Data/Goku_Injured_R.png"))
+        {
+            std::cout << "Failed to load Goku_Injured_R.png!" << std::endl;
+        }
+        else
+        {
+            SpriteTex[9].frameNum = 5;
         }
         velocityY = 0;
         velocityX = 0;

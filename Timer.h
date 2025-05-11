@@ -31,6 +31,7 @@ public:
     // queries
     bool isTimeUp()     const;
     float getRemainingTime() const;
+    float getcurrTime();
 
     // graphics
     void draw(sf::RenderWindow& window);
@@ -95,4 +96,9 @@ void Timer::draw(sf::RenderWindow& window) {
 
 
     window.draw(TimerText);
+}
+
+float Timer::getcurrTime() 
+{
+	return elapsed;
 }

@@ -1177,7 +1177,7 @@ private:
                 }
                 else
                 {
-                    std::cout << currentFrame << std::endl;
+                    //std::cout << currentFrame << std::endl;
 
                     currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
                     SpriteRect.left = currentFrame * SpriteRect.width;

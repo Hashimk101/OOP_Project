@@ -897,6 +897,17 @@ void Game::switchPlayer()
     static bool wasOPressed = false;
     static bool wasPPressed = false;
 
+    if (SpecCharTime.getElapsedTime().asSeconds() >= 15) {
+        SpecCharTime.restart();
+		specialChar = false;
+		currentPlayer = 0;
+        for (int i = 0; i < 4; i++) {
+			players[i]->setPos(player->getX(), player->getY());
+			players[i]->setOffsetX(player->getOffsetX());
+			players[i]->setVelocityY(player->getVelocityY());
+        }
+		player = players[currentPlayer];
+    }
     // Check for regular player switch with C key
     if (Keyboard::isKeyPressed(Keyboard::C) && !specialChar)
     {
@@ -937,7 +948,7 @@ void Game::switchPlayer()
     }
 
     // Check for P key press in OOP sequence
-    if (Keyboard::isKeyPressed(Keyboard::P))
+    if (Keyboard::isKeyPressed(Keyboard::P) && SpecCharTime.getElapsedTime().asSeconds() >= 5)
     {
         if (!wasPPressed) {
             wasPPressed = true;

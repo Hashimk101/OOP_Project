@@ -985,6 +985,8 @@ class EggStinger : public Enemies
 	float speed = 2.5f;
 	int destroyedIndex = 0;
 	float maxCeiling = 1;
+	sf::Clock damageClock;
+	float damageTime = 0.6f;
 public:
 	EggStinger() : Enemies("Data/EggStinger.png", 89, 86) {}
 	EggStinger(int x, int y, char** lvl) : Enemies("Data/EggStinger.png", 89, 86)
@@ -1081,10 +1083,14 @@ public:
 
 	void takeDamage(int damage, Scores& s) override
 	{
+		if (damageClock.getElapsedTime().asSeconds() <= damageTime) {
+			return;
+		}
+		damageClock.restart();
 		hp -= damage;
 		if (hp <= 0)
 		{
-			s.addBatBrainKill();
+			s.addBossKill();
 			isActive = false;
 		}
 
@@ -1151,7 +1157,7 @@ public:
 
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
 	{
-		if (upVelocity == 0 && checkCollision(P_x + off_x, P_y)) {
+		if (upVelocity == 0 && checkCollision(P_x + off_x, P_y) && damageClock.getElapsedTime().asSeconds() >= damageTime) {
 			return 15;
 		}
 		else {

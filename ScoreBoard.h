@@ -54,6 +54,7 @@ void addMotoBugKill() { scores += MOTOBUG_POINTS; }
 void addCrabMeatKill() { scores += CRABMEAT_POINTS; }  
 void addBatBrainKill() { scores += BATBRAIN_POINTS; }  
 void addBuzzBomberKill() { scores += BUZZBOMBER_POINTS; }  
+void addBossKill() { scores += 1000; }
 void addLevelClear() { scores += LEVEL_CLEAR_POINTS; }  
 void addName(std::string n) { name = n; }  
 

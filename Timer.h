@@ -6,10 +6,10 @@
 
 class Timer {
 private:
-    sf::Clock  clock;         // underlying SFML clock
-    float      timeLimit;     // total duration in seconds
-    bool       isRunning;     // are we currently counting?
-    float      elapsed;       // cached elapsed seconds
+    sf::Clock  clock;         
+    float      timeLimit;     
+    bool       isRunning;     
+    float      elapsed;    
 
     // graphics
     sf::Font   font;
@@ -17,7 +17,7 @@ private:
     float pos_x, pos_y;
 
 public:
-    // ctor: pass your duration, font filename, and text position
+   
     Timer(float limit, const std::string& fontFile, float x, float y);
 
     ~Timer() = default;

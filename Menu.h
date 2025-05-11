@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "Audio.h"
 using namespace std;
 
 class Menu
@@ -64,7 +65,7 @@ public:
             std::cout << "Failed to load MenuButton.wav" << std::endl;
         }
         OptionScrollSound.setBuffer(OptionBuffer);
-        OptionScrollSound.setVolume(60);
+        OptionScrollSound.setVolume(AudioSystem::GameVolume);
         
 
 

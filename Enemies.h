@@ -984,7 +984,7 @@ class EggStinger : public Enemies
 	bool stay; // dont let me leave MURPH!!!!!!......Dramatic aaa
 	float speed = 2.5f;
 	int destroyedIndex = 0;
-	float maxCeiling = 3;
+	float maxCeiling = 1;
 public:
 	EggStinger() : Enemies("Data/EggStinger.png", 89, 86) {}
 	EggStinger(int x, int y, char** lvl) : Enemies("Data/EggStinger.png", 89, 86)
@@ -1003,65 +1003,80 @@ public:
 	}
 	void move(int P_x, int P_y, int off_x, int off_y, Scores& s) override
 	{
-		if (destroyedIndex >= 9) {
+		enemySprite.setPosition(x - off_x, y);
+		/*std::cout << "State: " << (right ? "right" : "left") << " "
+			<< (down ? "down" : "up") << " "
+			<< (attack ? "attack" : "normal") << " "
+			<< (stay ? "stay" : "move") << std::endl;*/
+
+		// Check if we're at the limit of destroyed blocks
+		if (destroyedIndex >= 10) {
 			std::cout << "No platform to stand on\n";
+			// yaha game end karna
 		}
+
 		if (stayTime.getElapsedTime().asSeconds() >= maxStayTime && !attack) {
 			stay = false;
 			stayTime.restart();
 		}
+
 		if (stayTime.getElapsedTime().asSeconds() >= maxStayTime / 3 && attack) {
 			stay = false;
 			destroyBlock();
+			// Switch direction after destroying block
 			right = !right;
 			attack = false;
 			down = false;
 			stayTime.restart();
-			destroyedIndex++;
+			if(right)
+				destroyedIndex++;
 		}
+
+		// Don't move if we're staying in place
 		if (stay) {
 			return;
 		}
 
-		if (!down && y / 64 <= maxCeiling) {
-			y -= speed;
+		// MOVEMENT LOGIC sahi se dekhna isse..........
+		//Moving up (both in left and right phases)
+		if (!down && y / 64 > maxCeiling) {
+			y -= speed; // Moving up until we reach ceiling
 		}
-		if (right && !down) {
-			x += 2 * speed;
-			if (x / 64 >= 17 - destroyedIndex) {
-				down = true;
+		// Horizontal movement after reaching ceiling
+		else if (!down && y / 64 <= maxCeiling) {
+			if (right) {
+				x += speed; // Move right
+				if (x / 64 >= 18 - destroyedIndex) { // Check right bound
+					down = true; // Switch to moving down
+				}
+			}
+			else {
+				x -= speed; // Move left
+				if (x / 64 <= destroyedIndex) { // Check left bound
+					down = true; // moving down, copy and over
+				}
 			}
 		}
-		else if (right && down) {
-			y += speed;
+		//Moving down until finding a block to attack
+		else if (down) {
+			y += speed; // Moving down
+			// Check box below
 			if (lvl[(y / 64) + 1][x / 64] == 'w') {
-				attack = true;
-				stay = true;
+				attack = true; 
+				stay = true;   // Stay in place during attack cuz it is what it is
 				stayTime.restart();
 			}
 		}
-
-		else if (!right && !down) {
-			x -= 2 * speed;
-			if (x / 64 >= destroyedIndex) {
-				down = true;
-			}
-		}
-		else if (!right && down) {
-			y += speed;
-			if (lvl[(y / 64) + 1][x / 64] == 'w') {
-				attack = true;
-				stay = true;
-				stayTime.restart();
-			}
-		}
+		std::cout << hp << std::endl;
 	}
+
 	void destroyBlock() {
-		lvl[(y / 64) + 1][x / 64] == 's';
+		lvl[(y / 64) + 1][x / 64] = 's';
 	}
 	void draw(sf::RenderWindow& window)override
 	{
-		window.draw(enemySprite);
+		if(isActive)
+			window.draw(enemySprite);
 	}
 
 	void takeDamage(int damage, Scores& s) override
@@ -1123,7 +1138,6 @@ public:
 		float playerBottom = P_y + 40;
 		float playerLeft = P_x;
 		float playerRight = P_x + 40;
-
 		if (playerRight > enemyLeft &&
 			playerLeft < enemyRight &&
 			playerBottom > enemyTop &&
@@ -1137,12 +1151,13 @@ public:
 
 	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
 	{
-		if (upVelocity == 0) {
+		if (upVelocity == 0 && checkCollision(P_x + off_x, P_y)) {
 			return 15;
 		}
 		else {
 			if (checkCollision(P_x + off_x, P_y)) {
 				takeDamage(10, s);
+				//std::cout << "yes\n";
 				return 0;
 			}
 		}

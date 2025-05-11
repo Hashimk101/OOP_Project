@@ -117,15 +117,20 @@ private:
  
     //Common obstackle
     sf::Sprite spikeSprite;
-    //Level Text
-
+    //Level Text 
     sf::Font      Monaco;            
     sf::Text      levelLabel;
     sf::Clock     levelClock;
     bool          showLevelText = false;
     float         levelTextDuration = 2.5;   
     Clock  GameOverClk;
-
+    //Text for Volume
+    Text VolumeLevel;
+    Text VolumeInstructions;
+    // Text for High Scores
+    sf::Text highScoreText;
+    sf::Text highScoreInstruction;
+    sf::Text EnterName;
     //Menu tracker
     bool ActivateMenu;
     //Score object
@@ -141,6 +146,13 @@ private:
     bool isPaused;
     bool isGameOver;
     bool isInMenu;
+    bool isInOptions;
+    bool isInLevelSelect;
+    bool isInNameInput;
+    bool isInHighScores;
+
+    // Player name
+    std::string playerName;
 
     bool specialChar = false;
     sf::Clock SpecCharTime;
@@ -189,6 +201,18 @@ private:
         }
     }
 
+    void handleHighScoreEvents(const sf::Event& event)
+    {
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Escape)
+            {
+                isInHighScores = false;
+                isInMenu = true;
+            }
+        }
+    }
+
     void pauseGame()
     {
         isPlaying = false;
@@ -203,9 +227,10 @@ private:
 
     void gameOver()
     {
-        if (player->GetHp() == 0)
+        if (player->GetHp() <= 0)
         {
             std::cout << "Game Over" << std::endl;
+            score.saveScore();
         }
         
         isPlaying = false;
@@ -232,8 +257,84 @@ public:
     Game();
     ~Game();
     void run();
-    void showHighScores() {}
-    void openOptions() {}
+    void showHighScores()
+    {
+     isInHighScores = true;
+    isInMenu = false;
+    isPlaying = false;
+    isPaused = false;
+    isGameOver = false;
+    std::string highScores = score.topTwenty();
+    highScoreText.setString(highScores);
+    //HIGHSCORE AND LABELS
+    highScoreText.setFont(Monaco);
+    highScoreText.setCharacterSize(40);
+    highScoreText.setFillColor(sf::Color::White);
+    highScoreText.setOutlineColor(sf::Color::Black);
+    highScoreText.setOutlineThickness(2);
+    highScoreText.setPosition(100, 100);
+    highScoreInstruction.setFont(Monaco);
+    highScoreInstruction.setString("Press ESC to return");
+    highScoreInstruction.setCharacterSize(50);
+    highScoreInstruction.setFillColor(sf::Color::Black);
+    highScoreInstruction.setOutlineColor(sf::Color::White);
+    highScoreInstruction.setOutlineThickness(2);
+    highScoreInstruction.setPosition(70, 30);
+    }
+    void openOptions()
+    {
+        isInOptions = true;
+        isInMenu = false;
+        isPlaying = false;
+        isPaused = false;
+        isGameOver = false;
+
+        VolumeInstructions.setFont(Monaco);
+        VolumeInstructions.setString("Use UP/DOWN arrow keys to adjust volume\nPress ESC to return");
+        VolumeInstructions.setCharacterSize(50);
+        VolumeInstructions.setFillColor(sf::Color::White);
+        VolumeInstructions.setOutlineColor(sf::Color::Black);
+        VolumeInstructions.setOutlineThickness(3);
+        VolumeInstructions.setPosition(50, 100);
+
+        // Set up VolumeLevel text
+        VolumeLevel.setFont(Monaco);
+        VolumeLevel.setString("Volume: " + std::to_string(static_cast<int>(AudioSystem::GameVolume)));
+        VolumeLevel.setCharacterSize(50);
+        VolumeLevel.setFillColor(sf::Color::White);
+        VolumeLevel.setOutlineColor(sf::Color::Black);
+        VolumeLevel.setOutlineThickness(3);
+        VolumeLevel.setPosition(300, 250);
+
+    }
+    void handleOptionsEvents(const sf::Event& event)
+    {
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Up)
+            {
+                audio.increment();
+                VolumeLevel.setString("Volume: " + std::to_string(static_cast<int>(AudioSystem::GameVolume)));
+            }
+            else if (event.key.code == sf::Keyboard::Down)
+            {
+                audio.decrement();
+                VolumeLevel.setString("Volume: " + std::to_string(static_cast<int>(AudioSystem::GameVolume)));
+            }
+            else if (event.key.code == sf::Keyboard::Escape)
+            {
+                isInOptions = false;
+                isInMenu = true; // Return to main menu
+            }
+        }
+    }
+
+
+
+
+
+
+
     void resume() {}
     void startNewGame(int level)
     {
@@ -309,10 +410,8 @@ Game::Game() :
     menu(new Menu(window)),
     timer(300, "Data/Tricky Jimmy.ttf", 10, 2 * 65),
     motoBugs(nullptr), crabs(nullptr), bats(nullptr), buzzers(nullptr),
-    EgStinger(nullptr), lvl(nullptr),
-    isInMenu(true), isRunning(true), isPlaying(false), isPaused(false), isGameOver(false),
-    score(window),
-    coins(nullptr), diamonds(nullptr), special(nullptr) // Add these
+    EgStinger(nullptr), lvl(nullptr), isInMenu(true), isRunning(true), isPlaying(false), isPaused(false), isGameOver(false),
+    score(window),isInOptions(false),  coins(nullptr), diamonds(nullptr), special(nullptr) 
 {
     audio.play(0);
     players[0] = new Sonic();
@@ -331,6 +430,12 @@ Game::Game() :
     MotobugCount = 0;
     CrabCount = 0;
     buzzerCount = 0;
+    if (!Monaco.loadFromFile("Data/Tricky Jimmy.ttf"))
+        std::cout << "Could not load font\n";
+    if (!levelBackgroundTexture.loadFromFile("Data/landscape.jpg"))
+        std::cout << "Failed to load Data/landscape.jpg\n";
+    levelBackgroundSprite.setTexture(levelBackgroundTexture);
+    levelBackgroundSprite.setScale(1.5, 1.25);
    
 }
 Game::~Game()
@@ -374,10 +479,7 @@ void Game::initTextures()
 		std::cout << "Failed to load Data/CrabMeatBall.png\n";
 	if (!Projectile.loadFromFile("Data/egg.png"))
 		std::cout << "Failed to load Data/egg.png\n";
-    if (!levelBackgroundTexture.loadFromFile("Data/landscape.jpg"))
-        std::cout << "Failed to load Data/landscape.jpg\n";
-	levelBackgroundSprite.setTexture(levelBackgroundTexture);
-    levelBackgroundSprite.setScale(1.21, 1.23);
+
 
     // Load textures
     if (currentLevel == 1)
@@ -515,28 +617,30 @@ void Game::processEvents()
         if (isInMenu)
         {
            
-            menu->draw(window);
+         
             menu->handleEvent(event);
             if (menu->isEnterPressed())
             {
                 audio.play(0);
+               
                 int choice = menu->getSelectedIndex();
                 menu->resetEnter();
 
-                switch (choice) {
-                case 0: {   // New Game
-                    int level = menu->selectLevel();
-                    if (level > 0) {
-                        startNewGame(level);
-                        isInMenu = false;
-                        isPlaying = true;
-                    }
+                switch (choice)
+                {
+                case 0:
+                {   // New Game
+                    isInMenu = false;
+                    isInNameInput = true;
+                    menu->enterName();
+
                     break;
                 }
                 case 1:     // Resume
                     resume();    isInMenu = false;  break;
                 case 2:     // Options
-                    openOptions(); break;
+                    openOptions();
+                     break;
                 case 3:     // High Scores
                     showHighScores(); break;
                 case 4:     // Exit
@@ -546,9 +650,41 @@ void Game::processEvents()
 
         
         }
+        if (isInNameInput)
+        {
+            std::cout << "In Name Input State\n";
+            menu->handleNameInput(event);
+            if (!menu->isNameEntered()) 
+            {
+                std::cout << "Name Entered: " << menu->GetPlayerName() << "\n";
+                playerName = menu->GetPlayerName();
+                score.addName(playerName);
+                isInNameInput = false;
+                isInLevelSelect = true;
+            }
+        }
+        else if (isInLevelSelect)
+        {
+            menu->handleEvent(event);
+            int level = menu->selectLevel();
+            if (level > 0) {
+                isInLevelSelect = false;
+                startNewGame(level);
+                isPlaying = true;
+            }
+            else if (level == 0) {
+                isInLevelSelect = false;
+                isInMenu = true;
+            }
+        }
+
         else if (isPlaying) 
         {
             handleGameplayEvents(event);
+        }
+        else if(isInOptions)
+        {
+            handleOptionsEvents(event);
         }
         else if (isPaused)
         {
@@ -557,6 +693,15 @@ void Game::processEvents()
         else if (isGameOver)
         {
             handleGameOverEvents(event);
+        }
+        else if(isInNameInput)
+        {
+            
+            menu->handleNameInput(event);
+        }
+        if (isInHighScores) 
+        {
+            handleHighScoreEvents(event);
         }
     }
 }
@@ -706,19 +851,39 @@ void Game::render()
     if (isInMenu)
     {
         menu->draw(window);
-    }
-    if (isInMenu)
-    {
         menu->PlayMenuMusic();
     }
- 
 
- 
+    if (isInOptions)
+    {
+        
+    
+        window.draw(levelBackgroundSprite); 
+        window.draw(VolumeInstructions);
+        window.draw(VolumeLevel);
+        window.display();
+        return;
+    }
+    if (isInNameInput) 
+    {
+        menu->drawNameInput(window);
+        window.display();
+        return;
+    }
+    if (isInHighScores)
+    {
+        window.draw(levelBackgroundSprite);
+        window.draw(highScoreText);
+        window.draw(highScoreInstruction);
+        window.display();
+        return;
+    }
 
    
     // Draw background
     backgroundSprite.setPosition(-player->getOffsetX() / 7, 0);
     window.draw(backgroundSprite);
+
     
     // Draw level
     for (int i = 0; i < height; i += 1) {
@@ -879,12 +1044,25 @@ void Game::run()
         {
             renderGameOver();
         }
+        else if (isInOptions)
+        {
+            render(); 
+        }
         else if (isPlaying)
         {
             update();
             render();    // only after we’ve set up everything
             switchPlayer();
         }
+        else if(isInNameInput)
+        {
+            render();
+        }
+        else if (isInHighScores) {
+            render();   
+
+        }
+
     }
 }
 
@@ -1016,11 +1194,13 @@ void Game::advanceToNextLevel() {
     int next = currentLevel + 1;
     if (next > MAX_LEVELS)
     {
-       
+
         gameOver();
     }
     else 
     {
+        score.addLevelClear();
+        score.saveScore();
         startNewGame(next);
         isInMenu = false;
         isPlaying = true;

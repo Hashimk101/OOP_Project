@@ -113,7 +113,7 @@ std::string topTwenty() {
     for (int i = 0; i < count; i++) {
         result += std::to_string(i + 1) + ". " + names[i] + ": " + std::to_string(scores[i]) + "\n";
     }
-
+    cout << "RESULT" << result << endl;
     return result;
 }
 

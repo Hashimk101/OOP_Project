@@ -116,7 +116,7 @@ public:
         namePrompt.setFont(Monaco);
         namePrompt.setString("Enter Your Name");
         namePrompt.setCharacterSize(60);
-        namePrompt.setFillColor(sf::Color::White);
+        namePrompt.setFillColor(sf::Color::Black);
         namePrompt.setPosition(350, 250);
         nameText.setFont(Monaco);
         nameText.setCharacterSize(60);
@@ -138,6 +138,7 @@ public:
 
     void drawNameInput(sf::RenderWindow& GameWindow)
     {
+        window.clear();
         GameWindow.draw(BackgroundSprite);
         GameWindow.draw(namePrompt);
         GameWindow.draw(nameText);
@@ -268,7 +269,7 @@ public:
     bool isEnterPressed() const { return enterPressed; }
     int getSelectedIndex() const { return SelectedIndex; }
     void resetEnter() { enterPressed = false; }
-    bool isNameEntered() const { return !nameEntered; }
+    bool isNameEntered() const { return nameEntered; }
 
     void handleEvent(const sf::Event& event)
     {
@@ -318,7 +319,10 @@ public:
     {
         MenuMus.stop();
     }
-
+    string GetPlayerName() 
+    {
+        return playerName;
+    }
     void enterName()
     {
         nameEntered = true;

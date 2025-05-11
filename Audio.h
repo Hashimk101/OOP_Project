@@ -92,7 +92,28 @@ public:
             if (idx < 0 || idx >= trackCount) return;
             musics[idx].setVolume(volume);
         }
-
+        void increment() 
+        {
+            if (GameVolume < 100) 
+            {
+                GameVolume++;
+            }
+            else
+            {
+                return;
+            }
+        }
+        void decrement()
+        {
+            if (GameVolume> 0)
+            {
+                GameVolume--;
+            }
+            else
+            {
+                return;
+            }
+        }
 
         ~AudioSystem()
 
@@ -105,7 +126,7 @@ public:
 
 
 };
-int AudioSystem::GameVolume = 0;
+int AudioSystem::GameVolume = 20;
 
 
 

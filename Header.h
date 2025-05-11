@@ -131,7 +131,6 @@ public:
             left = true;
             // Collision checks go brrrrr
             bool leftCollision = false;
-
             // Check multiple points along the left side of the character
                 // Limit to within character height
 
@@ -151,7 +150,7 @@ public:
                         leftCollision = true;
                     }
                 }
-                else if (lvl[worldY][worldX] == 'k') {
+                if (lvl[worldY+1][worldX] == 'k' || lvl[worldY+1][worldX+1] == 'k') {
                     leftCollision = true;
                     takeDamage(5);
                 }
@@ -217,7 +216,7 @@ public:
                         rightCollision = true;
                     }
                 }
-                else if (lvl[worldY][worldX] == 'k') {
+                 if (lvl[worldY+1][worldX] == 'k' || lvl[worldY+1][worldX+1] == 'k') {
                     rightCollision = true;
                     takeDamage(5);
                 }

@@ -443,9 +443,9 @@ void Game::initGameObjects()
 {
     int thislvlWidth = map->GetLevelWidth();
     std::cout << thislvlWidth << std::endl;
-    for (int i = 0; i < 4; i++) {
-        players[i]->setWidth(thislvlWidth); // Set width for Sonic, Knuckles, Tails
-    }
+    //for (int i = 0; i < 4; i++) {
+    //    players[i]->setWidth(thislvlWidth); // Set width for Sonic, Knuckles, Tails
+    //}
     lvl = map->getMap();
     coins->place();
     diamonds->place();

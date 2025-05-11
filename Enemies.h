@@ -981,11 +981,12 @@ class EggStinger : public Enemies
 	sf::Clock stayTime;
 	float maxStayTime = 10.0f;
 	bool right, attack, down;
-	bool stay; // dont let me leave MURPH!!!!!!
+	bool stay; // dont let me leave MURPH!!!!!!......Dramatic aaa
 	float speed = 2.5f;
 	int destroyedIndex = 0;
 	float maxCeiling = 3;
 public:
+	EggStinger() : Enemies("Data/EggStinger.png", 89, 86) {}
 	EggStinger(int x, int y, char** lvl) : Enemies("Data/EggStinger.png", 89, 86)
 	{
 		this->x = x;
@@ -998,6 +999,7 @@ public:
 		stay = true;
 		stayTime.restart();
 		hp = 200;
+		frameCount = 4;
 	}
 	void move(int P_x, int P_y, int off_x, int off_y, Scores& s) override
 	{
@@ -1145,5 +1147,9 @@ public:
 			}
 		}
 		return 0;
+	}
+	Sprite& GetEnemySprite() 
+	{
+		return enemySprite;
 	}
 };

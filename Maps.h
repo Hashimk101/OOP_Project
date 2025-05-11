@@ -30,7 +30,7 @@ Maps() : lvl(nullptr), widthLvl(0), level(0), FilePath(nullptr), File("")
         , widthLvl((levl == 1) ? 200
             : (levl == 2) ? 250
             : (levl == 3) ? 300
-            : 22)
+            : 200)
     {
 
         lvl = new char* [height];

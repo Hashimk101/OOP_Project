@@ -81,6 +81,8 @@ private:
     sf::Texture eggStingerTex;
     sf::Texture MeatBallTex;
     sf::Texture Projectile;
+ 
+
 
 
     // Sprites and textures
@@ -324,7 +326,6 @@ void Game::initTextures()
 		std::cout << "Failed to load Data/CrabMeatBall.png\n";
 	if (!Projectile.loadFromFile("Data/egg.png"))
 		std::cout << "Failed to load Data/egg.png\n";
-    
     if (!levelBackgroundTexture.loadFromFile("Data/landscape.jpg"))
         std::cout << "Failed to load Data/landscape.jpg\n";
 	levelBackgroundSprite.setTexture(levelBackgroundTexture);
@@ -395,11 +396,13 @@ void Game::initTextures()
     else if (currentLevel == 3)
     {
        backgroundSprite.setScale(0.6, 0.5);
-       
+     
     }
     else if (currentLevel==4)
     {
         backgroundSprite.setScale(0.2, 0.375);
+        
+      
     }
 
     wallSprite1.setTexture(wallTex1);
@@ -599,6 +602,12 @@ void Game::update()
         int dmg = crabs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
         if (dmg > 0) player->takeDamage(dmg);
     }
+    for (int i = 0; i < EggStCount; i++)
+    {
+        EgStinger[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
+        int dmg = EgStinger[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        if (dmg > 0) player->takeDamage(dmg);
+    }
 
     // Check collectable collisions
     coins->checkCollision(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), player->gethitX(), player->gethitY(), score, *player);
@@ -764,8 +773,11 @@ void Game::render()
         crabs[i].draw(window);
 		crabs[i].animateSprite();
     }
-   // EgStinger.draw(window);
-   // EgStinger.animateSprite();
+    for (int i = 0; i < EggStCount; i++)
+    {
+        EgStinger[i].draw(window);
+        EgStinger[i].animateSprite();
+    }
 
     // Draw player
     //player->draw_player(window);
@@ -967,6 +979,8 @@ void Game::configureEnemies()
    bats = new BatBrain[BatCount];  
    motoBugs = new MotoBug[MotobugCount];  
    buzzers = new BuzzBomber[buzzerCount];  
+   EgStinger = new EggStinger[EggStCount];
+
 
    // 4) (optional) initialize each with its spawn point or map reference  
    for (int i = 0; i < CrabCount; ++i)
@@ -1029,7 +1043,8 @@ void Game::configureEnemies()
    }
    for (int i = 0; i < EggStCount; i++)
    {
-       EgStinger[i] = EggStinger(10, 10, map->getMap());
+       EgStinger[i] = EggStinger(500, 300, map->getMap());
+       EgStinger[i].GetEnemySprite().setTexture(eggStingerTex);
    }
 }
 
@@ -1054,6 +1069,13 @@ void Game::cleanupEnemies()
         delete[] buzzers;
         buzzers = nullptr;
         buzzerCount = 0;
+
+    }
+    if (EgStinger) 
+    {
+        delete[] EgStinger;
+        EgStinger = nullptr;
+        EggStCount = 0;
     }
 }
 

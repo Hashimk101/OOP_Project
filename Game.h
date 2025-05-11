@@ -1,5 +1,6 @@
 // Game.h
 #pragma once
+#include <fstream>
 #include "Header.h"
 #include "Maps.h"
 #include "Collectables.h"
@@ -61,16 +62,16 @@ private:
 
     // Enemies
     MotoBug* motoBugs;
-	int MotobugCount;
- 
+    int MotobugCount;
+
     CrabMeat* crabs;
-	int CrabCount ;
+    int CrabCount;
 
     BatBrain* bats;
-	int BatCount ;
+    int BatCount;
 
     BuzzBomber* buzzers;
-	int buzzerCount;
+    int buzzerCount;
 
     EggStinger* EgStinger;
     int EggStCount;
@@ -82,7 +83,7 @@ private:
     sf::Texture eggStingerTex;
     sf::Texture MeatBallTex;
     sf::Texture Projectile;
-     //Musics
+    //Musics
     AudioSystem audio;
 
     // Sprites and textures
@@ -98,7 +99,7 @@ private:
     sf::Sprite wallSprite1;
     sf::Sprite breakableWallSprite;
     sf::Texture CompleteLevelBoardTex;
-	sf::Sprite CompleteLevelBoardSprite;
+    sf::Sprite CompleteLevelBoardSprite;
 
     sf::Texture levelBackgroundTexture;
     sf::Sprite levelBackgroundSprite;
@@ -114,15 +115,15 @@ private:
     sf::Texture BlackCrystalTex, PinkCrystalTex, WhiteCrystalTex, blueCrystalTex, voiletCrystalTex;
     sf::Sprite BlackCrystal, PinkCrystal, WhiteCrystal, BlueCrystal, voiletCrystal;
     //Boss Level
- 
+
     //Common obstackle
     sf::Sprite spikeSprite;
     //Level Text 
-    sf::Font      Monaco;            
+    sf::Font      Monaco;
     sf::Text      levelLabel;
     sf::Clock     levelClock;
     bool          showLevelText = false;
-    float         levelTextDuration = 2.5;   
+    float         levelTextDuration = 2.5;
     Clock  GameOverClk;
     //Text for Volume
     Text VolumeLevel;
@@ -131,6 +132,8 @@ private:
     sf::Text highScoreText;
     sf::Text highScoreInstruction;
     sf::Text EnterName;
+    //Saving game state
+    string savedGamePath;
     //Menu tracker
     bool ActivateMenu;
     //Score object
@@ -158,7 +161,7 @@ private:
     sf::Clock SpecCharTime;
     float MAX_CHAR_TIME = 15.0f;
     //Menu Pointer
-    Menu* menu=nullptr;
+    Menu* menu = nullptr;
     // Private methods
     void initWindow();
     void initTextures();
@@ -167,7 +170,7 @@ private:
     void update();
     void render();
     void switchPlayer();
-   void renderGameOver();
+    void renderGameOver();
     void handleGameplayEvents(const sf::Event& event)
     {
         if (event.type == sf::Event::KeyPressed)
@@ -176,11 +179,11 @@ private:
             {
                 pauseGame();
             }
-            
+
         }
     }
 
-    void handlePausedEvents(const sf::Event& event) 
+    void handlePausedEvents(const sf::Event& event)
     {
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Escape) {
@@ -232,20 +235,20 @@ private:
             std::cout << "Game Over" << std::endl;
             score.saveScore();
         }
-        
+
         isPlaying = false;
         isGameOver = true;
         GameOverClk.restart();
         renderGameOver();
     }
 
-    void returnToMenu() 
+    void returnToMenu()
     {
         isPlaying = false;
         isPaused = false;
         isGameOver = false;
         isInMenu = true;
-        
+
 
 
     }
@@ -259,27 +262,27 @@ public:
     void run();
     void showHighScores()
     {
-     isInHighScores = true;
-    isInMenu = false;
-    isPlaying = false;
-    isPaused = false;
-    isGameOver = false;
-    std::string highScores = score.topTwenty();
-    highScoreText.setString(highScores);
-    //HIGHSCORE AND LABELS
-    highScoreText.setFont(Monaco);
-    highScoreText.setCharacterSize(40);
-    highScoreText.setFillColor(sf::Color::White);
-    highScoreText.setOutlineColor(sf::Color::Black);
-    highScoreText.setOutlineThickness(2);
-    highScoreText.setPosition(100, 100);
-    highScoreInstruction.setFont(Monaco);
-    highScoreInstruction.setString("Press ESC to return");
-    highScoreInstruction.setCharacterSize(50);
-    highScoreInstruction.setFillColor(sf::Color::Black);
-    highScoreInstruction.setOutlineColor(sf::Color::White);
-    highScoreInstruction.setOutlineThickness(2);
-    highScoreInstruction.setPosition(70, 30);
+        isInHighScores = true;
+        isInMenu = false;
+        isPlaying = false;
+        isPaused = false;
+        isGameOver = false;
+        std::string highScores = score.topTwenty();
+        highScoreText.setString(highScores);
+        //HIGHSCORE AND LABELS
+        highScoreText.setFont(Monaco);
+        highScoreText.setCharacterSize(40);
+        highScoreText.setFillColor(sf::Color::White);
+        highScoreText.setOutlineColor(sf::Color::Black);
+        highScoreText.setOutlineThickness(2);
+        highScoreText.setPosition(100, 100);
+        highScoreInstruction.setFont(Monaco);
+        highScoreInstruction.setString("Press ESC to return");
+        highScoreInstruction.setCharacterSize(50);
+        highScoreInstruction.setFillColor(sf::Color::Black);
+        highScoreInstruction.setOutlineColor(sf::Color::White);
+        highScoreInstruction.setOutlineThickness(2);
+        highScoreInstruction.setPosition(70, 30);
     }
     void openOptions()
     {
@@ -331,11 +334,44 @@ public:
 
 
 
+    void  saveGame(const std::string& filename)
+    {
+        std::ofstream out(filename);
+        if (!out) return;
+        out << currentLevel << ' '
+            << player->getX() << ' '
+            << player->getY() << ' '
+            << player->GetHp() << ' '
+            << score.getScore() << '\n';
+
+        out << '\n';
+        out.close();
+
+    }
+    void loadGame(const std::string& filename) {
+        std::ifstream in(filename);
+        if (!in) return; 
+
+        int lvl, hp;
+        float px, py;
+        int totalScore;
+
+        in >> lvl >> px >> py >> hp >> totalScore;
+        startNewGame(lvl);                  
+        player->setPos(px, py);
+        player->SetHp(hp);
+        score.SetScore(totalScore);
+
+
+        in.close();
+    }
 
 
 
-
-    void resume() {}
+    void resume() 
+    {
+        loadGame(savedGamePath);
+    }
     void startNewGame(int level)
     {
         audio.play(level);
@@ -436,7 +472,7 @@ Game::Game() :
         std::cout << "Failed to load Data/landscape.jpg\n";
     levelBackgroundSprite.setTexture(levelBackgroundTexture);
     levelBackgroundSprite.setScale(1.5, 1.25);
-   
+    savedGamePath = "save.txt";
 }
 Game::~Game()
 {
@@ -649,6 +685,13 @@ void Game::processEvents()
             }
 
         
+        }
+       
+        if (event.type == sf::Event::KeyPressed
+            && event.key.code == sf::Keyboard::S
+            && event.key.control)
+        {
+            saveGame(savedGamePath);
         }
         if (isInNameInput)
         {

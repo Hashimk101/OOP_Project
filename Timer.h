@@ -26,7 +26,7 @@ public:
     void start();
     void stop();
     void reset();
-    void update();              // call every frame
+    void update();             
 
     // queries
     bool isTimeUp()     const;

@@ -54,6 +54,7 @@ protected:
     int power;
 public:
     bool isKnuckles = true;
+    bool isSonic=true;
     // Constructor to initialize the sprite with the texture
     MySprite()
     {
@@ -451,7 +452,20 @@ public:
         if (isInvincible && !InvspowerUp)
             ESprite.setColor({ 255,255,255,200 });
 
+        if (isSonic && InvspowerUp) 
+        {
+            if (left) 
+            {
+                currentIndex = 11;
+                isMoving = true;
 
+            }
+            else 
+            {
+                currentIndex = 12;
+                isMoving = true;
+            }
+        }
         if (isMoving)
         {
             if (animationClock.getElapsedTime().asMilliseconds() > 80) {
@@ -501,6 +515,13 @@ public:
             return;
         }
 
+
+    }
+    void StartRunning() 
+    {
+        if(isSonic)
+        InvspowerUp = true;
+        velocityX += 5;
 
     }
 
@@ -584,6 +605,10 @@ public:
     int getVelocityY() const {
         return velocityY;
     }
+    void SetHp(int hhp) 
+    {
+        hp = hhp;
+    }
 
     virtual void punching(char** lvl, bool check) = 0;
     void setPos(float x, float y) {
@@ -622,7 +647,8 @@ public:
     void setDirection(bool dir) {
         left = dir;
     }
-    void setcurrentIndex(int index) {
+    void setcurrentIndex(int index) 
+    {
         currentIndex = index;
     }
     int getcurrentIndex() {
@@ -638,8 +664,6 @@ public:
     }
 
 
-
-
 };
 int MySprite ::  hp = 100;
 class Sonic : public MySprite
@@ -651,7 +675,7 @@ private:
 public:
     Sonic() : MySprite()
     {
-        SpriteTex = new SpriteSheet[11];
+        SpriteTex = new SpriteSheet[13];
         // Load textures into the array
         if (!SpriteTex[0].T.loadFromFile("Data/0left_still.png"))
         {
@@ -747,8 +771,23 @@ public:
         {
             SpriteTex[10].frameNum = 8;
         }
+        //Running
+        if (!SpriteTex[11].T.loadFromFile("Data/0left_run.png")) {
+            std::cout << "Failed to load 0left_run.png!" << std::endl;
 
+        }
+        else
+        {
+            SpriteTex[11].frameNum = 8;
+        }
+        if (!SpriteTex[12].T.loadFromFile("Data/0right_run.png")) {
+            std::cout << "Failed to load 0right_run.png!" << std::endl;
 
+        }
+        else
+        {
+            SpriteTex[12].frameNum = 8;
+        }
 
         // Initialize variables
         velocityY = 0;
@@ -778,6 +817,8 @@ public:
         power = 10;
         InvspowerUp = false;
         isKnuckles = false;
+        isSonic = true;
+
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 49, 49);
@@ -1009,6 +1050,7 @@ private:
         isGliding = false;
         InvspowerUp = false;
         isKnuckles = true;
+        isSonic = false;
 
         // after you set raw_img_x = 24; raw_img_y = 35;  (or whatever your actual frame size is)
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -1349,6 +1391,7 @@ public:
         isFlying = false;
         InvspowerUp = false;
         isKnuckles = false;
+        isSonic = false;
 
         // Set up sprite rectangle
         SpriteRect = IntRect(0, 0, 40, 40);
@@ -1594,6 +1637,7 @@ public:
         window_y = 0;
         acceleration = 1.1;
         max_speed = 12; // Sonic's speed
+        isSonic = false;
       
         power = 20; // Initialize power
         isInvincible = false;
@@ -1601,8 +1645,8 @@ public:
         gravity = 1;
         friction = 0.80;
         terminal_Velocity = 20;
-        scale_x = 2.5;
-        scale_y = 2.5;
+        scale_x = 3.5;
+        scale_y = 3.5;
         raw_img_x = 24;
         raw_img_y = 35;
         Pheight = raw_img_y * scale_y;

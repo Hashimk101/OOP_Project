@@ -72,7 +72,10 @@ void saveScore() const
 	}  
 
 }  
-
+void SetScore(int escore) 
+{
+    scores = escore;
+}
 
 std::string topTwenty() {
     const int MAX_SCORES = 20;  // We only care about the top 20

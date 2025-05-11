@@ -25,7 +25,7 @@ protected:
     int raw_img_x, raw_img_y;
     int Pheight, Pwidth;
     int hit_box_factor_x, hit_box_factor_y;
-    int hp;
+    static int hp;
     bool     isInvincible = false;
     sf::Clock invClock;                     // tracks invincibility time
     float   invDuration = 1.0;
@@ -57,7 +57,7 @@ public:
     // Constructor to initialize the sprite with the texture
     MySprite()
     {
-
+       
     }
 
     // Function to get the sprite (for rendering, etc.)
@@ -629,7 +629,8 @@ public:
         return currentIndex;
     }
 
-    int GetHp() {
+ static int GetHp()
+    {
         return hp;
     }
     int getPower() {
@@ -640,6 +641,7 @@ public:
 
 
 };
+int MySprite ::  hp = 100;
 class Sonic : public MySprite
 {
 private:
@@ -757,7 +759,6 @@ public:
         window_y = 0; // Corrected to window_y
         acceleration = 1.1;
         max_speed = 12;
-        hp = 100;
         isInvincible = false;
         onGround = false;
         gravity = 1;
@@ -989,7 +990,6 @@ private:
         window_y = 0; // Corrected to window_y
         acceleration = 1.1;
         max_speed = 12;
-        hp = 100;
         isInvincible = false;
         onGround = false;
         gravity = 1;
@@ -1330,7 +1330,6 @@ public:
         window_y = 0;
         acceleration = 1.1;
         max_speed = 8;
-        hp = 100;
         isInvincible = false;
         onGround = false;
         gravity = 1;
@@ -1595,7 +1594,7 @@ public:
         window_y = 0;
         acceleration = 1.1;
         max_speed = 12; // Sonic's speed
-        hp = 100;
+      
         power = 20; // Initialize power
         isInvincible = false;
         onGround = false;

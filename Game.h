@@ -7,6 +7,7 @@
 #include "Menu.h"
 #include "ScoreBoard.h"
 #include "Timer.h"
+#include "Audio.h"
 #include <SFML/Graphics.hpp>
 
     /////////////////////////////////////////////////////////////////
@@ -81,10 +82,8 @@ private:
     sf::Texture eggStingerTex;
     sf::Texture MeatBallTex;
     sf::Texture Projectile;
- //Musics
-
-
-
+     //Musics
+    AudioSystem audio;
 
     // Sprites and textures
     sf::Texture backgroundTex;
@@ -125,6 +124,7 @@ private:
     sf::Clock     levelClock;
     bool          showLevelText = false;
     float         levelTextDuration = 2.5;   
+    Clock  GameOverClk;
 
     //Menu tracker
     bool ActivateMenu;
@@ -201,9 +201,17 @@ private:
         isPaused = false;
     }
 
-    void gameOver() {
+    void gameOver()
+    {
+        if (player->GetHp() == 0)
+        {
+            std::cout << "Game Over" << std::endl;
+        }
+        
         isPlaying = false;
         isGameOver = true;
+        GameOverClk.restart();
+        renderGameOver();
     }
 
     void returnToMenu() 
@@ -212,6 +220,9 @@ private:
         isPaused = false;
         isGameOver = false;
         isInMenu = true;
+        
+
+
     }
     void configureEnemies();
     void cleanupEnemies();
@@ -226,6 +237,7 @@ public:
     void resume() {}
     void startNewGame(int level)
     {
+        audio.play(level);
         currentLevel = level;
         map = new  Maps(currentLevel);   
 		coins = new  RingCoin(*map);
@@ -253,7 +265,41 @@ public:
         showLevelText = true;
         levelClock.restart();
 
+
+        if (currentLevel == 1)
+        {
+            backgroundSprite.setScale(1.8, 1.2);
+        }
+        else if (currentLevel == 2)
+        {
+            backgroundSprite.setScale(1, 1);
+            wallSprite1.setScale(2, 2);
+        }
+        else if (currentLevel == 3)
+        {
+            backgroundSprite.setScale(0.6, 0.5);
+
+        }
+        else if (currentLevel == 4)
+        {
+            backgroundSprite.setScale(0.2, 0.375);
+
+
+        }
+
+        wallSprite1.setTexture(wallTex1);
+
+        if (currentLevel == 1)
+        {
+            wallSprite1.setScale(0.63, 0.63);
+        }
+        else
+        {
+            wallSprite1.setScale(1, 1);
+        }
+
     }
+
 };
 
 
@@ -268,6 +314,7 @@ Game::Game() :
     score(window),
     coins(nullptr), diamonds(nullptr), special(nullptr) // Add these
 {
+    audio.play(0);
     players[0] = new Sonic();
     players[1] = new Knuckles();
     players[2] = new Tails();
@@ -467,10 +514,12 @@ void Game::processEvents()
 
         if (isInMenu)
         {
+           
             menu->draw(window);
             menu->handleEvent(event);
             if (menu->isEnterPressed())
             {
+                audio.play(0);
                 int choice = menu->getSelectedIndex();
                 menu->resetEnter();
 
@@ -494,6 +543,7 @@ void Game::processEvents()
                     window.close();  break;
                 }
             }
+
         
         }
         else if (isPlaying) 
@@ -513,6 +563,13 @@ void Game::processEvents()
 
 void Game::update()
 {
+
+    if (player->GetHp() <= 0)
+    {
+        std::cout << "Game Over" << std::endl;
+        gameOver();
+    }
+
     if (showLevelText)
     {
         float t = levelClock.getElapsedTime().asSeconds();
@@ -526,7 +583,7 @@ void Game::update()
             levelLabel.setFillColor(sf::Color::White);
 
         }
-       
+        return;
        
     }
 
@@ -650,6 +707,12 @@ void Game::render()
     {
         menu->draw(window);
     }
+    if (isInMenu)
+    {
+        menu->PlayMenuMusic();
+    }
+ 
+
  
 
    
@@ -806,11 +869,15 @@ void Game::run()
 
         if (isInMenu)
         {
-            
+           
             window.clear();
             menu->draw(window);
             window.display();
             
+        }
+        else if (isGameOver)
+        {
+            renderGameOver();
         }
         else if (isPlaying)
         {
@@ -903,24 +970,34 @@ void Game::switchPlayer()
         wasPPressed = false;
     }
 }
-void  Game::renderGameOver() {
-    // Draw game over screen
-    sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
-    background.setFillColor(sf::Color(50, 0, 0));
-    window.draw(background);
-
-    // Draw game over text
-    sf::Font font;
-    if (font.loadFromFile("Data/Tricky Jimmy.ttf")) {
-        sf::Text gameOverText;
-        gameOverText.setFont(font);
-        gameOverText.setString("GAME OVER");
-        gameOverText.setCharacterSize(100);
-        gameOverText.setFillColor(sf::Color::White);
-        gameOverText.setPosition(
-            window.getSize().x / 2 - gameOverText.getLocalBounds().width / 2,
-            window.getSize().y / 2 - gameOverText.getLocalBounds().height / 2 );
-        window.draw(gameOverText);
+void Game::renderGameOver()
+{
+   
+    
+    if (GameOverClk.getElapsedTime().asSeconds() >= 3.0)
+    {
+        isGameOver = false;
+        isInMenu = true; 
+    }
+    else
+    {
+        // Draw game over text
+        sf::Font font;
+        if (font.loadFromFile("Data/Tricky Jimmy.ttf")) {
+            sf::Text gameOverText;
+            gameOverText.setFont(font);
+            gameOverText.setString("GAME OVER");
+            gameOverText.setOutlineThickness(4);
+            gameOverText.setOutlineColor(sf::Color::Black);
+            gameOverText.setCharacterSize(120);
+            gameOverText.setFillColor(sf::Color::White);
+            gameOverText.setPosition(350, 300);
+            window.draw(gameOverText);
+        }
+        else {
+            std::cout << "Failed to load font for Game Over screen: Data/Tricky Jimmy.ttf" << std::endl;
+        }
+        window.display(); 
     }
 }
 void Game::advanceToNextLevel() {
@@ -931,7 +1008,8 @@ void Game::advanceToNextLevel() {
        
         gameOver();
     }
-    else {
+    else 
+    {
         startNewGame(next);
         isInMenu = false;
         isPlaying = true;

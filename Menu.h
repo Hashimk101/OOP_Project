@@ -58,14 +58,14 @@ public:
         MenuMus.setBuffer(MenuBgMusic);
         MenuMus.setVolume(70);
         MenuMus.setLoop(true);
-        MenuMus.play();
+       
         if (!OptionBuffer.loadFromFile("Data/MenuButton.wav"))
         {
             std::cout << "Failed to load MenuButton.wav" << std::endl;
         }
         OptionScrollSound.setBuffer(OptionBuffer);
         OptionScrollSound.setVolume(60);
-        OptionScrollSound.setLoop(true);
+        
 
 
         options = new sf::String[numOptions];
@@ -137,29 +137,36 @@ public:
         if (SelectedIndex == 0)
         {
             SelectedIndex = numOptions - 1;
+            
         }
         else
         {
             SelectedIndex--;
+          
         }
         text[SelectedIndex].setFillColor(lightBlue);
-        OptionScrollSound.play();
+      
+        
     }
 
     void moveDown()
     {
+        
         if (SelectedIndex < 0 || SelectedIndex >= numOptions) SelectedIndex = 0; // Safety check
         text[SelectedIndex].setFillColor(sf::Color::White);
         if (SelectedIndex == numOptions - 1)
         {
             SelectedIndex = 0;
+            
         }
         else
         {
             SelectedIndex++;
+           
         }
         text[SelectedIndex].setFillColor(lightBlue);
-        OptionScrollSound.play();
+        
+       
     }
     int selectLevel()
     {
@@ -194,6 +201,9 @@ public:
                 }
                 if (event.type == sf::Event::KeyPressed)
                 {
+                    if (OptionScrollSound.getStatus() != sf::Sound::Playing)
+                        OptionScrollSound.play();
+
                     switch (event.key.code)
                     {
                     case sf::Keyboard::Up:
@@ -223,7 +233,11 @@ public:
                     }
                   
                 }
-                OptionScrollSound.play();
+                else if(event.type == sf::Event::KeyReleased)
+                {
+                    OptionScrollSound.stop();
+                }
+                
             }
 
             window.clear();
@@ -259,14 +273,25 @@ public:
     int     getSelectedIndex() const { return SelectedIndex; }
     void    resetEnter() { enterPressed = false; }
 
-    void handleEvent(const sf::Event& event) {
+    void handleEvent(const sf::Event& event)
+    {
         if (event.type == sf::Event::KeyReleased)
+        {
+            OptionScrollSound.stop();
             keyHandled = false;
+        }
+           
 
-        if (event.type == sf::Event::KeyPressed && !keyHandled) {
-            switch (event.key.code) {
+
+        if (event.type == sf::Event::KeyPressed && !keyHandled)
+        {
+            if (OptionScrollSound.getStatus() != sf::Sound::Playing)
+                OptionScrollSound.play();
+            switch (event.key.code) 
+            {
             case sf::Keyboard::Up:
                 moveUp();
+
                 keyHandled = true;
                 break;
             case sf::Keyboard::Down:
@@ -282,8 +307,14 @@ public:
             }
         }
     }
-
-
+    void PlayMenuMusic() 
+    {
+        MenuMus.play();
+    }
+    void StopMenuMusic() 
+    {
+        MenuMus.stop();
+    }
     ~Menu() {
         delete[] options;
         delete[] text;

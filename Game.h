@@ -564,7 +564,7 @@ void Game::processEvents()
 void Game::update()
 {
 
-    if (player->GetHp() == 0)
+    if (player->GetHp() <= 0)
     {
         std::cout << "Game Over" << std::endl;
         gameOver();
@@ -974,14 +974,13 @@ void Game::renderGameOver()
 {
    
     
-    if (GameOverClk.getElapsedTime().asSeconds() >= 2.0)
+    if (GameOverClk.getElapsedTime().asSeconds() >= 3.0)
     {
         isGameOver = false;
         isInMenu = true; 
     }
     else
     {
-       
         // Draw game over text
         sf::Font font;
         if (font.loadFromFile("Data/Tricky Jimmy.ttf")) {

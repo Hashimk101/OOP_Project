@@ -22,7 +22,10 @@ private:
     int SelectedIndex;
     static const int numOptions = 5;
 
-    
+    sf::Text namePrompt, nameText;
+    std::string playerName;
+    bool nameEntered;
+
     sf::Color lightBlue;
     sf::Texture BannerTxture;
     sf::Sprite* OptionBanners;
@@ -322,4 +325,69 @@ public:
         delete[] OptionBanners;
         // No need to delete Levels as it's already handled in selectLevel()
     }
+    void enterName()
+    {
+        nameEntered = true;
+        playerName.clear();
+        nameText.setString("");
+    }
+
+    void handleNameInput(const sf::Event& event)
+    {
+        static sf::Clock inputDelay;
+        if (inputDelay.getElapsedTime().asMilliseconds() < 150)
+            return;
+
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (playerName.length() < 20)
+            {
+                if (event.key.code == sf::Keyboard::A) { playerName += 'A'; }
+                else if (event.key.code == sf::Keyboard::B) { playerName += 'B'; }
+                else if (event.key.code == sf::Keyboard::C) { playerName += 'C'; }
+                else if (event.key.code == sf::Keyboard::D) { playerName += 'D'; }
+                else if (event.key.code == sf::Keyboard::E) { playerName += 'E'; }
+                else if (event.key.code == sf::Keyboard::F) { playerName += 'F'; }
+                else if (event.key.code == sf::Keyboard::G) { playerName += 'G'; }
+                else if (event.key.code == sf::Keyboard::H) { playerName += 'H'; }
+                else if (event.key.code == sf::Keyboard::I) { playerName += 'I'; }
+                else if (event.key.code == sf::Keyboard::J) { playerName += 'J'; }
+                else if (event.key.code == sf::Keyboard::K) { playerName += 'K'; }
+                else if (event.key.code == sf::Keyboard::L) { playerName += 'L'; }
+                else if (event.key.code == sf::Keyboard::M) { playerName += 'M'; }
+                else if (event.key.code == sf::Keyboard::N) { playerName += 'N'; }
+                else if (event.key.code == sf::Keyboard::O) { playerName += 'O'; }
+                else if (event.key.code == sf::Keyboard::P) { playerName += 'P'; }
+                else if (event.key.code == sf::Keyboard::Q) { playerName += 'Q'; }
+                else if (event.key.code == sf::Keyboard::R) { playerName += 'R'; }
+                else if (event.key.code == sf::Keyboard::S) { playerName += 'S'; }
+                else if (event.key.code == sf::Keyboard::T) { playerName += 'T'; }
+                else if (event.key.code == sf::Keyboard::U) { playerName += 'U'; }
+                else if (event.key.code == sf::Keyboard::V) { playerName += 'V'; }
+                else if (event.key.code == sf::Keyboard::W) { playerName += 'W'; }
+                else if (event.key.code == sf::Keyboard::X) { playerName += 'X'; }
+                else if (event.key.code == sf::Keyboard::Y) { playerName += 'Y'; }
+                else if (event.key.code == sf::Keyboard::Z) { playerName += 'Z'; }
+            }
+
+            if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
+            {
+                playerName.pop_back();
+            }
+
+            if (event.key.code == sf::Keyboard::Enter && !playerName.empty())
+            {
+                nameEntered = false;
+            }
+
+            nameText.setString(playerName);
+            inputDelay.restart();
+        }
+    }
+
+
+
+
+
+
 };

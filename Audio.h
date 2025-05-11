@@ -10,7 +10,7 @@ private:
     int        current;   // which track is playing now
 
 public:
-
+    static int GameVolume;
     AudioSystem(int numTracks = 5)
     {
         current = 0;
@@ -57,7 +57,7 @@ public:
                 musics[current].stop();
 
             current = idx;
-            musics[current].setVolume(50);
+            musics[current].setVolume(GameVolume);
             musics[current].setLoop(true);
             musics[current].play();
         }
@@ -105,6 +105,7 @@ public:
 
 
 };
+int AudioSystem::GameVolume = 0;
 
 
 

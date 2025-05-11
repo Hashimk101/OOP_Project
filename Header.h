@@ -641,7 +641,7 @@ public:
 
 
 };
-int MySprite ::  hp = 20;
+int MySprite ::  hp = 100;
 class Sonic : public MySprite
 {
 private:

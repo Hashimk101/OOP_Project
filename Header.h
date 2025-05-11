@@ -1662,6 +1662,9 @@ public:
         }
     }
 
+    void hang(float x, float y, float off_x) {
+
+    }
 };
 
 

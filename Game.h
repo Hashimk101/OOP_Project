@@ -47,7 +47,7 @@ private:
     int currentLevel;
     // Game objects
     Maps* map;
-    MySprite* players[3];
+    MySprite* players[4];
     int currentPlayer;
     MySprite* player;
     //Knuckles player;
@@ -138,6 +138,10 @@ private:
     bool isPaused;
     bool isGameOver;
     bool isInMenu;
+
+    bool specialChar = false;
+    sf::Clock SpecCharTime;
+    float MAX_CHAR_TIME = 15.0f;
     //Menu Pointer
     Menu* menu=nullptr;
     // Private methods
@@ -264,12 +268,14 @@ Game::Game() :
     players[0] = new Sonic();
     players[1] = new Knuckles();
     players[2] = new Tails();
+    players[3] = new GOKU();
     currentPlayer = 0;
     player = players[currentPlayer];
     float x = player->getX();
     float y = player->getY();
     players[1]->setPos(x - 20, y);
     players[2]->setPos(x - 30, y);
+	players[3]->setPos(x, y);
     ActivateMenu = true;
     BatCount = 0;
     MotobugCount = 0;
@@ -279,7 +285,7 @@ Game::Game() :
 }
 Game::~Game()
 {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         delete players[i];
     }
     delete menu;
@@ -297,7 +303,7 @@ void Game::initWindow()
 
 void Game::initTextures()
 {
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         players[i]->setWidth(map->GetLevelWidth());
     }
@@ -434,7 +440,7 @@ void Game::initGameObjects()
 {
     int thislvlWidth = map->GetLevelWidth();
     std::cout << thislvlWidth << std::endl;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         players[i]->setWidth(thislvlWidth); // Set width for Sonic, Knuckles, Tails
     }
     lvl = map->getMap();
@@ -529,7 +535,7 @@ void Game::update()
     player->player_gravity(lvl);
     player->update();
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         if (i != currentPlayer) {
             players[i]->setOffsetX(player->getOffsetX());
@@ -764,7 +770,7 @@ void Game::render()
     // Draw player
     //player->draw_player(window);
     for (int i = 0; i < 3; i++) {
-        if (i != currentPlayer) {
+        if (i != currentPlayer && !specialChar) {
             players[i]->draw_player(window);
         }
     }
@@ -804,27 +810,82 @@ void Game::run()
 
 void Game::switchPlayer()
 {
-    if (Keyboard::isKeyPressed(Keyboard::C))
+    // Static variables to track OOP sequence detection
+    static int sequenceState = 0;
+    static bool wasOPressed = false;
+    static bool wasPPressed = false;
+
+    // Check for regular player switch with C key
+    if (Keyboard::isKeyPressed(Keyboard::C) && !specialChar)
     {
         if (playerChange.getElapsedTime().asSeconds() >= 1.5f) {
-            //sf::Vector2f pos = player->getPos();
             float x = player->getX();
             float y = player->getY();
             float velocityY = player->getVelocityY();
             float offsetX = player->getOffsetX();
-
             // Switch to next character
             currentPlayer = (currentPlayer + 1) % 3;
             player = players[currentPlayer];
-
             // Apply position and state to new character
             player->setPos(x, y);
             player->setOffsetX(offsetX);
-
             // Optional: Apply velocity to maintain momentum
             player->setVelocityY(velocityY);
             playerChange.restart();
         }
+    }
+
+    // Check for O key press in OOP sequence
+    if (Keyboard::isKeyPressed(Keyboard::O))
+    {
+        if (!wasOPressed) {
+            wasOPressed = true;
+
+            // Update sequence state
+            if (sequenceState == 0 || sequenceState == 1) {
+                sequenceState++;
+            }
+            else {
+                sequenceState = 1; // Reset to first 'O'
+            }
+        }
+    }
+    else {
+        wasOPressed = false;
+    }
+
+    // Check for P key press in OOP sequence
+    if (Keyboard::isKeyPressed(Keyboard::P))
+    {
+        if (!wasPPressed) {
+            wasPPressed = true;
+
+            // Update sequence state
+            if (sequenceState == 2) {
+                sequenceState = 0; // Reset after completing sequence
+
+                std::cout << " OOP sequence detected! " << std::endl;
+                specialChar = true;
+                SpecCharTime.restart();
+                float x = player->getX();
+                float y = player->getY();
+                float velocityY = player->getVelocityY();
+                float offsetX = player->getOffsetX();
+                currentPlayer = 4;
+                player = players[currentPlayer];
+                // Apply position and state to new character
+                player->setPos(x, y);
+                player->setOffsetX(offsetX);
+                // Optional: Apply velocity to maintain momentum
+                player->setVelocityY(velocityY);
+            }
+            else {
+                sequenceState = 0; // Reset on wrong key
+            }
+        }
+    }
+    else {
+        wasPPressed = false;
     }
 }
 void  Game::renderGameOver() {

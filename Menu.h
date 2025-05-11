@@ -59,15 +59,13 @@ public:
         MenuMus.setBuffer(MenuBgMusic);
         MenuMus.setVolume(70);
         MenuMus.setLoop(true);
-        MenuMus.play();
+
         if (!OptionBuffer.loadFromFile("Data/MenuButton.wav"))
         {
             std::cout << "Failed to load MenuButton.wav" << std::endl;
         }
         OptionScrollSound.setBuffer(OptionBuffer);
         OptionScrollSound.setVolume(AudioSystem::GameVolume);
-        
-
 
         options = new sf::String[numOptions];
         options[0] = "New Game";
@@ -87,19 +85,19 @@ public:
         {
             text[i].setFont(Monaco);
             text[i].setString(options[i]);
-            text[i].setCharacterSize(48);
+            text[i].setCharacterSize(60);
             text[i].setOutlineThickness(3);
             text[i].setOutlineColor(sf::Color::Black);
             text[i].setFillColor(sf::Color::White);
-            text[i].setPosition(480, 309 + i * 122);
+            text[i].setPosition(450, 325 + i * 150);
         }
 
         OptionBanners = new sf::Sprite[numOptions];
         for (int i = 0; i < numOptions; i++)
         {
             OptionBanners[i].setTexture(BannerTxture);
-            OptionBanners[i].setScale(0.6, 0.6);
-            OptionBanners[i].setPosition(650, 285 + i * 122);
+            OptionBanners[i].setScale(0.75, 0.75);
+            OptionBanners[i].setPosition(650, 300 + i * 150);
             OptionBanners[i].setOrigin(385, 50);
         }
 
@@ -152,33 +150,27 @@ public:
         if (SelectedIndex == 0)
         {
             SelectedIndex = numOptions - 1;
-            
         }
         else
         {
             SelectedIndex--;
-          
         }
         text[SelectedIndex].setFillColor(lightBlue);
-        OptionScrollSound.play();
     }
 
     void moveDown()
     {
-        if (SelectedIndex < 0 || SelectedIndex >= numOptions) SelectedIndex = 0; // Safety check
+        if (SelectedIndex < 0 || SelectedIndex >= numOptions) SelectedIndex = 0;
         text[SelectedIndex].setFillColor(sf::Color::White);
         if (SelectedIndex == numOptions - 1)
         {
             SelectedIndex = 0;
-            
         }
         else
         {
             SelectedIndex++;
-           
         }
         text[SelectedIndex].setFillColor(lightBlue);
-        OptionScrollSound.play();
     }
 
     int selectLevel()
@@ -244,7 +236,10 @@ public:
                         return -1;
                     }
                 }
-                OptionScrollSound.play();
+                else if (event.type == sf::Event::KeyReleased)
+                {
+                    OptionScrollSound.stop();
+                }
             }
 
             window.clear();
@@ -275,167 +270,120 @@ public:
     void resetEnter() { enterPressed = false; }
     bool isNameEntered() const { return !nameEntered; }
 
-    bool    isEnterPressed() const { return enterPressed; }
-    int     getSelectedIndex() const { return SelectedIndex; }
-    void    resetEnter() { enterPressed = false; }
-
-    void handleEvent(const sf::Event& event) {
-        if (event.type == sf::Event::KeyReleased)
-            keyHandled = false;
+    void handleEvent(const sf::Event& event)
+    {
+        if (nameEntered)
+        {
+            handleNameInput(event); // Process name input events
         }
-           
+        else
+        {
+            if (event.type == sf::Event::KeyReleased)
+            {
+                OptionScrollSound.stop();
+                keyHandled = false;
+            }
 
-
-        if (event.type == sf::Event::KeyPressed && !keyHandled) {
-            switch (event.key.code) {
-            case sf::Keyboard::Up:
-                moveUp();
-                keyHandled = true;
-                break;
-            case sf::Keyboard::Down:
-                moveDown();
-                keyHandled = true;
-                break;
-            case sf::Keyboard::Enter:
-                keyHandled = true;
-                enterPressed = true;    // record that Enter was hit
-                break;
-            default:
-                break;
+            if (event.type == sf::Event::KeyPressed && !keyHandled)
+            {
+                if (OptionScrollSound.getStatus() != sf::Sound::Playing)
+                    OptionScrollSound.play();
+                switch (event.key.code)
+                {
+                case sf::Keyboard::Up:
+                    moveUp();
+                    keyHandled = true;
+                    break;
+                case sf::Keyboard::Down:
+                    moveDown();
+                    keyHandled = true;
+                    break;
+                case sf::Keyboard::Enter:
+                    keyHandled = true;
+                    enterPressed = true;
+                    break;
+                default:
+                    break;
+                }
             }
         }
     }
 
+    void PlayMenuMusic()
+    {
+        MenuMus.play();
+    }
 
-    ~Menu() {
+    void StopMenuMusic()
+    {
+        MenuMus.stop();
+    }
+
+    void enterName()
+    {
+        nameEntered = true;
+        playerName.clear();
+        nameText.setString("");
+    }
+
+    void handleNameInput(const sf::Event& event)
+    {
+        static sf::Clock inputDelay;
+        if (inputDelay.getElapsedTime().asMilliseconds() < 150)
+            return;
+
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (playerName.length() < 20)
+            {
+                if (event.key.code == sf::Keyboard::A) { playerName += 'A'; }
+                else if (event.key.code == sf::Keyboard::B) { playerName += 'B'; }
+                else if (event.key.code == sf::Keyboard::C) { playerName += 'C'; }
+                else if (event.key.code == sf::Keyboard::D) { playerName += 'D'; }
+                else if (event.key.code == sf::Keyboard::E) { playerName += 'E'; }
+                else if (event.key.code == sf::Keyboard::F) { playerName += 'F'; }
+                else if (event.key.code == sf::Keyboard::G) { playerName += 'G'; }
+                else if (event.key.code == sf::Keyboard::H) { playerName += 'H'; }
+                else if (event.key.code == sf::Keyboard::I) { playerName += 'I'; }
+                else if (event.key.code == sf::Keyboard::J) { playerName += 'J'; }
+                else if (event.key.code == sf::Keyboard::K) { playerName += 'K'; }
+                else if (event.key.code == sf::Keyboard::L) { playerName += 'L'; }
+                else if (event.key.code == sf::Keyboard::M) { playerName += 'M'; }
+                else if (event.key.code == sf::Keyboard::N) { playerName += 'N'; }
+                else if (event.key.code == sf::Keyboard::O) { playerName += 'O'; }
+                else if (event.key.code == sf::Keyboard::P) { playerName += 'P'; }
+                else if (event.key.code == sf::Keyboard::Q) { playerName += 'Q'; }
+                else if (event.key.code == sf::Keyboard::R) { playerName += 'R'; }
+                else if (event.key.code == sf::Keyboard::S) { playerName += 'S'; }
+                else if (event.key.code == sf::Keyboard::T) { playerName += 'T'; }
+                else if (event.key.code == sf::Keyboard::U) { playerName += 'U'; }
+                else if (event.key.code == sf::Keyboard::V) { playerName += 'V'; }
+                else if (event.key.code == sf::Keyboard::W) { playerName += 'W'; }
+                else if (event.key.code == sf::Keyboard::X) { playerName += 'X'; }
+                else if (event.key.code == sf::Keyboard::Y) { playerName += 'Y'; }
+                else if (event.key.code == sf::Keyboard::Z) { playerName += 'Z'; }
+            }
+
+            if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
+            {
+                playerName.pop_back();
+            }
+
+            if (event.key.code == sf::Keyboard::Enter && !playerName.empty())
+            {
+                nameEntered = false;
+            }
+
+            nameText.setString(playerName);
+            inputDelay.restart();
+        }
+    }
+
+    ~Menu()
+    {
         delete[] options;
         delete[] text;
         delete[] levelsTxt;
         delete[] OptionBanners;
     }
-
-    void enterName()
-    {
-        nameEntered = true;
-        playerName.clear();
-        nameText.setString("");
-    }
-
-    void handleNameInput(const sf::Event& event)
-    {
-        static sf::Clock inputDelay;
-        if (inputDelay.getElapsedTime().asMilliseconds() < 150)
-            return;
-
-        if (event.type == sf::Event::KeyPressed)
-        {
-            if (playerName.length() < 20)
-            {
-                if (event.key.code == sf::Keyboard::A) { playerName += 'A'; }
-                else if (event.key.code == sf::Keyboard::B) { playerName += 'B'; }
-                else if (event.key.code == sf::Keyboard::C) { playerName += 'C'; }
-                else if (event.key.code == sf::Keyboard::D) { playerName += 'D'; }
-                else if (event.key.code == sf::Keyboard::E) { playerName += 'E'; }
-                else if (event.key.code == sf::Keyboard::F) { playerName += 'F'; }
-                else if (event.key.code == sf::Keyboard::G) { playerName += 'G'; }
-                else if (event.key.code == sf::Keyboard::H) { playerName += 'H'; }
-                else if (event.key.code == sf::Keyboard::I) { playerName += 'I'; }
-                else if (event.key.code == sf::Keyboard::J) { playerName += 'J'; }
-                else if (event.key.code == sf::Keyboard::K) { playerName += 'K'; }
-                else if (event.key.code == sf::Keyboard::L) { playerName += 'L'; }
-                else if (event.key.code == sf::Keyboard::M) { playerName += 'M'; }
-                else if (event.key.code == sf::Keyboard::N) { playerName += 'N'; }
-                else if (event.key.code == sf::Keyboard::O) { playerName += 'O'; }
-                else if (event.key.code == sf::Keyboard::P) { playerName += 'P'; }
-                else if (event.key.code == sf::Keyboard::Q) { playerName += 'Q'; }
-                else if (event.key.code == sf::Keyboard::R) { playerName += 'R'; }
-                else if (event.key.code == sf::Keyboard::S) { playerName += 'S'; }
-                else if (event.key.code == sf::Keyboard::T) { playerName += 'T'; }
-                else if (event.key.code == sf::Keyboard::U) { playerName += 'U'; }
-                else if (event.key.code == sf::Keyboard::V) { playerName += 'V'; }
-                else if (event.key.code == sf::Keyboard::W) { playerName += 'W'; }
-                else if (event.key.code == sf::Keyboard::X) { playerName += 'X'; }
-                else if (event.key.code == sf::Keyboard::Y) { playerName += 'Y'; }
-                else if (event.key.code == sf::Keyboard::Z) { playerName += 'Z'; }
-            }
-
-            if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
-            {
-                playerName.pop_back();
-            }
-
-            if (event.key.code == sf::Keyboard::Enter && !playerName.empty())
-            {
-                nameEntered = false;
-            }
-
-            nameText.setString(playerName);
-            inputDelay.restart();
-        }
-    }
-    void enterName()
-    {
-        nameEntered = true;
-        playerName.clear();
-        nameText.setString("");
-    }
-
-    void handleNameInput(const sf::Event& event)
-    {
-        static sf::Clock inputDelay;
-        if (inputDelay.getElapsedTime().asMilliseconds() < 150)
-            return;
-
-        if (event.type == sf::Event::KeyPressed)
-        {
-            if (playerName.length() < 20)
-            {
-                if (event.key.code == sf::Keyboard::A) { playerName += 'A'; }
-                else if (event.key.code == sf::Keyboard::B) { playerName += 'B'; }
-                else if (event.key.code == sf::Keyboard::C) { playerName += 'C'; }
-                else if (event.key.code == sf::Keyboard::D) { playerName += 'D'; }
-                else if (event.key.code == sf::Keyboard::E) { playerName += 'E'; }
-                else if (event.key.code == sf::Keyboard::F) { playerName += 'F'; }
-                else if (event.key.code == sf::Keyboard::G) { playerName += 'G'; }
-                else if (event.key.code == sf::Keyboard::H) { playerName += 'H'; }
-                else if (event.key.code == sf::Keyboard::I) { playerName += 'I'; }
-                else if (event.key.code == sf::Keyboard::J) { playerName += 'J'; }
-                else if (event.key.code == sf::Keyboard::K) { playerName += 'K'; }
-                else if (event.key.code == sf::Keyboard::L) { playerName += 'L'; }
-                else if (event.key.code == sf::Keyboard::M) { playerName += 'M'; }
-                else if (event.key.code == sf::Keyboard::N) { playerName += 'N'; }
-                else if (event.key.code == sf::Keyboard::O) { playerName += 'O'; }
-                else if (event.key.code == sf::Keyboard::P) { playerName += 'P'; }
-                else if (event.key.code == sf::Keyboard::Q) { playerName += 'Q'; }
-                else if (event.key.code == sf::Keyboard::R) { playerName += 'R'; }
-                else if (event.key.code == sf::Keyboard::S) { playerName += 'S'; }
-                else if (event.key.code == sf::Keyboard::T) { playerName += 'T'; }
-                else if (event.key.code == sf::Keyboard::U) { playerName += 'U'; }
-                else if (event.key.code == sf::Keyboard::V) { playerName += 'V'; }
-                else if (event.key.code == sf::Keyboard::W) { playerName += 'W'; }
-                else if (event.key.code == sf::Keyboard::X) { playerName += 'X'; }
-                else if (event.key.code == sf::Keyboard::Y) { playerName += 'Y'; }
-                else if (event.key.code == sf::Keyboard::Z) { playerName += 'Z'; }
-            }
-
-            if (event.key.code == sf::Keyboard::BackSpace && !playerName.empty())
-            {
-                playerName.pop_back();
-            }
-
-            if (event.key.code == sf::Keyboard::Enter && !playerName.empty())
-            {
-                nameEntered = false;
-            }
-
-            nameText.setString(playerName);
-            inputDelay.restart();
-        }
-    }
-
-
-
-
-
-
 };

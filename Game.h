@@ -886,7 +886,7 @@ void Game::switchPlayer()
                 float y = player->getY();
                 float velocityY = player->getVelocityY();
                 float offsetX = player->getOffsetX();
-                currentPlayer = 4;
+                currentPlayer = 3;
                 player = players[currentPlayer];
                 // Apply position and state to new character
                 player->setPos(x, y);

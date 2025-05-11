@@ -99,7 +99,7 @@ public:
 
     virtual bool movement(char** lvl, bool check, bool check2)
     {
-        //std::cout << isFlying << std::endl;
+        //std::cout << velocityX <<  " " << velocityY << std::endl;
         /*if (check2) {
             return true;
         }*/
@@ -107,13 +107,7 @@ public:
         bool isMoving = false;
         //std::cout << velocityX << std::endl;
         if (Punch) {
-            if (left)
-                currentIndex = 10;
-            if (!left)
-                currentIndex = 9;
-
-            ESprite.setTexture(SpriteTex[currentIndex].T);
-            return isMoving;
+            return true;
         }
 
         if (isFlying && left)
@@ -139,29 +133,29 @@ public:
             bool leftCollision = false;
 
             // Check multiple points along the left side of the character
-            for (int checkY = 0; checkY < Pheight; checkY += cell_size / 3)
-            {
                 // Limit to within character height
-                if (checkY > Pheight - hit_box_factor_y) checkY = Pheight - hit_box_factor_y;
 
                 // Calculate the position to check (left side of character)
-                int worldY = (player_y + hit_box_factor_y + checkY) / cell_size;
+                int worldY = (player_y + hit_box_factor_y) / cell_size;
                 int worldX = (offset_x + player_x + hit_box_factor_x - 17) / cell_size; // Check slightly ahead
 
                 // Stay within bounds
                 if (worldY < 0) worldY = 0;
 
                 // Check if there's a wall
-                if (lvl[worldY][worldX] == 'w' || lvl[worldY][worldX] == 'b') {
-                    leftCollision = true;
-                    break;
+                if (worldY >= 0 && worldY < 14 && worldX >= 0 && worldX < totalWidth) {
+                    if (lvl[worldY][worldX] == 'w' || lvl[worldY][worldX] == 'b') {
+                        leftCollision = true;
+                    }
+                    if (lvl[worldY+1][worldX] == 'w' || lvl[worldY+1][worldX] == 'b') {
+                        leftCollision = true;
+                    }
                 }
                 else if (lvl[worldY][worldX] == 'k') {
                     leftCollision = true;
                     takeDamage(5);
-                    break;
                 }
-            }
+            
 
             if (leftCollision)
             {
@@ -206,28 +200,27 @@ public:
             bool rightCollision = false;
 
             // Check multiple points along the right side of the character
-            for (int checkY = 0; checkY < Pheight; checkY += cell_size / 2) {
-                // Limit to within character height
-                if (checkY > Pheight - hit_box_factor_y) checkY = Pheight - hit_box_factor_y;
 
                 // Calculate the position to check (right side of character)
-                int worldY = (player_y + hit_box_factor_y + checkY) / cell_size;
+                int worldY = (player_y + hit_box_factor_y) / cell_size;
                 int worldX = (offset_x + player_x + hit_box_factor_x + Pwidth + 15) / cell_size; // Check slightly ahead
 
                 // Stay within bounds
                 if (worldY < 0) worldY = 0;
 
                 // Check if there's a wall
-                if (lvl[worldY][worldX] == 'w' || lvl[worldY][worldX] == 'b') {
-                    rightCollision = true;
-                    break;
+                if (worldY >= 0 && worldY < 14 && worldX >= 0 && worldX < totalWidth) {
+                    if (lvl[worldY][worldX] == 'w' || lvl[worldY][worldX] == 'b') {
+                        rightCollision = true;
+                    }
+                    if (lvl[worldY+ 1][worldX] == 'w' || lvl[worldY+1][worldX] == 'b') {
+                        rightCollision = true;
+                    }
                 }
                 else if (lvl[worldY][worldX] == 'k') {
                     rightCollision = true;
                     takeDamage(5);
-                    break;
                 }
-            }
 
             if (rightCollision) {
                 velocityX = 0;
@@ -257,10 +250,10 @@ public:
                 // Movement logic
                 if (player_x >= 750) {
                     offset_x += velocityX; //velocity is positive so no need to apply any negative
-                    if (offset_x > (totalWidth * 64 - 800)) {
+                    if (offset_x > (totalWidth * 64 - 1200)) {
                         player_x += velocityX;
                         if (player_x > 1100) player_x = 1100;
-                        offset_x = (totalWidth * 64 - 800);
+                        offset_x = (totalWidth * 64 - 1200);
                     }
                 }
                 else {
@@ -282,10 +275,10 @@ public:
                     if (player_x < 5) player_x = 5;
                     offset_x = 0;
                 }
-                if (offset_x > (totalWidth * 64 - 800)) {
+                if (offset_x > (totalWidth * 64 - 1200)) {
                     player_x += velocityX;
                     if (player_x > 1100) player_x = 1100;
-                    offset_x = (totalWidth * 64 - 800);
+                    offset_x = (totalWidth * 64 - 1200);
 
                 }
             }
@@ -348,10 +341,11 @@ public:
         {
             //std::cout << "HELLO\n";
             if (Keyboard::isKeyPressed(Keyboard::Up)) {
-                player_y -= 10;
+                //player_y -= 10;
+                offset_y -= 10;
             }
             if (Keyboard::isKeyPressed(Keyboard::Down)) {
-                player_y += 10;
+                offset_y += 10;
             }
             //isMoving = true;
             ESprite.setPosition(player_x, player_y);
@@ -384,7 +378,12 @@ public:
     void player_gravity(char** lvl)
     {
         if (isFlying) {
-            return;
+            player_y = offset_y;
+            onGround = false;
+            gravity = 0;
+        }
+        else {
+            gravity = 1;
         }
         // Store previous position
         offset_y = player_y;
@@ -513,7 +512,7 @@ public:
         if (player_y < 22) {
             player_y = 22;
         }
-        else if (player_y >= 770) {
+        else if (player_y >= 720) {
             player_x = lastOnGround.x - 40;
             player_y = lastOnGround.y - 200;
             offset_x = lastx - 24;
@@ -1097,7 +1096,6 @@ private:
             {
                 ESprite.setTexture(SpriteTex[10].T);
                 currentIndex = 10;
-                //std::cout << currentIndex << std::endl;
                 updateTextureRectForCurrentIndex();
                 AnimateSprite(true);
             }
@@ -1169,15 +1167,19 @@ private:
                 }
                 if (currentIndex == 10)
                 {
-                    currentFrame = SpriteTex[10].frameNum;
+                    //currentFrame = SpriteTex[10].frameNum;
 
-                    currentFrame = (currentFrame - 1) % SpriteTex[currentIndex].frameNum;
+                    currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
                     animationClock.restart();
+                    std::cout << currentFrame << std::endl;
+
                 }
                 else
                 {
+                    std::cout << currentFrame << std::endl;
+
                     currentFrame = (currentFrame + 1) % SpriteTex[currentIndex].frameNum;
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
@@ -1708,16 +1710,16 @@ public:
             }
             if (left && Punch)
             {
-                ESprite.setTexture(SpriteTex[10].T);
-                currentIndex = 10;
+                ESprite.setTexture(SpriteTex[6].T);
+                currentIndex = 6;
                 //std::cout << currentIndex << std::endl;
                 updateTextureRectForCurrentIndex();
                 AnimateSprite(true);
             }
             else if (!left && Punch)
             {
-                ESprite.setTexture(SpriteTex[9].T);
-                currentIndex = 9;
+                ESprite.setTexture(SpriteTex[7].T);
+                currentIndex = 7;
                 updateTextureRectForCurrentIndex();
                 AnimateSprite(true);
             }

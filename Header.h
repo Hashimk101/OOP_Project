@@ -52,6 +52,7 @@ protected:
     float lastx;
     sf::Clock powerUPCLK;
     int power;
+    float old;
 public:
     bool isKnuckles = true;
     bool isSonic=true;
@@ -248,7 +249,7 @@ public:
                 AnimateSprite(isMoving);
 
                 // Movement logic
-                if (player_x >= 750) {
+                if (player_x >= 750 && !check2) {
                     offset_x += velocityX; //velocity is positive so no need to apply any negative
                     if (offset_x > (totalWidth * 64 - 1200)) {
                         player_x += velocityX;
@@ -258,6 +259,9 @@ public:
                 }
                 else {
                     player_x += velocityX;
+                    if (player_x >= 1100) {
+                        player_x = 1100;
+                    }
                 }
             }
         }
@@ -269,18 +273,29 @@ public:
             }
             // same logic of window movement, but now in friction too ;(
             else {
-                offset_x += velocityX;
-                if (offset_x < 0) {
-                    player_x += velocityX;
-                    if (player_x < 5) player_x = 5;
-                    offset_x = 0;
-                }
-                if (offset_x > (totalWidth * 64 - 1200)) {
-                    player_x += velocityX;
-                    if (player_x > 1100) player_x = 1100;
-                    offset_x = (totalWidth * 64 - 1200);
+                if (!check2) {
+                    offset_x += velocityX;
+                    if (offset_x < 0) {
+                        player_x += velocityX;
+                        if (player_x < 5) player_x = 5;
+                        offset_x = 0;
+                    }
+                    if (offset_x > (totalWidth * 64 - 1200)) {
+                        player_x += velocityX;
+                        if (player_x > 1100) player_x = 1100;
+                        offset_x = (totalWidth * 64 - 1200);
 
+                    }
                 }
+                else {
+                    player_x += velocityX;
+                    if (player_x >= 1100) {
+                        player_x = 1100;
+                    }
+                }
+            }
+            if (check2) {
+                offset_x = 0;
             }
             // Only zero out very small velocities
             if (std::abs(velocityX) < 0.1f) {
@@ -336,7 +351,6 @@ public:
             isMoving = true;
 
         }
-
         if (isFlying)
         {
             //std::cout << "HELLO\n";
@@ -380,10 +394,7 @@ public:
         if (isFlying) {
             player_y = offset_y;
             onGround = false;
-            gravity = 0;
-        }
-        else {
-            gravity = 1;
+            return;
         }
         // Store previous position
         offset_y = player_y;
@@ -533,10 +544,11 @@ public:
             player_y = 22;
         }
         else if (player_y >= 720) {
-            player_x = lastOnGround.x - 40;
+           /* player_x = lastOnGround.x - 40;
             player_y = lastOnGround.y - 200;
             offset_x = lastx - 24;
-            ESprite.setPosition(player_x + offset_x, player_y);
+            ESprite.setPosition(player_x + offset_x, player_y);*/
+            hp = 0;
         }
         //std::cout << player_y << std::endl;
     }
@@ -654,6 +666,19 @@ public:
     int getcurrentIndex() {
         return currentIndex;
     }
+	void setFriction(float f) {
+		friction = f;
+	}
+	void setGravity(float g) {
+		gravity = g;
+        old = g;
+	}
+	float getFriction() {
+		return friction;
+	}
+	float getGravity() {
+		return gravity;
+	}
 
  static int GetHp()
     {
@@ -1093,7 +1118,7 @@ private:
 
         if (onGround) {
             isGliding = false;
-            gravity = 1;
+            gravity = old;
         }
         /*std::cout << gravity << std::endl;
         std::cout << velocityX << " " << velocityY << std::endl;*/

@@ -387,12 +387,32 @@ public:
         currentPlayer = 0;
         player = players[currentPlayer];
         player->setOffsetX(0);
-   
+        
         player->setPos(100, 300);
         timer.reset();
         timer.start();
         cleanupEnemies();          
         configureEnemies();
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (currentLevel == 1) {
+                players[i]->setFriction(0.8);
+                players[i]->setGravity(1);
+            }
+            else if (currentLevel == 2) {
+                players[i]->setFriction(0.92);
+                players[i]->setGravity(1);
+            }
+            else if (currentLevel == 3) {
+                players[i]->setFriction(0.85);
+                players[i]->setGravity(0.85);
+            }
+            else if (currentLevel == 4) {
+                players[i]->setFriction(0.85);
+                players[i]->setGravity(0.95);
+            }
+        }
        
         levelLabel.setString("Level " + std::to_string(currentLevel) +
             ((currentLevel == 1) ? "\nLabyrinth Zone" :
@@ -777,7 +797,9 @@ void Game::update()
 
     if (!player || !lvl) return;
     // Update player
-    bool ismoving = player->movement(lvl, true, false);
+    bool BOSSLEVEL = currentLevel == 4;
+    bool ismoving = player->movement(lvl, true, BOSSLEVEL);
+    std::cout << player->getFriction() << " " << player->getGravity() << std::endl;
     bool isflying = player->getIsFlying();
    
     player->punching(lvl, true);
@@ -786,6 +808,15 @@ void Game::update()
 
     for (int i = 0; i < 4; i++)
     {
+        if (currentPlayer == 0) {
+            players[i]->setSpeed(15);
+        }
+        else if (currentPlayer == 1) {
+            players[i]->setSpeed(10);
+        }
+        else if (currentPlayer == 2) {
+            players[i]->setSpeed(8);
+        }
         if (i != currentPlayer) {
             players[i]->setOffsetX(player->getOffsetX());
             if (player->getDirection()) {
@@ -803,18 +834,6 @@ void Game::update()
             players[i]->punching(lvl, false);
             players[i]->player_gravity(lvl);
             players[i]->update();
-
-
-
-            if (currentPlayer == 0) {
-                players[i]->setSpeed(12);
-            }
-            else if (currentPlayer == 1) {
-                players[i]->setSpeed(10);
-            }
-            else if (currentPlayer == 2) {
-                players[i]->setSpeed(8);
-            }
 
         }
     }
@@ -1118,7 +1137,7 @@ void Game::switchPlayer()
     static bool wasOPressed = false;
     static bool wasPPressed = false;
 
-    if (SpecCharTime.getElapsedTime().asSeconds() >= 15) {
+    if (SpecCharTime.getElapsedTime().asSeconds() >= 15 && specialChar) {
         SpecCharTime.restart();
 		specialChar = false;
 		currentPlayer = 0;

@@ -1048,7 +1048,7 @@ public:
 		else if (!down && y / 64 <= maxCeiling) {
 			if (right) {
 				x += speed; // Move right
-				if (x / 64 >= 18 - destroyedIndex) { // Check right bound
+				if (x / 64 >= 19 - destroyedIndex) { // Check right bound
 					down = true; // Switch to moving down
 				}
 			}

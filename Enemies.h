@@ -44,6 +44,18 @@ public:
 	{
 		return enemySprite;
 	}
+	void setHP(int hp) {
+		this->hp = hp;
+	}
+	int getHP() {
+		return hp;
+	}
+	void setActive(bool active) {
+		isActive = active;
+	}
+	bool isActiveEnemy() {
+		return isActive;
+	}
 };
 
 Enemies::~Enemies() {

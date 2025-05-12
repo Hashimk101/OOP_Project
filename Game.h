@@ -1211,6 +1211,10 @@ void Game::switchPlayer()
                 player->setOffsetX(offsetX);
                 // Optional: Apply velocity to maintain momentum
                 player->setVelocityY(velocityY);
+                if (currentLevel == 4) {
+					int hp = EgStinger->getHP();
+                    EgStinger->setHP(hp / 2);
+                }
             }
             else {
                 sequenceState = 0; // Reset on wrong key

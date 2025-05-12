@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Audio.h"
+#include "Game.h"
 using namespace std;
 
 class Menu
@@ -382,6 +383,132 @@ public:
             inputDelay.restart();
         }
     }
+
+    void saveCurrentState(MotoBug* m, CrabMeat* c, BatBrain* b, BuzzBomber* B, EggStinger* E, MySprite* pl, char** lvl, int LEVEL_WIDTH, Scores& s) {
+
+        string path = "Data/currentgamestate.txt";
+        ofstream saveFile(path);
+        if (!saveFile.is_open()) {
+            cout << "Error: Could not create save file at " << path << endl;
+            return;
+        }
+
+        // Save player info
+        saveFile << "PLAYER" << endl;
+        saveFile << pl->getX() << " " << pl->getY() << " ";
+        saveFile << pl->getHP() << " " << pl->getOffsetX() << " " << pl->getFriction() << " " << pl->getGravity() << endl;
+
+        // MotoBugs
+        int activeMoto = 0;
+        for (int i = 0; i < 10; ++i)
+            if (m[i].isActiveEnemy()) activeMoto++;
+
+        saveFile << "MOTOBUG " << activeMoto << endl;
+        for (int i = 0; i < 10; ++i) {
+            if (m[i].isActiveEnemy()) {
+                saveFile << m[i].getX() << " " << m[i].getY() << " 1" << endl;
+            }
+        }
+
+        // CrabMeats
+        int activeCrab = 0;
+        for (int i = 0; i < 10; ++i)
+            if (c[i].isActiveEnemy()) activeCrab++;
+
+        saveFile << "CRABMEAT " << activeCrab << endl;
+        for (int i = 0; i < 10; ++i) {
+            if (c[i].isActiveEnemy()) {
+                saveFile << c[i].getX() << " " << c[i].getY() << " 1" << endl;
+            }
+        }
+
+        // BatBrains
+        int activeBat = 0;
+        for (int i = 0; i < 10; ++i)
+            if (b[i].isActiveEnemy()) activeBat++;
+
+        saveFile << "BATBRAIN " << activeBat << endl;
+        for (int i = 0; i < 10; ++i) {
+            if (b[i].isActiveEnemy()) {
+                saveFile << b[i].getX() << " " << b[i].getY() << " 1" << endl;
+            }
+        }
+
+        // BuzzBombers
+        int activeBuzz = 0;
+        for (int i = 0; i < 10; ++i)
+            if (B[i].isActiveEnemy()) activeBuzz++;
+
+        saveFile << "BUZZBOMBER " << activeBuzz << endl;
+        for (int i = 0; i < 10; ++i) {
+            if (B[i].isActiveEnemy()) {
+                saveFile << B[i].getX() << " " << B[i].getY() << " 1" << endl;
+            }
+        }
+
+        // EggStingers
+        int activeEgg = 0;
+        for (int i = 0; i < 5; ++i)
+            if (E[i].isActiveEnemy()) activeEgg++;
+
+        saveFile << "EGGSTINGER " << activeEgg << endl;
+        for (int i = 0; i < 5; ++i) {
+            if (E[i].isActiveEnemy()) {
+                saveFile << E[i].getX() << " " << E[i].getY() << " 1" << endl;
+            }
+        }
+
+        // Scan level grid for items
+        int coinCount = 0;
+        int boostCount = 0;
+        int lifeCount = 0;
+
+        for (int i = 0; i < 14; ++i) {
+            for (int j = 0; j < LEVEL_WIDTH; ++j) {
+                if (lvl[i][j] == 'c') coinCount++;
+                else if (lvl[i][j] == 'd') boostCount++;
+                else if (lvl[i][j] == 'L') lifeCount++;
+            }
+        }
+
+        // Save RingCoins
+        saveFile << "RINGCOIN " << coinCount << endl;
+        for (int i = 0; i < 14; ++i) {
+            for (int j = 0; j < LEVEL_WIDTH; ++j) {
+                if (lvl[i][j] == 'c') {
+                    saveFile << j << " " << i << " 1" << endl;
+                }
+            }
+        }
+
+        // Save SpecialBoosts
+        saveFile << "SPECIALBOOST " << boostCount << endl;
+        for (int i = 0; i < 14; ++i) {
+            for (int j = 0; j < LEVEL_WIDTH; ++j) {
+                if (lvl[i][j] == 'd') {
+                    saveFile << j << " " << i << " 1" << endl;
+                }
+            }
+        }
+
+        // Save ExtraLives
+        saveFile << "EXTRALIFE " << lifeCount << endl;
+        for (int i = 0; i < 14; ++i) {
+            for (int j = 0; j < LEVEL_WIDTH; ++j) {
+                if (lvl[i][j] == 'L') {
+                    saveFile << j << " " << i << " 1" << endl;
+                }
+            }
+        }
+
+        // Player stats
+        saveFile << "STATS" << endl;
+        saveFile << s.getScore() << endl;
+
+        saveFile.close();
+        cout << "Game state saved successfully to " << path << endl;
+    }
+
 
     ~Menu()
     {

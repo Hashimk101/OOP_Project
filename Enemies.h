@@ -56,6 +56,12 @@ public:
 	bool isActiveEnemy() {
 		return isActive;
 	}
+	int getX() {
+		return x;
+	}
+	int getY() {
+		return y;
+	}
 };
 
 Enemies::~Enemies() {
@@ -213,7 +219,7 @@ public:
 		return (playerRight > enemyLeft && playerLeft < enemyRight &&
 			playerBottom >= enemyTop - 20 && playerTop < enemyBottom);
 	}
-
+	
 };
 
 

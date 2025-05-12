@@ -143,13 +143,6 @@ public:
                     Activeplayer.MakeInvisible();
 
                 }
-                if (levelChar == 'd' && Activeplayer.isSonic)
-                {
-                    cout << "You are now running!" << endl;
-                    Activeplayer.setcurrentIndex(11);
-                  
-
-                }
                     lvl[gridY][gridX] = 's';
                     sound.play();
                     onCollect(gridY, gridX);
@@ -166,17 +159,14 @@ public:
                 }
 				if (levelChar == 'd' && Activeplayer.isKnuckles)
 				{
-                    Activeplayer.MakeInvisible();	
+                    cout << "You are now invisible!" << endl;
+					cout << "active player" << Activeplayer.isKnuckles << endl;
+				
+                    Activeplayer.MakeInvisible();
+                    
+
+					
 				}
-                if (levelChar == 'd' && Activeplayer.isSonic)
-                {
-                    cout << "You are now running!" << endl;
-                    Activeplayer.setcurrentIndex(11);
-                    Activeplayer.StartRunning();
-                 
-
-                }
-
                 // Calculate collectable's screen position
                 lvl[gridY - 1][gridX] = 's';
                 sound.play();
@@ -190,63 +180,6 @@ public:
     virtual void onCollect(int i, int j) {
         std::cout << "Collected an item at grid [" << i << "][" << j << "]!" << std::endl;
     }
-
-    void save(std::ofstream& out)  {
-        // Count collectables
-        int count = 0;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < map.GetLevelWidth(); j++) {
-                if (lvl[i][j] == levelChar) {
-                    count++;
-                }
-            }
-        }
-
-        // Write count and coordinates
-        out << count << ' ';
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < map.GetLevelWidth(); j++) {
-                if (lvl[i][j] == levelChar) {
-                    out << i << ' ' << j << ' ';
-                }
-            }
-        }
-        out << '\n';
-    }
-
-    void load(std::ifstream& in)  {
-        int count;
-        if (!(in >> count)) {
-            std::cout << "Error: Failed to read RingCoin count." << std::endl;
-            return;
-        }
-
-        // Clear existing collectables of this type
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < map.GetLevelWidth(); j++) {
-                if (lvl[i][j] == levelChar) {
-                    lvl[i][j] = 's';
-                }
-            }
-        }
-
-        // Read and place collectables
-        for (int k = 0; k < count; k++) {
-            int i, j;
-            if (!(in >> i >> j)) {
-                std::cout << "Error: Failed to read RingCoin coordinates." << std::endl;
-                return;
-            }
-            if (i >= 0 && i < height && j >= 0 && j < map.GetLevelWidth()) {
-                lvl[i][j] = levelChar;
-            }
-        }
-    }
-
-
-
-
-
 };
 
 // Child class for rings/coins

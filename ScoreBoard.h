@@ -59,6 +59,9 @@ void addLevelClear() { scores += LEVEL_CLEAR_POINTS; }
 void addName(std::string n) { name = n; }  
 
 int getScore() const { return scores; }  
+void setScore(int a) {
+	scores = a;
+}
 
 void saveScore() const  
 {  

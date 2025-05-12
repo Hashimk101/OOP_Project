@@ -517,6 +517,110 @@ public:
         cout << "Game state saved successfully to " << path << endl;
     }
 
+    void LoadOldState(MotoBug* m, CrabMeat* c, BatBrain* b, BuzzBomber* B, EggStinger* E, MySprite* pl, char** lvl, int LEVEL_WIDTH, Scores& s, RingCoin* coins, ExtraLife* diamonds, SpecialBoost* special) {
+
+        string path = "Data/currentgamestate.txt";
+        ifstream loadFile(path);
+        if (!loadFile.is_open()) {
+            cout << "Error: Could not open save file at " << path << endl;
+            return;
+        }
+
+        string line;
+
+        // Read and ignore the "PLAYER" header
+        getline(loadFile, line);
+
+        // Load player data
+        int px, py, hp, offsetX, friction, gravity;
+        loadFile >> px >> py >> hp >> offsetX >> friction >> gravity;
+        pl->setX(px);
+        pl->setY(py);
+        pl->setHP(hp);
+        pl->setOffsetX(offsetX);
+        pl->setFriction(friction);
+        pl->setGravity(gravity);
+
+        // Load MotoBugs
+        getline(loadFile, line); // MOTOBUG header
+        int activeMoto;
+        loadFile >> activeMoto;
+        for (int i = 0; i < activeMoto; ++i) {
+            int mx, my;
+            loadFile >> mx >> my;
+            m[i].setX(mx);
+            m[i].setY(my);
+            m[i].activate();
+        }
+
+        // Load CrabMeats
+        getline(loadFile, line); // CRABMEAT header
+        int activeCrab;
+        loadFile >> activeCrab;
+        for (int i = 0; i < activeCrab; ++i) {
+            int cx, cy;
+            loadFile >> cx >> cy;
+            c[i].setX(cx);
+            c[i].setY(cy);
+            c[i].activate();
+        }
+
+        // Load BatBrains
+        getline(loadFile, line); // BATBRAIN header
+        int activeBat;
+        loadFile >> activeBat;
+        for (int i = 0; i < activeBat; ++i) {
+            int bx, by;
+            loadFile >> bx >> by;
+            b[i].setX(bx);
+            b[i].setY(by);
+            b[i].activate();
+        }
+
+        // Load BuzzBombers
+        getline(loadFile, line); // BUZZBOMBER header
+        int activeBuzz;
+        loadFile >> activeBuzz;
+        for (int i = 0; i < activeBuzz; ++i) {
+            int bx, by;
+            loadFile >> bx >> by;
+            B[i].setX(bx);
+            B[i].setY(by);
+            B[i].activate();
+        }
+
+        // Load EggStingers
+        getline(loadFile, line); // EGGSTINGER header
+        int activeEgg;
+        loadFile >> activeEgg;
+        for (int i = 0; i < activeEgg; ++i) {
+            int ex, ey;
+            loadFile >> ex >> ey;
+            E[i].setX(ex);
+            E[i].setY(ey);
+            E[i].activate();
+        }
+
+       
+
+        // Load Player Stats
+        getline(loadFile, line); // STATS header
+        int score;
+        loadFile >> score;
+        s.setScore(score);
+
+        // Load level data
+        getline(loadFile, line); // LEVEL header
+        for (int i = 0; i < 14; ++i) {
+            for (int j = 0; j < LEVEL_WIDTH; ++j) {
+                loadFile >> lvl[i][j];
+            }
+        }
+
+        loadFile.close();
+        cout << "Game state loaded successfully from " << path << endl;
+    }
+
 
     ~Menu()
     {

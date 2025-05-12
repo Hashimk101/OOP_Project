@@ -153,6 +153,7 @@ private:
     bool isInLevelSelect;
     bool isInNameInput;
     bool isInHighScores;
+    bool isInResume;
 
     // Player name
     std::string playerName;
@@ -271,7 +272,7 @@ public:
         highScoreText.setString(highScores);
         //HIGHSCORE AND LABELS
         highScoreText.setFont(Monaco);
-        highScoreText.setCharacterSize(40);
+        highScoreText.setCharacterSize(35);
         highScoreText.setFillColor(sf::Color::White);
         highScoreText.setOutlineColor(sf::Color::Black);
         highScoreText.setOutlineThickness(2);
@@ -334,44 +335,30 @@ public:
 
 
 
-    void  saveGame(const std::string& filename)
+  
+
+    void resume()
     {
-        std::ofstream out(filename);
-        if (!out) return;
-        out << currentLevel << ' '
-            << player->getX() << ' '
-            << player->getY() << ' '
-            << player->GetHp() << ' '
-            << score.getScore() << '\n';
 
-        out << '\n';
-        out.close();
+        menu->LoadOldState(
+            motoBugs, crabs, bats, buzzers, EgStinger,  player, lvl, map->GetLevelWidth(),
+            score, coins, diamonds, special
+        );
 
-    }
-    void loadGame(const std::string& filename) {
-        std::ifstream in(filename);
-        if (!in) return; 
+        initTextures();
 
-        int lvl, hp;
-        float px, py;
-        int totalScore;
-
-        in >> lvl >> px >> py >> hp >> totalScore;
-        startNewGame(lvl);                  
-        player->setPos(px, py);
-        player->SetHp(hp);
-        score.SetScore(totalScore);
-
-
-        in.close();
+        initGameObjects();
+        timer.start();
+        playerChange.restart();
+        isInMenu = false;
+        isInOptions = false;
+        isInNameInput = false;
+        isInLevelSelect = false;
+        isGameOver = false;
+        isPaused = false;
+        isPlaying = true;
     }
 
-
-
-    void resume() 
-    {
-        loadGame(savedGamePath);
-    }
     void startNewGame(int level)
     {
         audio.play(level);
@@ -711,7 +698,7 @@ void Game::processEvents()
             && event.key.code == sf::Keyboard::S
             && event.key.control)
         {
-            saveGame(savedGamePath);
+            menu->saveCurrentState(motoBugs, crabs, bats, buzzers, EgStinger, player, lvl, map->GetLevelWidth(), score);
         }
         if (isInNameInput)
         {
@@ -766,6 +753,7 @@ void Game::processEvents()
         {
             handleHighScoreEvents(event);
         }
+       
     }
 }
 
@@ -1123,6 +1111,12 @@ void Game::run()
         else if (isInHighScores) {
             render();   
 
+        }
+        if (isInResume) 
+        {
+            isInResume = false;
+            isPlaying = true;
+            continue;
         }
 
     }

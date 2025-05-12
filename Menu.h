@@ -536,7 +536,7 @@ public:
         loadFile >> px >> py >> hp >> offsetX >> friction >> gravity;
         pl->setX(px);
         pl->setY(py);
-        pl->setHP(hp);
+        pl->SetHp(hp);
         pl->setOffsetX(offsetX);
         pl->setFriction(friction);
         pl->setGravity(gravity);

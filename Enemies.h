@@ -44,7 +44,8 @@ public:
 	{
 		return enemySprite;
 	}
-	void setHP(int hp) {
+	 void setHP(int hp)
+	{
 		this->hp = hp;
 	}
 	int getHP() {

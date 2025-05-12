@@ -624,6 +624,7 @@ public:
     int getHP() {
 		return hp;
     }
+ 
     virtual void punching(char** lvl, bool check) = 0;
     void setPos(float x, float y) {
         player_x = x;

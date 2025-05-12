@@ -638,6 +638,9 @@ public:
     void setOffsetX(float x) {
         offset_x = x;
     }
+	void setOffsetY(float y) {
+		offset_y = y;
+	}
     void setVelocityY(float y) {
         velocityY = y;
     }
@@ -1670,8 +1673,8 @@ public:
         gravity = 1;
         friction = 0.80;
         terminal_Velocity = 20;
-        scale_x = 3.5;
-        scale_y = 3.5;
+        scale_x = 2.78;
+        scale_y = 2.68;
         raw_img_x = 24;
         raw_img_y = 35;
         Pheight = raw_img_y * scale_y;
@@ -1697,6 +1700,7 @@ public:
     }
     bool movement(char** lvl, bool check, bool check2) override
     {
+        //std::cout << power << std::endl;
         isMoving = MySprite::movement(lvl, check, check2);
 
         if (Keyboard::isKeyPressed(Keyboard::F) && check)

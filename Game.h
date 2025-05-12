@@ -799,7 +799,7 @@ void Game::update()
     // Update player
     bool BOSSLEVEL = currentLevel == 4;
     bool ismoving = player->movement(lvl, true, BOSSLEVEL);
-    std::cout << player->getFriction() << " " << player->getGravity() << std::endl;
+    std::cout << player->getOffsetX() << " " << player->getX() << " " <<player->getOffsetY()<< std::endl;
     bool isflying = player->getIsFlying();
    
     player->punching(lvl, true);
@@ -846,31 +846,31 @@ void Game::update()
     for (int i = 0; i < MotobugCount; ++i) {
         motoBugs[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
         // Check collisions with enemies
-        int dmg = motoBugs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        int dmg = motoBugs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score, player->getPower());
         if (dmg > 0) player->takeDamage(dmg);
     }
     for (int i = 0; i < BatCount; i++)
     {
         bats[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);     
-        int dmg = bats[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        int dmg = bats[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score, player->getPower());
         if (dmg > 0) player->takeDamage(dmg);
     }
     for (int i = 0; i < buzzerCount; i++)
     {
         buzzers[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-        int dmg = buzzers[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        int dmg = buzzers[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score, player->getPower());
         if (dmg > 0) player->takeDamage(dmg);
     }
     for (int i = 0; i < CrabCount; i++)
     {
         crabs[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-        int dmg = crabs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        int dmg = crabs[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score, player->getPower());
         if (dmg > 0) player->takeDamage(dmg);
     }
     for (int i = 0; i < EggStCount; i++)
     {
         EgStinger[i].move(player->getX(), player->getY(), player->getOffsetX(), player->getOffsetY(), score);
-        int dmg = EgStinger[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score);
+        int dmg = EgStinger[i].giveDamage(player->getVelocityY(), player->getX(), player->getY(), player->getOffsetX(), score, player->getPower());
         if (dmg > 0) player->takeDamage(dmg);
     }
 
@@ -1204,11 +1204,13 @@ void Game::switchPlayer()
                 float y = player->getY();
                 float velocityY = player->getVelocityY();
                 float offsetX = player->getOffsetX();
+				float offsetY = player->getOffsetY();
                 currentPlayer = 3;
                 player = players[currentPlayer];
                 // Apply position and state to new character
                 player->setPos(x, y);
                 player->setOffsetX(offsetX);
+                player->setOffsetY(offsetY);
                 // Optional: Apply velocity to maintain momentum
                 player->setVelocityY(velocityY);
                 if (currentLevel == 4) {

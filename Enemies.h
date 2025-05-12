@@ -39,7 +39,7 @@ public:
 	virtual void takeDamage(int damage, Scores& s) = 0;
 	virtual void animateSprite() = 0;
 	virtual bool proximityCheck(int P_x, int P_y) = 0;
-	virtual int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) = 0;
+	virtual int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s, int power) = 0;
 	Sprite& getEnemySprite() 
 	{
 		return enemySprite;
@@ -131,7 +131,7 @@ public:
 		//std::cout << "Motobug HP: " << hp << std::endl;
 	}
 
-	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s, int power) override
 	{
 		//std::cout << isActive << " " << hp << std::endl;
 		if (!isActive) return 0;
@@ -144,7 +144,7 @@ public:
 			if (upVelocity > 0 && playerBottom < enemyTop + 15) 
 			{
 				
-				takeDamage(hp, s);
+				takeDamage(power, s);
 				// Return immediately to prevent side damage
 				return 0;
 			}
@@ -344,7 +344,7 @@ public:
 		animationClock.restart();
 	}
 
-	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s, int power) override
 	{
 		if (!isActive) return 0;
 
@@ -371,7 +371,7 @@ public:
 		if (collisionWithCrab)
 		{
 			if (upVelocity > 0) { // Player is falling (not jumping)
-				takeDamage(hp, s);   // Destroy crab
+				takeDamage(power, s);   // Destroy crab
 				return 0;         // No damage to player
 			}
 			else {
@@ -622,10 +622,10 @@ public:
 			}
 			enemySprite.setScale(dx < 0 ? +spriteScale : -spriteScale, spriteScale);
 
-			if (std::abs(x - sonicX) < 10 && std::abs(y - sonicY) < 10) {
-				giveDamage(5, P_x, P_y, off_x, s );
+			/*if (std::abs(x - sonicX) < 10 && std::abs(y - sonicY) < 10) {
+				giveDamage(5, P_x, P_y, off_x, s, power);
 				isReturning = true;
-			}
+			}*/
 		}
 		else if (isReturning)
 		{
@@ -681,7 +681,7 @@ public:
 			proximity = false;
 		return proximity;
 	}
-	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s)
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s, int power) override
 	{
 		if (!isActive) return 0;
 		if (checkCollision(P_x + off_x, P_y))
@@ -690,7 +690,7 @@ public:
 			if (upVelocity > 0) // checks if the player is falling and falling ONLY, not jumping
 			{
 
-				takeDamage(1, s);    // take damage from enemy and die on first hit
+				takeDamage(power, s);    // take damage from enemy and die on first hit
 				return 0;
 			}
 
@@ -909,7 +909,7 @@ public:
 		}
 	};
 
-	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s)
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s, int power) override
 	{
 		if (!isActive) return 0;
 		//if (!isProjActive) return 0;
@@ -917,7 +917,7 @@ public:
 			(P_y / 64) == y / 64)
 		{
 			if (invincibilityClock.getElapsedTime().asSeconds() >= INVINCIBILITY_DURATION) {
-				takeDamage(hp, s);
+				takeDamage(power, s);
 				//std::cout << invincibilityClock.getElapsedTime().asSeconds() << std::endl;
 			}
 		}
@@ -1167,14 +1167,14 @@ public:
 		return false;
 	}
 
-	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s) override
+	int giveDamage(int upVelocity, int P_x, int P_y, int off_x, Scores& s, int power) override
 	{
 		if (upVelocity == 0 && checkCollision(P_x + off_x, P_y) && damageClock.getElapsedTime().asSeconds() >= damageTime) {
 			return 15;
 		}
 		else {
 			if (checkCollision(P_x + off_x, P_y)) {
-				takeDamage(10, s);
+				takeDamage(power, s);
 				//std::cout << "yes\n";
 				return 0;
 			}

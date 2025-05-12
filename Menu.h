@@ -333,7 +333,7 @@ public:
     void handleNameInput(const sf::Event& event)
     {
         static sf::Clock inputDelay;
-        if (inputDelay.getElapsedTime().asMilliseconds() < 150)
+        if (inputDelay.getElapsedTime().asMilliseconds() < 80)
             return;
 
         if (event.type == sf::Event::KeyPressed)

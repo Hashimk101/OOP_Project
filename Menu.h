@@ -504,6 +504,14 @@ public:
         // Player stats
         saveFile << "STATS" << endl;
         saveFile << s.getScore() << endl;
+        saveFile << "LEVEL" << endl;
+
+        for (int i = 0; i < 14; ++i) {
+            for (int j = 0; j < LEVEL_WIDTH; ++j) {
+                saveFile << lvl[i][j];
+            }
+            saveFile << '\n'; // new line after each row
+        }
 
         saveFile.close();
         cout << "Game state saved successfully to " << path << endl;

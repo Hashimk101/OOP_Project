@@ -1149,7 +1149,7 @@ void Game::switchPlayer()
 		player = players[currentPlayer];
     }
     // Check for regular player switch with C key
-    if (Keyboard::isKeyPressed(Keyboard::C) && !specialChar)
+    if (Keyboard::isKeyPressed(Keyboard::Z) && !specialChar)
     {
         if (playerChange.getElapsedTime().asSeconds() >= 1.5f) {
             float x = player->getX();

@@ -453,18 +453,18 @@ public:
         int check_y = (int)((offset_y + hit_box_factor_y + Pheight) / cell_size); // gives the row of the lvl the character is currently on
 
         // Calculate x positions of collision points
-        int left_x = (int)(((offset_x + player_x + hit_box_factor_x) / cell_size));
-        int right_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size));
+        //int left_x = (int)(((offset_x + player_x + hit_box_factor_x) / cell_size));
+        //int right_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size));
         int mid_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth / 2) / cell_size));
 
         // Check for ground collision
         bool collision = false;
-        char bottom_left = lvl[check_y][left_x];
-        char bottom_right = lvl[check_y][right_x];
+        //char bottom_left = lvl[check_y][left_x];
+        //char bottom_right = lvl[check_y][right_x];
         char bottom_mid = lvl[check_y][mid_x];
 
-        collision = (bottom_left == 'w' || bottom_right == 'w' || bottom_mid == 'w'
-            || bottom_left == 'b' || bottom_right == 'b' || bottom_mid == 'b');
+        collision = (/*bottom_left == 'w' || bottom_right == 'w' || */bottom_mid == 'w'
+          /*  || bottom_left == 'b' || bottom_right == 'b' || bottom_mid == 'b'*/);
 
         //std::cout << player_y << std::endl;
         if (collision)

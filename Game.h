@@ -361,6 +361,13 @@ public:
 
     void startNewGame(int level)
     {
+        isGameOver = false;
+        isPaused = false;
+        isInMenu = false;
+        isInOptions = false;
+        isPlaying = true;      
+        isInHighScores = false;   
+        isInLevelSelect = false; 
         audio.play(level);
         currentLevel = level;
         map = new  Maps(currentLevel);   
@@ -451,7 +458,7 @@ public:
 Game::Game() :
     window(sf::VideoMode(screen_x, screen_y), "Sonic the Hedgehog-OOP", sf::Style::Close),
     menu(new Menu(window)),
-    timer(300, "Data/Tricky Jimmy.ttf", 10, 2 * 65),
+    timer(180, "Data/Tricky Jimmy.ttf", 10, 2 * 65),
     motoBugs(nullptr), crabs(nullptr), bats(nullptr), buzzers(nullptr),
     EgStinger(nullptr), lvl(nullptr), isInMenu(true), isRunning(true), isPlaying(false), isPaused(false), isGameOver(false),
     score(window),isInOptions(false),  coins(nullptr), diamonds(nullptr), special(nullptr) 
@@ -1225,7 +1232,7 @@ void Game::renderGameOver()
 {
    
     
-    if (GameOverClk.getElapsedTime().asSeconds() >= 3.0)
+    if (GameOverClk.getElapsedTime().asSeconds() >= 1.0)
     {
         isGameOver = false;
         isInMenu = true; 
@@ -1244,17 +1251,19 @@ void Game::renderGameOver()
             gameOverText.setFillColor(sf::Color::White);
             gameOverText.setPosition(350, 300);
             window.draw(gameOverText);
+            window.display();
         }
-        else {
+        else 
+        {
             std::cout << "Failed to load font for Game Over screen: Data/Tricky Jimmy.ttf" << std::endl;
         }
-        window.display(); 
+       
     }
 }
 void Game::advanceToNextLevel() {
   //sAVE SCORE AND SHI
     int next = currentLevel + 1;
-    if (next > MAX_LEVELS)
+    if (next >= MAX_LEVELS)
     {
 
         gameOver();

@@ -105,7 +105,7 @@ public:
 		enemySprite.setOrigin(frameRect.width / 2.0f, frameRect.height / 2.0f);
 	}
 	bool wallCollision(bool right){ // for checking if the player is right or not and then allowing it to move left or right
-		std::cout << x / 64 << " " << (y / 64) + 1 << endl;
+		//std::cout << x / 64 << " " << (y / 64) + 1 << endl;
 		int off = 0;
 		if (right) {
 			off = +1;

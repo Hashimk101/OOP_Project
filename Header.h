@@ -54,8 +54,8 @@ protected:
     int power;
     float old;
 public:
-    bool isKnuckles = true;
-    bool isSonic=true;
+    bool isKnuckles = false;
+    bool isSonic = false;
     // Constructor to initialize the sprite with the texture
     MySprite()
     {
@@ -101,7 +101,7 @@ public:
 
     virtual bool movement(char** lvl, bool check, bool check2)
     {
-        //std::cout << velocityX <<  " " << velocityY << std::endl;
+        //std::cout << player_x <<  " " << player_y << std::endl;
         /*if (check2) {
             return true;
         }*/
@@ -402,12 +402,29 @@ public:
         if (isFlying)
         {
             //std::cout << "HELLO\n";
-            if (Keyboard::isKeyPressed(Keyboard::Up)) {
-                //player_y -= 10;
-                offset_y -= 10;
+            if (Keyboard::isKeyPressed(Keyboard::Up) && player_y >= 20) {
+                int worldY_top = (int)((player_y + hit_box_factor_y - 10) / cell_size); // Check slightly above current top
+                int worldX_left = (int)((offset_x + player_x + hit_box_factor_x) / cell_size);
+                int worldX_right = (int)((offset_x + player_x + hit_box_factor_x + Pwidth - 1) / cell_size);
+
+                if (lvl[worldY_top][worldX_left] == 'w' || lvl[worldY_top][worldX_right] == 'w') {
+
+                }
+                else {
+                    player_y -= 10;
+                }
+                //offset_y -= 10;
             }
+
             if (Keyboard::isKeyPressed(Keyboard::Down)) {
-                offset_y += 10;
+                int worldY_bottom = (int)((player_y + hit_box_factor_y + Pheight + 10) / cell_size); // Check 10px below player's bottom
+                int worldX_left = (int)((offset_x + player_x + hit_box_factor_x) / cell_size);
+                int worldX_right = (int)((offset_x + player_x + hit_box_factor_x + Pwidth - 1) / cell_size);
+				if (lvl[worldY_bottom][worldX_left] == 'w' || lvl[worldY_bottom][worldX_right] == 'w') {
+				}
+                else {
+                    player_y += 10;
+                }
             }
             //isMoving = true;
             ESprite.setPosition(player_x, player_y);
@@ -439,8 +456,9 @@ public:
 
     void player_gravity(char** lvl)
     {
+        std::cout << isFlying << " " << isSonic << " " << isKnuckles;
         if (isFlying) {
-            player_y = offset_y;
+            offset_y = player_y;
             onGround = false;
             return;
         }
@@ -451,7 +469,7 @@ public:
         offset_y += velocityY;
 
         int check_y = (int)((offset_y + hit_box_factor_y + Pheight) / cell_size); // gives the row of the lvl the character is currently on
-
+        std::cout <<" " << check_y << std::endl;
         // Calculate x positions of collision points
         //int left_x = (int)(((offset_x + player_x + hit_box_factor_x) / cell_size));
         //int right_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size));
@@ -461,6 +479,17 @@ public:
         bool collision = false;
         //char bottom_left = lvl[check_y][left_x];
         //char bottom_right = lvl[check_y][right_x];
+        if (check_y < 0) {
+            check_y = 0;
+            offset_y = 0; // Clamp to top of map
+            velocityY = 0;
+        }
+        else if (check_y >= 12) { // Your map height is 14
+            check_y = 12;
+            // Handle falling off the map (respawn, damage, etc.)
+            // offset_y = (13 * cell_size) - hit_box_factor_y - Pheight;
+            // velocityY = 0;
+        }
         char bottom_mid = lvl[check_y][mid_x];
 
         collision = (/*bottom_left == 'w' || bottom_right == 'w' || */bottom_mid == 'w'
@@ -754,6 +783,7 @@ private:
 public:
     Sonic() : MySprite()
     {
+        isSonic = true;
         SpriteTex = new SpriteSheet[13];
         // Load textures into the array
         if (!SpriteTex[0].T.loadFromFile("Data/0left_still.png"))
@@ -969,7 +999,7 @@ private:
     public:
     Knuckles() : MySprite()
     {
-
+        isKnuckles = true;
         SpriteTex = new SpriteSheet[13];
         //  IDLE
         if (!SpriteTex[0].T.loadFromFile("Data/Knuckles_Idle_L.png")) { //40x40 => 1 frame

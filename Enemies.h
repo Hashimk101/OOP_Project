@@ -74,6 +74,8 @@ public:
 	void activate() {
 		isActive = true;
 	}
+
+	//virtual bool wallCollision(int off_x) = 0;
 };
 
 Enemies::~Enemies() {
@@ -102,17 +104,37 @@ public:
 		enemySprite.setScale(2.2, 2.24);
 		enemySprite.setOrigin(frameRect.width / 2.0f, frameRect.height / 2.0f);
 	}
-
+	bool wallCollision(bool right){ // for checking if the player is right or not and then allowing it to move left or right
+		std::cout << x / 64 << " " << (y / 64) + 1 << endl;
+		int off = 0;
+		if (right) {
+			off = +1;
+		}
+		else {
+			off = -2;
+		}
+		std::cout << lvl[(y / 64) + 1][(x / 64) + off] << std::endl;
+		if (lvl[(y / 64) - 1][(x / 64) + off] == 'w' || lvl[(y / 64) - 1][(x / 64) + off] == 'b') {
+			return true;
+		}
+		return false;
+	}
 	void move(int P_x, int P_y, int off_x, int off_y, Scores& s) override
 	{
 		if (isActive && proximityCheck(P_x + off_x, P_y)) {
 			if (P_x + off_x + 40 < x) {
+				bool collCheck = wallCollision(false);
 				isPlayerRight = false;
-				x -= speed;
+				if (!collCheck) {
+					x -= speed;
+				}
 			}
 			else if (P_x + off_x > x) {
+				bool collCheck = wallCollision(true);
 				isPlayerRight = true;
-				x += speed;
+				if (!collCheck) {
+					x += speed;
+				}
 			}
 		}
 		enemySprite.setPosition(x - off_x, y);
@@ -122,14 +144,14 @@ public:
 	{
 		proximity = false;
 		// Check if the player is within a certain distance
-		if (((P_y / 64 == y / 64) || (P_y / 64 == (y / 64) - 1)) &&
-			((P_x / 64 >= (x / 64) - 6) && (P_x / 64 <= (x / 64) + 6))) {
+		if (((P_y / 64 == (y / 64) - 4) || (P_y / 64 == (y / 64) - 1) || (P_y / 64 == (y / 64) - 2)) &&
+			((P_x / 64 >= (x / 64) - 8) && (P_x / 64 <= (x / 64) + 8))) {
 			proximity = true;
 		}
-		if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
+		/*if (lvl[y / 64][(x / 64) + 2] == 'w' && isPlayerRight)
 			proximity = false;
 		if (lvl[y / 64][(x / 64)] == 'w' && !isPlayerRight)
-			proximity = false;
+			proximity = false;*/
 		return proximity;
 	}
 
@@ -912,7 +934,7 @@ public:
 	void takeDamage(int damage, Scores& s) {
 		if (!isInvincible && isActive) { // Only take damage if not invincible
 			hp -= damage;
-			std::cout << "BuzzBomber HP: " << hp << std::endl;
+			//std::cout << "BuzzBomber HP: " << hp << std::endl;
 			if (hp <= 0) 
 			{
 				s.addBuzzBomberKill();
@@ -1099,7 +1121,7 @@ public:
 				stayTime.restart();
 			}
 		}
-		std::cout << hp << std::endl;
+		//std::cout << hp << std::endl;
 	}
 
 	void destroyBlock() {

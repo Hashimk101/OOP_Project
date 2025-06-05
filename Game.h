@@ -787,7 +787,7 @@ void Game::update()
     // Update player
     bool BOSSLEVEL = currentLevel == 4;
     bool ismoving = player->movement(lvl, true, BOSSLEVEL);
-    std::cout << player->getOffsetX() << " " << player->getX() << " " <<player->getOffsetY()<< std::endl;
+    //std::cout << player->getOffsetX() << " " << player->getX() << " " <<player->getOffsetY()<< std::endl;
     bool isflying = player->getIsFlying();
    
     player->punching(lvl, true);
@@ -1362,7 +1362,7 @@ void Game::configureEnemies()
        }
        
        else
-       motoBugs[i] = MotoBug(3600 * (i + 1), 730, map->getMap());
+       motoBugs[i] = MotoBug(3500 * (i + 1), 730, map->getMap());
        motoBugs[i].getEnemySprite().setTexture(motoBugTex);
    }
    for (int i = 0; i < buzzerCount; ++i)

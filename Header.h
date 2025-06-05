@@ -267,7 +267,55 @@ public:
         }
         else {
             // Apply friction when no key is pressed
-            velocityX *= friction;
+            bool collision = false;
+
+            // Check both left and right collisions
+            int worldY = (player_y + hit_box_factor_y) / cell_size;
+            int leftX = (offset_x + player_x + hit_box_factor_x - 17) / cell_size;
+            int rightX = (offset_x + player_x + hit_box_factor_x + Pwidth + 15) / cell_size;
+
+            // Stay within bounds
+            if (worldY < 0) worldY = 0;
+
+            // Check walls and blocks for both sides
+            if (worldY >= 0 && worldY < 14) {
+                // Left side collision
+                if (leftX >= 0 && leftX < totalWidth) {
+                    if (lvl[worldY][leftX] == 'w' || lvl[worldY][leftX] == 'b' ||
+                        lvl[worldY + 1][leftX] == 'w' || lvl[worldY + 1][leftX] == 'b') {
+                        collision = true;
+                    }
+                }
+
+                // Right side collision
+                if (rightX >= 0 && rightX < totalWidth) {
+                    if (lvl[worldY][rightX] == 'w' || lvl[worldY][rightX] == 'b' ||
+                        lvl[worldY + 1][rightX] == 'w' || lvl[worldY + 1][rightX] == 'b') {
+                        collision = true;
+                    }
+                }
+            }
+
+            // Check spikes for both sides
+            if (leftX >= 0 && leftX + 1 < totalWidth) {
+                if (lvl[worldY + 1][leftX] == 'k' || lvl[worldY + 1][leftX + 1] == 'k') {
+                    collision = true;
+                    takeDamage(5);
+                }
+            }
+            if (rightX >= 0 && rightX + 1 < totalWidth) {
+                if (lvl[worldY + 1][rightX] == 'k' || lvl[worldY + 1][rightX + 1] == 'k') {
+                    collision = true;
+                    takeDamage(5);
+                }
+            }
+
+            if (!collision) {
+                velocityX *= friction;
+            }
+            else {
+                velocityX = 0;
+            }
             if (player_x >= 450 && player_x <= 750) {
                 player_x += velocityX;
             }
@@ -512,7 +560,7 @@ public:
         {
             return;
         }
-        std::cout << dmg << std::endl;
+        //std::cout << dmg << std::endl;
         if (dmg != 0) {
             hp -= dmg;
             isInvincible = true;
@@ -1245,7 +1293,7 @@ private:
                     SpriteRect.left = currentFrame * SpriteRect.width;
                     ESprite.setTextureRect(SpriteRect);
                     animationClock.restart();
-                    std::cout << currentFrame << std::endl;
+                    //std::cout << currentFrame << std::endl;
 
                 }
                 else

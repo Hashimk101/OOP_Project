@@ -24,7 +24,7 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >HUD ⏱️: Retro-styled display tracks your score, a countdown timer, and persistent high scores across sessions.<br>
 >Audio 🎵: Pump up the jams with level-specific background music.<br>
 >Menu & Pause 🖱️: Navigate slick menus, pause/resume gameplay, or restart levels with ease.<br>
->Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.<br>
+>Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.
 
 ## ⚙️Working (Architecture & Flow)
 Entry Point (Source.cpp) <br>

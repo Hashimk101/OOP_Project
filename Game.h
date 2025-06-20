@@ -634,7 +634,7 @@ void Game::initTextures()
 void Game::initGameObjects() 
 {
     int thislvlWidth = map->GetLevelWidth();
-    std::cout << thislvlWidth << std::endl;
+    //std::cout << thislvlWidth << std::endl;
     //for (int i = 0; i < 4; i++) {
     //    players[i]->setWidth(thislvlWidth); // Set width for Sonic, Knuckles, Tails
     //}
@@ -699,11 +699,11 @@ void Game::processEvents()
         }
         if (isInNameInput)
         {
-            std::cout << "In Name Input State\n";
+            //std::cout << "In Name Input State\n";
             menu->handleNameInput(event);
             if (!menu->isNameEntered()) 
             {
-                std::cout << "Name Entered: " << menu->GetPlayerName() << "\n";
+                //std::cout << "Name Entered: " << menu->GetPlayerName() << "\n";
                 playerName = menu->GetPlayerName();
                 score.addName(playerName);
                 isInNameInput = false;
@@ -805,10 +805,10 @@ void Game::update()
         if (i != currentPlayer) {
             players[i]->setOffsetX(player->getOffsetX());
             if (player->getDirection()) {
-                players[i]->setX(player->getX() + 40);
+                players[i]->setX(player->getX() + 55);
             }
             else {
-                players[i]->setX(player->getX() - 40);
+                players[i]->setX(player->getX() - 55);
             }
             if (isflying) {
                 players[i]->hang(player->getX(), player->getY(), player->getOffsetX());

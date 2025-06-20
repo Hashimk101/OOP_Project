@@ -456,7 +456,7 @@ public:
 
     void player_gravity(char** lvl)
     {
-        std::cout << isFlying << " " << isSonic << " " << isKnuckles;
+        //std::cout << isFlying << " " << isSonic << " " << isKnuckles;
         if (isFlying) {
             offset_y = player_y;
             onGround = false;
@@ -469,7 +469,7 @@ public:
         offset_y += velocityY;
 
         int check_y = (int)((offset_y + hit_box_factor_y + Pheight) / cell_size); // gives the row of the lvl the character is currently on
-        std::cout <<" " << check_y << std::endl;
+        //std::cout <<" " << check_y << std::endl;
         // Calculate x positions of collision points
         //int left_x = (int)(((offset_x + player_x + hit_box_factor_x) / cell_size));
         //int right_x = (int)(((offset_x + player_x + hit_box_factor_x + Pwidth) / cell_size));
@@ -620,12 +620,14 @@ public:
         if (player_y < 22) {
             player_y = 22;
         }
-        else if (player_y >= 720) {
-           /* player_x = lastOnGround.x - 40;
-            player_y = lastOnGround.y - 200;
-            offset_x = lastx - 24;
-            ESprite.setPosition(player_x + offset_x, player_y);*/
-            hp = 0;
+        else if (player_y >= 750) {
+            player_x = lastOnGround.x - 5;
+            player_y = 100;
+            offset_x = lastx;
+            velocityX = 0;
+            velocityY = -1;
+            ESprite.setPosition(player_x + offset_x, player_y);
+            //hp = 0;
         }
         //std::cout << player_y << std::endl;
     }

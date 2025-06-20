@@ -113,7 +113,7 @@ public:
 		else {
 			off = -2;
 		}
-		std::cout << lvl[(y / 64) + 1][(x / 64) + off] << std::endl;
+		//std::cout << lvl[(y / 64) + 1][(x / 64) + off] << std::endl;
 		if (lvl[(y / 64) - 1][(x / 64) + off] == 'w' || lvl[(y / 64) - 1][(x / 64) + off] == 'b') {
 			return true;
 		}
@@ -556,7 +556,7 @@ public:
 			projtop  < playerY + playerHeight + 10 &&
 			projtop + 35 > playerY) {
 
-			std::cout << "Collision happened" << std::endl;
+			//std::cout << "Collision happened" << std::endl;
 			//projectileActive = false;  // Deactivate projectile on collision
 
 			projectileCooldown.restart();
@@ -1019,7 +1019,7 @@ public:
 			projtop < P_y + 35 &&
 			projtop + 37 > P_y)
 		{
-			std::cout << "Collision happened" << std::endl;
+			//std::cout << "Collision happened" << std::endl;
 			isProjActive = false;  // Deactivate projectile on collision
 			return true;
 		}
@@ -1065,7 +1065,7 @@ public:
 
 		// Check if we're at the limit of destroyed blocks
 		if (destroyedIndex >= 10) {
-			std::cout << "No platform to stand on\n";
+			//std::cout << "No platform to stand on\n";
 			// yaha game end karna
 		}
 

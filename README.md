@@ -34,7 +34,7 @@ Game Loop (Game::run())<br>
 1. Start with the menu (New Game, Options,  Leaderboard).
 2. Play through 3 levels (collect all rings, reach the end) and the boss level (defeat Egg Stinger).
 3. Lose if HP = 0 or timer expires; win by completing all levels.
- ## 🎮 Game Controls
+ ## 🎮Game Controls
 * Arrow Keys: Move left/right, jump and spin.
 * T: Punch (Knuckles breaks walls).
 * Z: Switch between Sonic, Tails, and Knuckles.

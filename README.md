@@ -4,13 +4,10 @@
 1. [About](#about)  
 2. [Features](#features)  
 3. [Working (Architecture & Flow)](#working-architecture--flow)  
-4. [Prerequisites](#prerequisites)  
-5. [Installation & Build](#installation--build)  
-6. [Game Controls](#game-controls)  
-7. [Project Structure](#project-structure)  
-8. [Contributing](#contributing)  
-9. [License](#license)  
-10. [Contact](#contact)  
+4. [Game Controls](#game-controls)  
+5. [Project Structure](#project-structure)  
+6. [Contributing](#contributing)  
+7. [Contact](#contact)  
 
 ## 📖 About  
 Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA’s classic Sonic! In Sonic Classic Heroes, guide Sonic and friends through procedurally generated levels brimming with loops, ramps, and secrets. Collect crystals, outsmart pesky enemies, and race the clock to claim the top spot on the leaderboard. 
@@ -33,8 +30,14 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 Entry Point (Source.cpp) <br>
 Creates a Game object and kicks off the fun with game.run().<br>
 Game Loop (Game::run())<br>
-<b>Game Flow
+<b>⚡Game Flow
 1. Start with the menu (New Game, Options,  Leaderboard).
-2. Play through 3 levels (collect all rings, reach end) and boss level (defeat Egg Stinger).
+2. Play through 3 levels (collect all rings, reach the end) and the boss level (defeat Egg Stinger).
 3. Lose if HP = 0 or timer expires; win by completing all levels.
+ ## 🎮 Game Controls
+Arrow Keys: Move left/right, jump.
+* T: Punch (Knuckles breaks walls).
+* Z: Switch between Sonic, Tails, and Knuckles.
+* F: Flying of Tails
+
 

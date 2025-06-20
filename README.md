@@ -44,15 +44,15 @@ Game Loop (Game::run())<br>
 ```plaintext
 sonic-classic-heroes
 ├──Data/               # Sprites, audio, level files
-│   ├── sprites/          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
-│   ├── audio/            # BGM, SFX (jump, collect, damage)
-│   └── levels/           # Text files for procedural maps (14×200 grids)
-├── src/                  # Source code
-├── assets/               # Sprites, audio, level files
-│   ├── sprites/          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
-│   ├── audio/            # BGM, SFX (jump, collect, damage)
-│   └── levels/           # Text files for procedural maps (14×200 grids)
-├── src/                  # Source code
+│   ├── sprites         # Sprite sheets (Sonic, Tails, Knuckles, enemies)
+│   ├── audio         # BGM, SFX (jump, collect, damage)
+│   └── levels          # Text files for procedural maps (14×200 grids)
+├── src               # Source code
+├── assets               # Sprites, audio, level files
+│   ├── sprites          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
+│   ├── audio            # BGM, SFX (jump, collect, damage)
+│   └── levels           # Text files for procedural maps (14×200 grids)
+├── src                   # Source code
 │   ├── Source.cpp          # Entry point
 │   ├── Game.h            # Game loop, core logic
 │   ├──Header.h          # Player mechanics (movement, abilities)

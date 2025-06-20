@@ -18,9 +18,20 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >Procedural Map Loader 📍: Levels generated from text-file grids, creating unique tile-based worlds every run.<br>
 >Sprite Animation 🎥: Smooth moves for Sonic & co.—walk, jump, fly, and punch with pixel-perfect flair.<br>
 >Collectables: coins for points🪙, crystals for health 💎, and smash breakable walls  for shortcuts.<br>
+> Levels🗺️:
+Labyrinth Zone: Easy, 200×14 cells, standard friction.<br>
+Ice Cap Zone: Medium, 250×14 cells, low friction (higher acceleration/deceleration).<br>
+Death Egg Zone: Hard, 300×14 cells, low gravity, reduced player speeds.<br>
+Boss Level: Face Egg Stinger in a high-stakes showdown.<br>
 >Enemies 🤖: Clever  enemies spawn off-screen, patrol to waypoints, and chase when you get too close!<br>
 >HUD ⏱️: Retro-styled display tracks your score, a countdown timer, and persistent high scores across sessions.<br>
 >Audio 🎵: Pump up the jams with level-specific background music.<br>
 >Menu & Pause 🖱️: Navigate slick menus, pause/resume gameplay, or restart levels with ease.<br>
 >Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.<br>
+
+##⚙️ Working (Architecture & Flow)
+>Entry Point (Source.cpp)
+Creates a Game object and kicks off the fun with game.run().
+Game Loop (Game::run())
+
 

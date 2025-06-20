@@ -187,10 +187,8 @@ private:
     void handlePausedEvents(const sf::Event& event)
     {
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Escape) {
-                resumeGame();
-            }
-            else if (event.key.code == sf::Keyboard::M) {
+
+             if (event.key.code == sf::Keyboard::M) {
                 returnToMenu();
             }
         }
@@ -221,12 +219,6 @@ private:
     {
         isPlaying = false;
         isPaused = true;
-    }
-
-    void resumeGame()
-    {
-        isPlaying = true;
-        isPaused = false;
     }
 
     void gameOver()
@@ -686,14 +678,12 @@ void Game::processEvents()
 
                     break;
                 }
-                case 1:     // Resume
-                    resume();    isInMenu = false;  break;
-                case 2:     // Options
+                case 1:     // Options
                     openOptions();
                      break;
-                case 3:     // High Scores
+                case 2:     // High Scores
                     showHighScores(); break;
-                case 4:     // Exit
+                case 3:     // Exit
                     window.close();  break;
                 }
             }

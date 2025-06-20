@@ -126,7 +126,7 @@ public:
 
 
 };
-int AudioSystem::GameVolume = 50;
+int AudioSystem::GameVolume = 10;
 
 
 

@@ -20,7 +20,7 @@ private:
     sf::String* levelsTxt;
     string TlTxt;
     int SelectedIndex;
-    static const int numOptions = 5;
+    static const int numOptions = 4;
 
     sf::Text namePrompt, nameText;
     std::string playerName;
@@ -70,10 +70,9 @@ public:
 
         options = new sf::String[numOptions];
         options[0] = "New Game";
-        options[1] = "Resume";
-        options[2] = "Options";
-        options[3] = "High Scores";
-        options[4] = "Exit";
+        options[1] = " Options";
+        options[2] = "High Scores";
+        options[3] = "  Exit";
 
         levelsTxt = new sf::String[4];
         levelsTxt[0] = "Level 1";
@@ -86,27 +85,27 @@ public:
         {
             text[i].setFont(Monaco);
             text[i].setString(options[i]);
-            text[i].setCharacterSize(40);
+            text[i].setCharacterSize(60);
             text[i].setOutlineThickness(3);
             text[i].setOutlineColor(sf::Color::Black);
             text[i].setFillColor(sf::Color::White);
-            text[i].setPosition(550, 220 + i * 150);
+            text[i].setPosition(500, 260 + i * 150);
         }
 
         OptionBanners = new sf::Sprite[numOptions];
         for (int i = 0; i < numOptions; i++)
         {
             OptionBanners[i].setTexture(BannerTxture);
-            OptionBanners[i].setScale(0.5, 0.5);
-            OptionBanners[i].setPosition(650, 200 + i * 150);
-            OptionBanners[i].setOrigin(300, 50);
+            OptionBanners[i].setScale(0.65, 0.65);
+            OptionBanners[i].setPosition(650, 250 + i * 150);
+            OptionBanners[i].setOrigin(320, 50);
         }
 
         SelectedIndex = 0;
         text[SelectedIndex].setFillColor(lightBlue);
 
         TlTxt = "Sonic Classic Heroes";
-        Title.setCharacterSize(110);
+        Title.setCharacterSize(130);
         Title.setFont(Monaco);
         Title.setOutlineThickness(5);
         Title.setOutlineColor(sf::Color::Black);
@@ -185,11 +184,11 @@ public:
         {
             Levels[i].setFont(Monaco);
             Levels[i].setString(levelsTxt[i]);
-            Levels[i].setCharacterSize(60);
+            Levels[i].setCharacterSize(70);
             Levels[i].setOutlineThickness(3);
             Levels[i].setOutlineColor(sf::Color::Black);
             Levels[i].setFillColor(i == selected - 1 ? lightBlue : sf::Color::White);
-            Levels[i].setPosition(450, 325 + i * 150);
+            Levels[i].setPosition(450, 305 + i * 150);
         }
 
         bool selecting = true;

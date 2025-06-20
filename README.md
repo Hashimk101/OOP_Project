@@ -43,21 +43,28 @@ Game Loop (Game::run())<br>
 ## 📂 Project Structure
 ```plaintext
 sonic-classic-heroes
+├──Data/               # Sprites, audio, level files
+│   ├── sprites/          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
+│   ├── audio/            # BGM, SFX (jump, collect, damage)
+│   └── levels/           # Text files for procedural maps (14×200 grids)
+├── src/                  # Source code
 ├── assets/               # Sprites, audio, level files
 │   ├── sprites/          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
 │   ├── audio/            # BGM, SFX (jump, collect, damage)
 │   └── levels/           # Text files for procedural maps (14×200 grids)
 ├── src/                  # Source code
-│   ├── main.cpp          # Entry point
-│   ├── Game.cpp/.hpp     # Game loop, core logic
-│   ├── Player.cpp/.hpp   # Player mechanics (movement, abilities)
-│   ├── Enemy.cpp/.hpp    # Enemy AI (Bat Brain, Bee-Bot, etc.)
-│   ├── Map.cpp/.hpp      # Procedural map loader
-│   ├── HUD.cpp/.hpp      # Score, timer, leaderboard
-│   ├── Animation.cpp/.hpp# Animation handling
-│   └── Save.cpp/.hpp     # Save/load game state
-├── CMakeLists.txt        # CMake build config
+│   ├── Source.cpp          # Entry point
+│   ├── Game.h            # Game loop, core logic
+│   ├──Header.h          # Player mechanics (movement, abilities)
+│   ├── Enemy.h          # Enemy AI (Bat Brain, Bee-Bot, etc.)
+│   ├── Map.h            # Procedural map loader
+│   ├── Menu.h           # Menu Integration
+│   ├── Collectables.h   # Implementation of collectables(Collision detection and animation)
+│   ├──  Timer.h        # Tracks gameplay time
+│   ├──  Score Board.h   # Tracks high score
+│   ├── Audio.h          # Controls the music throughout the game
 ├── README.md             # This file
-├── LICENSE               # MIT License
+└── CONTRIBUTING.md       # Contribution guidelines
+├── README.md             # This file
 └── CONTRIBUTING.md       # Contribution guidelines
 

@@ -40,4 +40,23 @@ Game Loop (Game::run())<br>
 * Z: Switch between Sonic, Tails, and Knuckles.
 * F: Flying of Tails
 
+## 📂 Project Structure
+sonic-classic-heroes/
+├── assets/               # Sprites, audio, level files
+│   ├── sprites/          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
+│   ├── audio/            # BGM, SFX (jump, collect, damage)
+│   └── levels/           # Text files for procedural maps (14×200 grids)
+├── src/                  # Source code
+│   ├── Source.cpp          # Entry point
+│   ├── Game.h            # Game loop, core logic
+│   ├──Header.h          # Player mechanics (movement, abilities)
+│   ├── Enemy.h          # Enemy AI (Bat Brain, Bee-Bot, etc.)
+│   ├── Map.h            # Procedural map loader
+│   ├── Menu.h           # Menu Integration
+│   ├── Collectables.h   # Implementation of collectables(Collision detection and animation)
+│   ├──  Timer.h        # Tracks gameplay time
+│   ├──  Score Board.h   # Tracks highscores
+│   ├── Audio.h          # Controls the music throughout the game
+├── README.md             # This file
+└── CONTRIBUTING.md       # Contribution guidelines
 

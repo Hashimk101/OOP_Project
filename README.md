@@ -26,7 +26,7 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >Menu & Pause 🖱️: Navigate slick menus, pause/resume gameplay, or restart levels with ease.<br>
 >Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.<br>
 
-## ⚙️ Working (Architecture & Flow)
+## ⚙️working-architecture--flow
 Entry Point (Source.cpp) <br>
 Creates a Game object and kicks off the fun with game.run().<br>
 Game Loop (Game::run())<br>

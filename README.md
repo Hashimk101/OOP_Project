@@ -45,7 +45,7 @@ Game Loop (Game::run())<br>
 sonic-classic-heroes
 ├──Data/               # Sprites, audio, level files
 │   ├── sprites         # Sprite sheets (Sonic, Tails, Knuckles, enemies)
-│   ├── audio         # BGM, SFX (jump, collect, damage)
+│   ├── audio         # BGM
 │   └── levels          # Text files for procedural maps (14×200 grids)
 ├── src               # Source code
 ├── assets               # Sprites, audio, level files

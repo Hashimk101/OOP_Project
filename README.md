@@ -41,7 +41,8 @@ Game Loop (Game::run())<br>
 * F: Flying of Tails
 
 ## 📂 Project Structure
-sonic-classic-heroes/
+```plaintext
+sonic-classic-heroes
 ├── assets/               # Sprites, audio, level files
 │   ├── sprites/          # Sprite sheets (Sonic, Tails, Knuckles, enemies)
 │   ├── audio/            # BGM, SFX (jump, collect, damage)

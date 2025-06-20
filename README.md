@@ -30,8 +30,11 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.<br>
 
 ## ⚙️ Working (Architecture & Flow)
->Entry Point (Source.cpp)
-Creates a Game object and kicks off the fun with game.run().
-Game Loop (Game::run())
-
+Entry Point (Source.cpp) <br>
+Creates a Game object and kicks off the fun with game.run().<br>
+Game Loop (Game::run())<br>
+<b>Game Flow
+1. Start with the menu (New Game, Options,  Leaderboard).
+2. Play through 3 levels (collect all rings, reach end) and boss level (defeat Egg Stinger).
+3. Lose if HP = 0 or timer expires; win by completing all levels.
 

@@ -8,7 +8,7 @@
 4. [Game Controls](#game-controls)  
 5. [Project Structure](#project-structure)  
 6. [Contributing](#contributing)  
-7. [Contact](#contact)  
+7. [Credits](#credits)  
 
 ## 📖 About  
 Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA’s classic Sonic! In Sonic Classic Heroes, guide Sonic and friends through procedurally generated levels brimming with loops, ramps, and secrets. Collect crystals, outsmart pesky enemies, and race the clock to claim the top spot on the leaderboard. 

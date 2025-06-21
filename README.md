@@ -13,7 +13,7 @@
 ## 📖 About  
 Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA’s classic Sonic! In Sonic Classic Heroes, guide Sonic and friends through procedurally generated levels brimming with loops, ramps, and secrets. Collect crystals, outsmart pesky enemies, and race the clock to claim the top spot on the leaderboard. 
 ## 🔥Features
->Map Loader 📍: Levels generated from text-file grids, creating unique tile-based worlds every run.<br>
+>Map Loader 📍: Loads pre-designed  grids from text files, creating intentional level layouts that enhance the storytelling by reflecting the South Island’s narrative—Labyrinth Zone’s traps, Ice Cap Zone’s slippery paths, and Death Egg Zone’s desolate space. This blend of predetermined challenges and procedural variety ensures a cohesive and immersive adventure for Sonic, Tails, and Knuckles, while keeping the gameplay fresh.<br>
 >Sprite Animation 🎥: Smooth moves for Sonic & co.—walk, jump, fly, and punch with pixel-perfect flair.<br>
 >Collectables: coins for points🪙, crystals for health 💎, and smash breakable walls  for shortcuts.<br>
 > Levels🗺️:<br>
@@ -26,6 +26,7 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >Audio 🎵: Pump up the jams with level-specific background music.<br>
 >Menu & Pause 🖱️: Navigate slick menus, pause/resume gameplay, or restart levels with ease.<br>
 >Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.
+>Cheat Code: "OOPS" 🎉: Input the sequence "OOPS" to unleash a mega-hero! This spawns a larger, more powerful character combining Sonic’s speed, Tails’ flight, and Knuckles’ punch for 15 seconds. In ball form, it deals increased damage, wipes out all on-screen enemies instantly, and—during the boss fight—slashes Egg Stinger’s health by 50%!
 
 ## ⚙️Working (Architecture & Flow)
 Entry Point (Source.cpp) <br>
@@ -74,3 +75,6 @@ We’re a dynamic duo of programmers, but we’d love for you to join the advent
 * SFML: [SFML 2.6.2](https://www.sfml-dev.org/download/sfml/2.6.2/)
 * Sprites: (Various free sources from the internet, mainly [FreePik](https://www.freepik.com/), [the spriters resource](https://www.spriters-resource.com/))
 * Music/SFX: [khinsider](https://downloads.khinsider.com/game-soundtracks/album/sonic-1-revisited)
+  
+## 🎉 Why Play?
+Sonic Classic Heroes is a tribute to SEGA’s golden era, blending retro platforming with creative twists like procedural levels and character-switching. Dodge Bat Brains, outrun Egg Stinger, and soar with Tails—grab your rings and let’s save South Island in style! 🚀

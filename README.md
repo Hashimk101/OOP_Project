@@ -1,6 +1,6 @@
 
 # 🎮 SONIC CLASSIC HEROS
-> A recreation of SEGA's classic Sonic, crafted with C++17 and SFML 2.6.1, featuring procedural maps, animated sprites, collectables, basic AI enemies, and a Heads Up Display (timer + scoreboard)
+> A recreation of SEGA's classic Sonic, crafted with C++17 and SFML SFML 2.6.2, featuring procedural maps, animated sprites, collectables, basic AI enemies, and a Heads Up Display (timer + scoreboard)
 ## 🚀 Table of Contents  
 1. [About](#about)  
 2. [Features](#features)  
@@ -78,6 +78,6 @@ We’re a dynamic duo of programmers, but we’d love for you to join the advent
 > Got ideas? Report bugs or suggest features via GitHub Issues. Let’s make this game even more heroic! 🦸
 ## 📜Credits
 * Developers: [Hashimk101](https://github.com/Hashimk101), [Hadiah-Batool](https://github.com/Hadiah-Batool)
-* SFML: [Laurent Gomila](https://www.sfml-dev.org/download/sfml/2.6.2/)
+* SFML: [SFML 2.6.2](https://www.sfml-dev.org/download/sfml/2.6.2/)
 * Sprites: (Various free sources from the internet, mainly [FreePik](https://www.freepik.com/), [the spriters resource](https://www.spriters-resource.com/))
 * Music/SFX: [khinsider](https://downloads.khinsider.com/game-soundtracks/album/sonic-1-revisited)

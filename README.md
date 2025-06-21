@@ -76,3 +76,8 @@ We’re a dynamic duo of programmers, but we’d love for you to join the advent
 3.  Follow our C++ Coding Guidelines
 4.  Submit a pull request with a detailed description of your changes.<br>
 > Got ideas? Report bugs or suggest features via GitHub Issues. Let’s make this game even more heroic! 🦸
+## 📜Credits
+* Developers: [Hashimk101], [Hadiah-Batool]
+* SFML: Laurent Gomila
+* Sprites: (Various free sources from the internet, mainly [FreePix], [the spriters resource])
+* Music/SFX: [khinsider]

@@ -65,9 +65,7 @@ sonic-classic-heroes
 │   ├──  Score Board.h   # Tracks high score
 │   ├── Audio.h          # Controls the music throughout the game
 ├── README.md             # This file
-└── CONTRIBUTING.md       # Contribution guidelines
-├── README.md             # This file
-└── CONTRIBUTING.md       # Contribution guidelines
+
 ```
 ## 🤝Contributing
 We’re a dynamic duo of programmers, but we’d love for you to join the adventure! To contribute:

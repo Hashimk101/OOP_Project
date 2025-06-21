@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
-//#include <fstream>
+#include <string>
+#include <fstream>
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -8,131 +9,137 @@
 //#include "Header.h"
 
 //const int cell_size = 64;
-const int height = 14;
-const int width = 200;
+//Heights of all levels are same
+
+
 
 class Maps {
-	// only making one map rn so there is one main class over here, else multiple classes based on the levels
-	char** lvl;
+     int widthLvl;
+    // only making one map rn so there is one main class over here, else multiple classes based on the levels
+    char** lvl;
+    int level;
+    std::string* FilePath = nullptr;
+    std::string File = "";
+    int height = 14;
 public:
-    Maps() {
+Maps() : lvl(nullptr), widthLvl(0), level(0), FilePath(nullptr), File("")
+{
+
+}
+    Maps(int levl) : level(levl)
+        , widthLvl((levl == 1) ? 200
+            : (levl == 2) ? 250
+            : (levl == 3) ? 300
+            : 200)
+    {
+
         lvl = new char* [height];
-        for (int i = 0; i < height; i++) {
-            lvl[i] = new char[width];
+        for (int i = 0; i < height; i++)
+        {
+            lvl[i] = new char[widthLvl];
             // Initialize all cells to empty space
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < widthLvl; j++)
+            {
                 lvl[i][j] = 's'; // 's' for empty space
             }
         }
+        FilePath = new std::string[4];
+        FilePath[0] = "Data/level1.txt";
+        FilePath[1] = "Data/level2.txt";
+        FilePath[2] = "Data/level3.txt";
+        FilePath[3] = "Data/Boss_Level.txt";
+        this->level = levl;
 
-        // Create the ground floor (width 200)
-        for (int i = 0; i < 200; i++)
+        File = (levl == 1) ? FilePath[0] : ((levl == 2) ? FilePath[1] : (levl == 3) ? FilePath[2] : FilePath[3]);
+
+
+        std::ifstream file(File);
+        if (!file.is_open())
         {
-            lvl[12][i] = 'w';
-            lvl[13][i] = 'w';
+            std::cerr << "Failed to open map file: " << File << std::endl;
+            // Continue with hardcoded map if file doesn't exist
+        }
+        else {
+
+            std::string line;
+            int row = 0;
+
+            while (std::getline(file, line) && row < height) {
+                for (int col = 0; col < line.length() && col < widthLvl; col++)
+                {
+                    lvl[row][col] = line[col];
+                }
+                row++;
+            }
+
+            file.close();
+            std::cout << "Map loaded from file: " << File << std::endl;
+
         }
 
-        // Fixed platforms (manually placed)
-        // Small platforms
-        lvl[8][4] = 'w';
-        lvl[8][5] = 'w';
-        lvl[8][6] = 'w';
-        lvl[8][6] = 'w';
-        lvl[7][4] = 'B';
-        lvl[7][5] = 'B';
-        lvl[7][6] = 'B';
-       
 
 
-        lvl[7][10] = 'w';
-        lvl[7][11] = 'w';
-        lvl[7][12] = 'w';
 
-        lvl[5][20] = 'w';
-        lvl[5][21] = 'w';
-        lvl[5][22] = 'w';
 
-        // Medium platforms
-        for (int i = 30; i <= 34; i++)lvl[6][i] = 'w';
-        for (int i = 50; i <= 54; i++) lvl[9][i] = 'w';
-        for (int i = 57; i <= 60; i++) lvl[8][i] = 'w';
 
-        // Long platforms floating vertiacally
-        for (int i = 64; i <= 66; i++) lvl[5][i] = 'w';
-        lvl[6][67] = 'w';lvl[6][68] = 'w';lvl[6][69] = 'w';
 
-        for (int i = 70; i <= 74; i++) lvl[4][i] = 'w';
-        for (int i = 90; i <= 94; i++) lvl[7][i] = 'w';
-
-        // Staircase pattern
-        lvl[5][120] = 'w'; lvl[5][121] = 'w';
-        lvl[6][123] = 'w'; lvl[6][124] = 'w';
-        lvl[7][126] = 'w'; lvl[7][127] = 'w';
-
-        // Floating islands
-        for (int i = 140; i <= 143; i++)
-        {
-            lvl[5][i] = 'w';
-			lvl[4][i] = 'B';
-        };
-        //towers
-        lvl[9][26] = 'T';
-        lvl[9][47] = 'T';
-        lvl[9][106] = 'T';
-        lvl[9][195] = 'T';
-
-        for (int i = 148; i <= 150; i++) lvl[4][i] = 'w';
-        for (int i = 155; i <= 160; i++) lvl[6][i] = 'w';
-        for (int i = 160; i <= 167; i++) lvl[8][i] = 'w';
-        for (int i = 170; i <= 180; i++) lvl[9][i] = 'w';
-        for (int i = 180; i <= 183; i++) lvl[7][i] = 'w';
-        for (int i = 186; i <= 190; i++) lvl[6][i] = 'w';
-        for (int i = 189; i <= 191; i++) 
-        {
-            lvl[4][i] = 'w';
-            lvl[3][i] = 'B';
-        }
-        for (int i = 191; i <= 195; i++) lvl[6][i] = 'w';
-      
-        // Vertical pillars
-        //Partially a staircase
-        lvl[11][15] = 'w';
-        lvl[11][16] = 'w'; lvl[10][16] = 'w'; 
-        lvl[10][17] = 'w'; lvl[9][17] = 'w';lvl[11][17] = 'w';
-        lvl[8][18] = 'w'; lvl[9][18] = 'w'; lvl[10][18] = 'w';lvl[11][18] = 'w';
-        lvl[10][45] = 'w'; lvl[9][45] = 'w'; lvl[11][45] = 'w';
-        lvl[10][79] = 'w'; lvl[9][79] = 'w'; lvl[11][79] = 'w';
-		//Staircase for upper platforms
-        lvl[11][78] = 'w'; lvl[10][78] = 'w';
-		lvl[11][77] = 'w';
-        //Vertical
-        for (int i = 80; i <= 89; i++) lvl[7][i] = 'w';
-        lvl[10][45] = 'w'; lvl[9][45] = 'w';
-        lvl[10][100] = 'w'; lvl[9][100] = 'w';lvl[11][100] = 'w';
-
-        // Ceiling platforms
-        for (int i = 110; i <= 115; i++) lvl[8][i] = 'w';
-        for (int i = 90; i <= 105; i++) 
-        {
-            lvl[6][i] = 'w';
-            lvl[5][i] = 'B';
-        };
-        for (int i = 130; i <= 135; i++) lvl[7][i] = 'w';
     }
-    Maps(Maps& m)
+
+
+
+
+
+    Maps(Maps& m) : widthLvl(m.widthLvl), level(m.level), File(m.File), height(m.height)
     {
-        lvl = m.lvl;
+        lvl = new char* [height];
+        for (int i = 0; i < height; i++) {
+            lvl[i] = new char[widthLvl];
+            for (int j = 0; j < widthLvl; j++)
+            {
+                lvl[i][j] = m.lvl[i][j];
+            }
+        }
+        FilePath = new std::string[4];
+        for (int i = 0; i < 4; i++) {
+            FilePath[i] = m.FilePath[i];
+        }
     }
-	char** getMap() {
-		return lvl;
-	}
-	~Maps() {
-		for (int i = 0; i < height; i++) {
-			delete[] lvl[i];
-		}
-		delete[] lvl;
-	}
-	/*void setLevel(int a, int b) {
+	//Maps& operator=(const Maps& m) {
+	//	if (this != &m) {
+	//		for (int i = 0; i < height; i++) {
+	//			delete[] lvl[i];
+	//		}
+	//		delete[] lvl;
+	//		widthLvl = m.widthLvl;
+	//		level = m.level;
+	//		height = m.height;
+	//		File = m.File;
+	//		lvl = new char* [height];
+	//		for (int i = 0; i < height; i++) {
+	//			lvl[i] = new char[widthLvl];
+	//			for (int j = 0; j < widthLvl; j++)
+	//			{
+	//				lvl[i][j] = m.lvl[i][j];
+	//			}
+	//		}
+	//	}
+	//	return *this;
+	//}
+    char** getMap() {
+        return lvl;
+    }
+    ~Maps() {
+        for (int i = 0; i < height; i++) {
+            delete[] lvl[i];
+        }
+        delete[] lvl;
+    }
+    /*void setLevel(int a, int b) {
 
-	}*/
+    }*/
+
+    const int GetLevelWidth() const
+    {
+        return widthLvl;
+    }
 };

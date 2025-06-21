@@ -25,7 +25,7 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >HUD ⏱️: Retro-styled display tracks your score, a countdown timer, and persistent high scores across sessions.<br>
 >Audio 🎵: Pump up the jams with level-specific background music.<br>
 >Menu & Pause 🖱️: Navigate slick menus, pause/resume gameplay, or restart levels with ease.<br>
->Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.
+>Classic Sonic Vibes 🌀: Authentic physics for spin-dashes, loops, and high-speed action.<br>
 >Cheat Code: "OOPS" 🎉: Input the sequence "OOPS" to unleash a mega-hero! This spawns a larger, more powerful character combining Sonic’s speed, Tails’ flight, and Knuckles’ punch for 15 seconds. In ball form, it deals increased damage, wipes out all on-screen enemies instantly, and—during the boss fight—slashes Egg Stinger’s health by 50%!
 
 ## ⚙️Working (Architecture & Flow)

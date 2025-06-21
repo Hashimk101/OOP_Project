@@ -1,6 +1,6 @@
 
 # 🎮 SONIC CLASSIC HEROS
-> A recreation of SEGA's classic Sonic, crafted with C++17 and SFML SFML 2.6.2, featuring procedural maps, animated sprites, collectables, basic AI enemies, and a Heads Up Display (timer + scoreboard)
+> A recreation of SEGA's classic Sonic, crafted with C++17 and SFML 2.6.2, featuring grid based maps, animated sprites, collectables, basic AI enemies, and a Heads Up Display (timer + scoreboard)
 ## 🚀 Table of Contents  
 1. [About](#about)  
 2. [Features](#features)  
@@ -17,10 +17,10 @@ Get ready to dash through a nostalgic side-scrolling platformer inspired by SEGA
 >Sprite Animation 🎥: Smooth moves for Sonic & co.—walk, jump, fly, and punch with pixel-perfect flair.<br>
 >Collectables: coins for points🪙, crystals for health 💎, and smash breakable walls  for shortcuts.<br>
 > Levels🗺️:<br>
-1. Labyrinth Zone: Easy, 200×14 cells, standard friction.<br>
-2. Ice Cap Zone: Medium, 250×14 cells, low friction (higher acceleration/deceleration).<br>
-3. Death Egg Zone: Hard, 300×14 cells, low gravity, reduced player speeds.<br>
-4. Boss Level: Face Egg Stinger in a high-stakes showdown.<br>
+> 1. Labyrinth Zone: Easy, 200×14 cells, standard friction.<br>
+> 2. Ice Cap Zone: Medium, 250×14 cells, low friction (higher acceleration/deceleration).<br>
+> 3. Death Egg Zone: Hard, 300×14 cells, low gravity, reduced player speeds.<br>
+> 4. Boss Level: Face Egg Stinger in a high-stakes showdown.<br>
 >Enemies 🤖: Clever  enemies spawn off-screen, patrol to waypoints, and chase when you get too close!<br>
 >HUD ⏱️: Retro-styled display tracks your score, a countdown timer, and persistent high scores across sessions.<br>
 >Audio 🎵: Pump up the jams with level-specific background music.<br>

@@ -67,4 +67,11 @@ sonic-classic-heroes
 └── CONTRIBUTING.md       # Contribution guidelines
 ├── README.md             # This file
 └── CONTRIBUTING.md       # Contribution guidelines
-
+```
+## 🤝Contributing
+We’re a dynamic duo of programmers, but we’d love for you to join the adventure! To contribute:
+1. Fork the repo.
+2. Create a feature branch(git checkout -b feature/new-powerup)
+3.  Follow our C++ Coding Guidelines
+4.  Submit a pull request with a detailed description of your changes.
+Got ideas? Report bugs or suggest features via GitHub Issues. Let’s make this game even more heroic! 🦸

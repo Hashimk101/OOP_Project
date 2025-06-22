@@ -71,7 +71,7 @@ We’re a dynamic duo of programmers, but we’d love for you to join the advent
 4.  Submit a pull request with a detailed description of your changes.<br>
 > Got ideas? Report bugs or suggest features via GitHub Issues. Let’s make this game even more heroic! 🦸
 ## 📜Credits
-* Developers: [Hashimk101](https://github.com/Hashimk101), [Hadiah-Batool](https://github.com/Hadiah-Batool)
+* Developers: [Hashim Khushal Khan](https://github.com/Hashimk101), [Hadiah Batool](https://github.com/Hadiah-Batool)
 * SFML: [SFML 2.6.2](https://www.sfml-dev.org/download/sfml/2.6.2/)
 * Sprites: (Various free sources from the internet, mainly [FreePik](https://www.freepik.com/), [the spriters resource](https://www.spriters-resource.com/))
 * Music/SFX: [khinsider](https://downloads.khinsider.com/game-soundtracks/album/sonic-1-revisited)

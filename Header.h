@@ -668,12 +668,12 @@ public:
         window.draw(ESprite);
 
         // Debug hitbox
-        sf::RectangleShape hitbox(sf::Vector2f(Pwidth, Pheight));
+       /* sf::RectangleShape hitbox(sf::Vector2f(Pwidth, Pheight));
         hitbox.setPosition(player_x + hit_box_factor_x, player_y + hit_box_factor_y);
         hitbox.setFillColor(sf::Color::Transparent);
         hitbox.setOutlineColor(sf::Color::Blue);
         hitbox.setOutlineThickness(3);
-        window.draw(hitbox);
+        window.draw(hitbox);*/
     }
     int getOffsetX() const {
         return offset_x;

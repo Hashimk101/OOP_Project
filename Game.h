@@ -1057,12 +1057,12 @@ void Game::render()
 
     // Draw player
     //player->draw_player(window);
-    /*for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         if (i != currentPlayer && !specialChar) {
             players[i]->draw_player(window);
         }
     }
-    player->draw_player(window);*/
+    player->draw_player(window);
 
     // Draw collectables
     coins->draw(window, player->getOffsetX());

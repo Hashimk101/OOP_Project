@@ -384,7 +384,7 @@ public:
         {
             if (currentLevel == 1) {
                 players[i]->setFriction(0.8);
-                players[i]->setGravity(1);
+                players[i]->setGravity(0.95);
             }
             else if (currentLevel == 2) {
                 players[i]->setFriction(0.92);
@@ -794,7 +794,7 @@ void Game::update()
     for (int i = 0; i < 4; i++)
     {
         if (currentPlayer == 0) {
-            players[i]->setSpeed(15);
+            players[i]->setSpeed(11);
         }
         else if (currentPlayer == 1) {
             players[i]->setSpeed(10);
@@ -1057,12 +1057,12 @@ void Game::render()
 
     // Draw player
     //player->draw_player(window);
-    for (int i = 0; i < 3; i++) {
+    /*for (int i = 0; i < 3; i++) {
         if (i != currentPlayer && !specialChar) {
             players[i]->draw_player(window);
         }
     }
-    player->draw_player(window);
+    player->draw_player(window);*/
 
     // Draw collectables
     coins->draw(window, player->getOffsetX());
